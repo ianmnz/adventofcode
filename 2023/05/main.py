@@ -3,6 +3,7 @@
 
 from typing import List, Dict, Tuple
 import re
+import time
 from dataclasses import dataclass
 
 @dataclass
@@ -52,6 +53,11 @@ def apply(mapping: List[str], domain: List[Interval]) -> List[Interval]:
                                Interval(mapping_interval.right + 1, domain_interval.right)])
                 break
 
+            elif domain_interval.right_intersect(mapping_interval):
+                domain.extend([Interval(mapping_interval.left, domain_interval.right),
+                               Interval(domain_interval.left, mapping_interval.left - 1)])
+                break
+
         else:   # For's else
             images.append(domain_interval)
 
@@ -67,12 +73,18 @@ def main():
     seeds, mappings = parse()
 
     # --- Part 1 --- #
+    t_start = time.perf_counter_ns()
     seed_intervals = [Interval(seed, seed) for seed in seeds]
     print("Lowest location number:", min(seed_to_location(seed_intervals, mappings)).left)     # 650599855
+    t_end = time.perf_counter_ns()
+    print(f"Elapsed time: {(t_end - t_start) * 1.e-6:.3f} ms")
 
     # --- Part 2 --- #
+    t_start = time.perf_counter_ns()
     seed_intervals = [Interval(seed, seed + delta -1) for seed, delta in zip(seeds[::2], seeds[1::2])]
     print("Lowest location number (Part 2):", min(seed_to_location(seed_intervals, mappings)).left)     #1240035
+    t_end = time.perf_counter_ns()
+    print(f"Elapsed time (Part 2): {(t_end - t_start) * 1.e-6:.3f} ms")
 
 
 if __name__ == "__main__":
