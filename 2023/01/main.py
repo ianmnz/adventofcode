@@ -39,14 +39,26 @@ def fix(document: List[str]) -> List[str]:
 
 
 def main():
+    import os
+    import sys
+
+    # To be able to import the helpers module
+    sys.path.append(os.path.dirname(                                        # Project
+                        os.path.dirname(                                    # Year
+                            os.path.dirname(os.path.abspath(__file__)))))   # Day
+
+    from helpers import Timer
+
     with open("input.txt", "r") as file:
         document = file.read().strip().split("\n")
 
     # --- Part 1 --- #
-    print("Calibration:", calibrate(document)) # 55816
+    with Timer():
+        print("Calibration:", calibrate(document)) # 55816
 
     # --- Part 2 --- #
-    print("Fixed calibration", calibrate(fix(document))) # 54980
+    with Timer():
+        print("Fixed calibration", calibrate(fix(document))) # 54980
 
 
 if __name__ == "__main__":

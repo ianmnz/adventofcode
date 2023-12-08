@@ -72,21 +72,27 @@ def seed_to_location(seeds: List[Interval], mappings: List[List[str]]) -> List[I
 
 
 def main():
+    import os
+    import sys
+
+    # To be able to import the helpers module
+    sys.path.append(os.path.dirname(                                        # Project
+                        os.path.dirname(                                    # Year
+                            os.path.dirname(os.path.abspath(__file__)))))   # Day
+
+    from helpers import Timer
+
     seeds, mappings = parse()
 
     # --- Part 1 --- #
-    t_start = time.perf_counter_ns()
-    seed_intervals = [Interval(seed, seed) for seed in seeds]
-    print("Lowest location number:", min(seed_to_location(seed_intervals, mappings)).left)     # 650599855
-    t_end = time.perf_counter_ns()
-    print(f"Elapsed time: {(t_end - t_start) * 1.e-6:.3f} ms")
+    with Timer():
+        seed_intervals = [Interval(seed, seed) for seed in seeds]
+        print("Lowest location number:", min(seed_to_location(seed_intervals, mappings)).left)  # 650599855
 
     # --- Part 2 --- #
-    t_start = time.perf_counter_ns()
-    seed_intervals = [Interval(seed, seed + delta -1) for seed, delta in zip(seeds[::2], seeds[1::2])]
-    print("Lowest location number (Part 2):", min(seed_to_location(seed_intervals, mappings)).left)     #1240035
-    t_end = time.perf_counter_ns()
-    print(f"Elapsed time (Part 2): {(t_end - t_start) * 1.e-6:.3f} ms")
+    with Timer():
+        seed_intervals = [Interval(seed, seed + delta -1) for seed, delta in zip(seeds[::2], seeds[1::2])]
+        print("Lowest location number (Part 2):", min(seed_to_location(seed_intervals, mappings)).left) # 1240035
 
 
 if __name__ == "__main__":
