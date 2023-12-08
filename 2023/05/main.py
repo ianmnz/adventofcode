@@ -1,7 +1,7 @@
 # Advent of Code : Day 05 - If You Give A Seed A Fertilizer
 # https://adventofcode.com/2023/day/5
 
-from typing import List, Dict, Tuple
+from typing import List, Tuple, Optional
 import re
 import time
 from dataclasses import dataclass
@@ -14,11 +14,11 @@ class Interval:
     def __lt__(self, other: "Interval") -> bool:
         return self.left < other.left
 
+    def intersect(self, other: "Interval") -> bool:
+        return (self.right >= other.left) and (self.left <= other.right)
+
     def contains(self, other: "Interval") -> bool:
         return self.left <= other.left <= other.right <= self.right
-
-    def intersect(self, other: "Interval") -> bool:
-        return (self.right >= other.left) and (other.right >= self.left)
 
     def left_intersect(self, other: "Interval") -> bool:
         return other.left <= self.left <= other.right < self.right
@@ -33,6 +33,7 @@ def parse() -> Tuple[List[int], List[List[str]]]:
 
     return [int(seed) for seed in re.findall(f"\d+", seeds)], \
            [mapping.split("\n")[1:] for mapping in mappings.split("\n\n")]
+
 
 def apply(mapping: List[str], domain: List[Interval]) -> List[Interval]:
     images : List[Interval] = list()
@@ -62,6 +63,7 @@ def apply(mapping: List[str], domain: List[Interval]) -> List[Interval]:
             images.append(domain_interval)
 
     return images
+
 
 def seed_to_location(seeds: List[Interval], mappings: List[List[str]]) -> List[Interval]:
     for mapping in mappings:
