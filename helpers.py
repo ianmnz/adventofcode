@@ -10,6 +10,7 @@ class Timer:
     """
 
     def __enter__(self):
+        print(" -- start timer -- ")
         self.start = time.perf_counter_ns()
         return self
 
