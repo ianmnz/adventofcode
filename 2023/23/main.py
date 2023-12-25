@@ -2,7 +2,6 @@
 # https://adventofcode.com/2023/day/23
 
 import collections
-import heapq
 from typing import List, Dict, Tuple, Callable
 
 
@@ -12,6 +11,12 @@ def build_graph(carte: List[List[str]], with_slippery_slope = True) -> Tuple[com
 
     graph = collections.defaultdict(lambda: set())
     add_neighbor: Callable[[complex, complex, Dict], None] = lambda z, n, G=graph: G[z].add((n, 1))
+
+    source = complex(0, 1)
+    target = complex(n - 1, m - 2)
+
+    add_neighbor(source, source + ( 1 + 0j))
+    add_neighbor(target, target + (-1 + 0j))
 
     for i, row in enumerate(carte[1:n-1], 1):
         for j, col in enumerate(row):
@@ -50,28 +55,21 @@ def build_graph(carte: List[List[str]], with_slippery_slope = True) -> Tuple[com
                 if carte[i - 1][j] != '#' and ((not with_slippery_slope) or carte[i - 1][j] != 'v'):
                     add_neighbor(node, up)
 
-    source = complex(0, 1)
-    target = complex(n - 1, m - 2)
+    # Collapse nodes with only 2 neighbors for performance
+    for node, adjacency in graph.items():
+        if len(adjacency) == 2:
+            (first, weight_f), (second, weight_s) = adjacency
 
-    add_neighbor(source, source + ( 1 + 0j))
-    add_neighbor(target, target + (-1 + 0j))
+            if ((node, weight_f) not in graph[first]) or ((node, weight_s) not in graph[second]):
+                continue
 
-    if not with_slippery_slope:
-        while True:
-            for node, adjacency in graph.items():
-                if len(adjacency) == 2:
-                    first, second = adjacency
+            graph[first].remove((node, weight_f))
+            graph[second].remove((node, weight_s))
 
-                    graph[first[0]].remove((node, first[1]))
-                    graph[second[0]].remove((node, second[1]))
+            graph[first].add((second, weight_f + weight_s))
+            graph[second].add((first, weight_f + weight_s))
 
-                    graph[first[0]].add((second[0], first[1] + second[1]))
-                    graph[second[0]].add((first[0], first[1] + second[1]))
-
-                    del graph[node]
-                    break
-            else:
-                break
+            graph[node] = set()
 
     return source, target, graph
 
@@ -127,7 +125,7 @@ def main():
 
     # --- Part 2 --- #
     with Timer():
-        print("Longest path length without slopes:", get_longest_path_length(carte, False))  #
+        print("Longest path length without slopes:", get_longest_path_length(carte, False))  # 6622
 
 
 if __name__ == "__main__":
