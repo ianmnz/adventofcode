@@ -84,27 +84,25 @@ def find_best_starting_beam(layout: List[List[str]]) -> int:
     return most_energized
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         layout = [[char for char in line] for line in file.read().split('\n')]
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Nb of energized tiles:", count_energized_tiles(propagate_beams(layout)))  # 7543
+    part1 = count_energized_tiles(propagate_beams(layout))
+    part2 = find_best_starting_beam(layout)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Max nb of energized tiles:", find_best_starting_beam(layout))  # 8231
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 7543, f"Part1 = {res[0]}"
+        assert res[1] == 8231, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

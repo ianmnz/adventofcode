@@ -3,7 +3,6 @@
 
 import collections
 import itertools
-import sympy
 from typing import List, Tuple
 
 
@@ -51,6 +50,8 @@ def count_intersections(vectors: List[Tuple[Vector3d]], lower_bound: int, upper_
 
 
 def find_rock_launch_vector(vectors: List[Tuple[Vector3d]]) -> Tuple[Vector3d]:
+    import sympy
+
     Px = sympy.Symbol('Px')
     Py = sympy.Symbol('Py')
     Pz = sympy.Symbol('Pz')
@@ -87,36 +88,29 @@ def find_rock_launch_vector(vectors: List[Tuple[Vector3d]]) -> Tuple[Vector3d]:
     # Using SymPy to symbolic resolve the non-linear system of equations
     Px, Py, Pz, Vx, Vy, Vz, t1, t2, t3 = sympy.solve_poly_system(equations, *variables)[0]
 
-    print(f'Position  = ({Px}, {Py}, {Pz})')
-    print(f'Velocity  = ({Vx}, {Vy}, {Vz})')
-    print(f'Timesteps = ({t1}, {t2}, {t3})')
-
     return Px + Py + Pz
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         hailstorm = [line.split('@') for line in file.read().split('\n')]
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Nb of future intersections inside boundaries:",
-              count_intersections(get_vectors(hailstorm), 200_000_000_000_000, 400_000_000_000_000))  # 31921
+    vectors = get_vectors(hailstorm)
+    part1 = count_intersections(vectors, 200_000_000_000_000, 400_000_000_000_000)
+    part2 = find_rock_launch_vector(vectors)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main() -> None:
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Sum of x, y, z coordinates of position :",
-              find_rock_launch_vector(get_vectors(hailstorm)))  # 761691907059631
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 31921, f"Part1 = {res[0]}"
+        assert res[1] == 761691907059631, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

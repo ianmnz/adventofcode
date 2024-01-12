@@ -103,30 +103,28 @@ def get_fewest_nb_presses() -> int:
     return lcm
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         configuration = [line.split(' -> ') for line in file.read().split('\n')]
 
-    # --- Part 1 --- #
-    with Timer():
-        build_graph(configuration)
-        print("Product of total low and high pulses sent:", prod_low_high_pulses())  # 873301506
+    build_graph(configuration)
+    part1 = prod_low_high_pulses()
 
-    # --- Part 2 --- #
+    build_graph(configuration)
+    part2 = get_fewest_nb_presses()
+
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        build_graph(configuration)
-        print("Fewest number of button presses required to send a low pulse to 'rx':",
-              get_fewest_nb_presses())  # 241823802412393
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 873301506,       f"Part1 = {res[0]}"
+        assert res[1] == 241823802412393, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

@@ -45,27 +45,26 @@ def find_shortest_path(graph: Dict[Tuple[int], int], lower: int, upper: int) -> 
     return -1
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         heatmap = [[int(heatloss) for heatloss in line] for line in file.read().split('\n')]
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Least heat loss:", find_shortest_path(build_graph(heatmap), 1, 3))  # 674
+    graph = build_graph(heatmap)
+    part1 = find_shortest_path(graph, 1, 3)
+    part2 = find_shortest_path(graph, 4, 10)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Least heat loss for ultra:", find_shortest_path(build_graph(heatmap), 4, 10))  # 773
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 674, f"Part1 = {res[0]}"
+        assert res[1] == 773, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

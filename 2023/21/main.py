@@ -1,7 +1,7 @@
 # Advent of Code : Day 21 - Step Counter
 # https://adventofcode.com/2023/day/21
 
-from typing import List
+from typing import List, Tuple
 import collections
 
 
@@ -69,30 +69,25 @@ def quadratic_interpolation(grid: List[List[str]], nb_steps: int = 26501365) -> 
     return (a * x**2) + (b * x) + c
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         grid = [[char for char in line] for line in file.read().split('\n')]
 
-    # --- Part 1 --- #
-    with Timer():
-        n = 64
-        print(f"Nb of garden plots reachable in {n} steps", nb_reachable_gardens(grid, n))  # 3830
+    part1 = nb_reachable_gardens(grid, 64)
+    part2 = quadratic_interpolation(grid, 26501365)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        n = 26501365
-        print(f"Nb of garden plots reachable in {n} steps (with infinite map)",
-              quadratic_interpolation(grid, n))  # 637087163925555
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 3830,            f"Part1 = {res[0]}"
+        assert res[1] == 637087163925555, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

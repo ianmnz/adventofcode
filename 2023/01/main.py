@@ -2,7 +2,7 @@
 # https://adventofcode.com/2023/day/1
 
 import re
-from typing import List
+from typing import List, Tuple
 
 
 def calibrate(document: List[str]) -> int:
@@ -38,27 +38,25 @@ def fix(document: List[str]) -> List[str]:
     ]
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         document = file.read().strip().split("\n")
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Calibration:", calibrate(document)) # 55816
+    part1 = calibrate(document)
+    part2 = calibrate(fix(document))
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Fixed calibration", calibrate(fix(document))) # 54980
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 55816, f"Part1 = {res[0]}"
+        assert res[1] == 54980, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

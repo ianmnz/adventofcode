@@ -2,7 +2,7 @@
 # https://adventofcode.com/2023/day/10
 
 
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Tuple
 
 
 N, S, E, W = -1, +1, +1j, -1j
@@ -82,28 +82,26 @@ def find_enclosed_area(maze: List[str]) -> int:
     return enclosed_area
 
 
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
+        maze = file.read().splitlines()
+    maze_cp = maze.copy()
+
+    part1 = find_farthest_position(maze)
+    part2 = find_enclosed_area(maze_cp)
+
+    return part1, part2
+
+
 def main():
     import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
     from helpers import Timer
 
-    with open("input.txt", "r") as file:
-        maze = file.read().splitlines()
-        maze_cp = maze.copy()
-
-    # --- Part 1 --- #
     with Timer():
-        print("Nb of steps to farthest position from starting point:", find_farthest_position(maze))  # 6725
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-    # --- Part 2 --- #
-    with Timer():
-        print("Nb of tiles enclosed by the loop:", find_enclosed_area(maze_cp))  # 383
+        assert res[0] == 6725, f"Part1 = {res[0]}"
+        assert res[1] == 383,  f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

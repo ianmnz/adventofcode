@@ -34,27 +34,25 @@ def dig(plan: List[List[str]], is_color_code: bool = False) -> int:
     return int(area + 1)
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         plan = [line.split() for line in file.read().split('\n')]
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Digged area:", dig(plan))  # 50603
+    part1 = dig(plan)
+    part2 = dig(plan, True)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Digged area with color-code:", dig(plan, True))  # 96556251590677
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 50603,          f"Part1 = {res[0]}"
+        assert res[1] == 96556251590677, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 # Advent of Code : Day 15 - Lens Library
 # https://adventofcode.com/2023/day/15
 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from dataclasses import dataclass, field
 
 
@@ -99,27 +99,25 @@ def verify_HASHMAP(sequence: List[str]) -> int:
     return sum(idx * box.focusing_power() for idx, box in enumerate(boxes, 1))
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         sequence = file.read().strip().split(',')
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Verify HASH algorithm:", verify_HASH(sequence))  # 510792
+    part1 = verify_HASH(sequence)
+    part2 = verify_HASHMAP(sequence)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Verify HASHMAP algorithm:", verify_HASHMAP(sequence))  # 269410
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 510792, f"Part1 = {res[0]}"
+        assert res[1] == 269410, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

@@ -2,15 +2,12 @@
 # https://adventofcode.com/2023/day/13
 
 
-from typing import List
+from typing import List, Tuple
 
 
 def transpose(pattern: List[str]) -> List[str]:
-    pattern_t = ['' for _ in range(len(pattern[0]))]
-    for row in pattern:
-        for j, col in enumerate(row):
-            pattern_t[j] += col
-    return pattern_t
+    return [[pattern[j][i] for j in range(len(pattern))]
+                           for i in range(len(pattern[0]))]
 
 
 def find_reflection_point(pattern: List[str], expected_smudges: int) -> int:
@@ -40,27 +37,25 @@ def summarize_patterns(patterns: List[List[str]], expected_smudges: int) -> int:
     return ans
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         patterns = [line.split('\n') for line in file.read().split('\n\n')]
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Summarizing notes value:", summarize_patterns(patterns, 0))  # 34772
+    part1 = summarize_patterns(patterns, 0)
+    part2 = summarize_patterns(patterns, 1)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Summarizing notes value after smudge fix:", summarize_patterns(patterns, 1))  # 35554
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 34772, f"Part1 = {res[0]}"
+        assert res[1] == 35554, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

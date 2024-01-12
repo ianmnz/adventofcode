@@ -1,7 +1,7 @@
 # Advent of Code : Day 14 - Parabolic Reflector Dish
 # https://adventofcode.com/2023/day/14
 
-from typing import List
+from typing import List, Tuple
 
 
 def rotate(platform: List[List[str]]) -> List[List[str]]:
@@ -70,28 +70,25 @@ def run_n_cycles(platform: List[List[str]], n: int = 1) -> List[List[str]]:
     return str2grid(order2history[start + (n - start) % period])
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         platform = [[char for char in line] for line in file.read().split('\n')]
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Total load on the north support:", compute_load_on_north(tilt(platform)))  # 105208
+    part1 = compute_load_on_north(tilt(platform))
+    part2 = compute_load_on_north(run_n_cycles(platform, 1_000_000_000))
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Total load on the north support after cycles:",
-              compute_load_on_north(run_n_cycles(platform, 1_000_000_000)))  # 102943
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 105208, f"Part1 = {res[0]}"
+        assert res[1] == 102943, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

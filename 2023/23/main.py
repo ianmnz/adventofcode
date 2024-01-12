@@ -105,27 +105,25 @@ def get_longest_path_length(carte: List[List[str]], with_slippery_slope = True) 
     return longest
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         carte = [[char for char in line] for line in file.read().split('\n')]
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Longest path length:", get_longest_path_length(carte))  # 2246
+    part1 = get_longest_path_length(carte)
+    part2 = get_longest_path_length(carte, False)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Longest path length without slopes:", get_longest_path_length(carte, False))  # 6622
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 2246, f"Part1 = {res[0]}"
+        assert res[1] == 6622, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

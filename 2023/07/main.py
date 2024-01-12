@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass, field
 from collections import defaultdict
-from typing import List
+from typing import List, Tuple
 
 
 hand_strength = {
@@ -92,35 +92,34 @@ def calculate_total_winnings(hands: List[Hand]) -> int:
     return total_winnings
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         hands = [Hand(hand[0], int(hand[1])) for hand in map(lambda ss: ss.strip().split(), file.read().split('\n'))]
 
-    # --- Part 1 --- #
+    for hand in hands:
+        hand.set_rank()
+
+    part1 = calculate_total_winnings(sorted(hands))
+
+    card_strength['J'] = 0
+
+    for hand in hands:
+        hand.set_rank(True)
+
+    part2 = calculate_total_winnings(sorted(hands))
+
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        for hand in hands:
-            hand.set_rank()
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-        print("Total winnings:", calculate_total_winnings(sorted(hands)))  # 253910319
-
-    # --- Part 2 --- #
-    with Timer():
-        card_strength['J'] = 0
-
-        for hand in hands:
-            hand.set_rank(True)
-
-        print("Total winnings with Joker:", calculate_total_winnings(sorted(hands)))  # 254083736
+        assert res[0] == 253910319, f"Part1 = {res[0]}"
+        assert res[1] == 254083736, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

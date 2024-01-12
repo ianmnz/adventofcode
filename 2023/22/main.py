@@ -97,33 +97,28 @@ def bricks_to_disintegrate(data: List[Brick]) -> Tuple[int]:
     return safe, count
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         snapshot = [line.split('~') for line in file.read().split('\n')]
 
-        data = []
-        for left, right in snapshot:
-            left = Position(*eval(left))
-            right = Position(*eval(right))
-            data.append(Brick(left, right))
+    data = []
+    for left, right in snapshot:
+        left = Position(*eval(left))
+        right = Position(*eval(right))
+        data.append(Brick(left, right))
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Nb of brick to disintegrate:", bricks_to_disintegrate(data)[0])  # 468
+    return bricks_to_disintegrate(data)
 
-    # --- Part 2 --- #
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Nb of brick to disintegrate:", bricks_to_disintegrate(data)[1])  # 75358
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 468,   f"Part1 = {res[0]}"
+        assert res[1] == 75358, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

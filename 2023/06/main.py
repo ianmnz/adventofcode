@@ -2,7 +2,7 @@
 # https://adventofcode.com/2023/day/6
 
 import math
-from typing import List
+from typing import List, Tuple
 
 
 def calculate_margin_of_error(times: List[int], records: List[int]) -> int:
@@ -30,29 +30,29 @@ def calculate_margin_of_error(times: List[int], records: List[int]) -> int:
     return nb_of_ways_to_beat_record
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         times, record_distances = map(lambda ss: list(map(int, ss.split()[1:])), file.read().split('\n'))
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Margin of error:", calculate_margin_of_error(times, record_distances))  # 316800
+    part1 = calculate_margin_of_error(times, record_distances)
 
-    # --- Part 2 --- #
     times = [int(''.join(map(str, times)))]
     record_distances = [int(''.join(map(str, record_distances)))]
+
+    part2 = calculate_margin_of_error(times, record_distances)
+
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Margin of error with kerning:", calculate_margin_of_error(times, record_distances))  # 45647654
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 316800,   f"Part1 = {res[0]}"
+        assert res[1] == 45647654, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

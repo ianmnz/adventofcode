@@ -39,6 +39,7 @@ def iterative_split(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
 
 
 def minimum_cut(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
+    # Read about and maybe implement the Karger's minimum cut algorithm
     import networkx as nx
 
     G = nx.DiGraph()
@@ -55,24 +56,22 @@ def minimum_cut(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
             return len(group1) * len(group2)
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> int:
+    with open(filename, "r") as file:
         network = [line for line in file.read().split('\n')]
 
-    # --- Part 1 --- #
+    # return iterative_split(build_graph(network))
+    return minimum_cut(build_graph(network))
+
+
+def main() -> None:
+    import os
+    from helpers import Timer
+
     with Timer():
-        # print("Product of groups sizes:", iterative_split(build_graph(network)))  # 552695
-        print("Product of groups sizes:", minimum_cut(build_graph(network)))      # 552695
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res == 552695, f"Res = {res}"
 
 if __name__ == "__main__":
     main()

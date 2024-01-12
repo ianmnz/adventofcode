@@ -3,7 +3,7 @@
 
 import re
 import math
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 
 def build_graph(nodes: List[str]) -> Dict[str, Dict[str, str]]:
@@ -67,29 +67,25 @@ def count_simultaneous_steps_to_exit(sequence: str, nodes: List[str]) -> int:
     return len(sequence) * lcm(nb_cycles_by_start)
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         sequence, nodes = file.read().strip().split('\n\n')
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Nb of steps required to reach the exit:",
-              count_steps_to_exit(sequence.strip(), nodes.split('\n')))  # 21797
+    part1 = count_steps_to_exit(sequence.strip(), nodes.split('\n'))
+    part2 = count_simultaneous_steps_to_exit(sequence.strip(), nodes.split('\n'))
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Nb of simultaneous steps required to reach the exit:",
-              count_simultaneous_steps_to_exit(sequence.strip(), nodes.split('\n')))  # 23977527174353
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 21797,          f"Part1 = {res[0]}"
+        assert res[1] == 23977527174353, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

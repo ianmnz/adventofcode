@@ -2,7 +2,7 @@
 # https://adventofcode.com/2023/day/11
 
 
-from typing import List
+from typing import List, Tuple
 
 
 def compute_distances_matrix(image: List[str], expansion: int) -> List[List[int]]:
@@ -42,27 +42,25 @@ def calculate_sum_of_distances(image: List[str], expansion: int) -> int:
     return sum(map(sum, distances)) // 2
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         image = file.read().split('\n')
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Sum of distances:", calculate_sum_of_distances(image, 2))  # 9445168
+    part1 = calculate_sum_of_distances(image, 2)
+    part2 = calculate_sum_of_distances(image, 1_000_000)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Sum of distances for older universe:", calculate_sum_of_distances(image, 1_000_000))  # 742305960572
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 9445168,      f"Part1 = {res[0]}"
+        assert res[1] == 742305960572, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

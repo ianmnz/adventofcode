@@ -1,7 +1,7 @@
 # Advent of Code : Day 09 - Mirage Maintenance
 # https://adventofcode.com/2023/day/9
 
-from typing import List
+from typing import List, Tuple
 
 
 def extrapolate(history: List[int]) -> int:
@@ -9,27 +9,25 @@ def extrapolate(history: List[int]) -> int:
     return history[-1] + extrapolate(deltas) if any(t != 0 for t in history) else 0
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         histories = [[*map(int, line.split())] for line in file]
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Sum of extrapolated histories:", sum([extrapolate(history) for history in histories]))  # 1939607039
+    part1 = sum([extrapolate(history) for history in histories])
+    part2 = sum([extrapolate(history[::-1]) for history in histories])
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Sum of backward extrapolated histories:", sum([extrapolate(history[::-1]) for history in histories]))  # 1041
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 1939607039, f"Part1 = {res[0]}"
+        assert res[1] == 1041,       f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

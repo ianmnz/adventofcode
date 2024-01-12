@@ -2,7 +2,7 @@
 # https://adventofcode.com/2023/day/2
 
 import re
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 
 def determine_possible_games(games: Dict[int, List[str]]) -> int:
@@ -62,30 +62,28 @@ def determine_minimum_power_set_cubes(games: Dict[int, List[str]]) -> int:
     return sum_power_set_cubes
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         games = dict()
         for game in file.read().strip().split('\n'):
             game_id, subsets = game.split(':')
             games[int(re.findall(f'\d+', game_id)[0])] = [subset.split(',') for subset in subsets.split(';')]
 
-    # --- Part 1 --- #
-    with Timer():
-        print("Sum of IDs of all possible games:", determine_possible_games(games)) # 2162
+    part1 = determine_possible_games(games)
+    part2 = determine_minimum_power_set_cubes(games)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Sum of minimum power set cubes:", determine_minimum_power_set_cubes(games)) # 72513
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 2162,  f"Part1 = {res[0]}"
+        assert res[1] == 72513, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

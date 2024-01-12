@@ -4,7 +4,7 @@
 
 import re
 import math
-from typing import List
+from typing import List, Tuple
 
 
 def sum_engine_parts_numbers(schematic: List[str]) -> int:
@@ -42,27 +42,25 @@ def sum_gear_ratios(schematic: List[str]) -> int:
     return sum(math.prod(numbers) for numbers in gears.values() if len(numbers) == 2)
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         schematic = file.read().split('\n')
 
-    # --- Part 1 --- #
-    with Timer():
-        print("The sum of the engine parts is:", sum_engine_parts_numbers(schematic))  # 533775
+    part1 = sum_engine_parts_numbers(schematic)
+    part2 = sum_gear_ratios(schematic)
 
-    # --- Part 2 --- #
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("The sum of the gear ratios is:", sum_gear_ratios(schematic))  # 78236071
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+        assert res[0] == 533775,   f"Part1 = {res[0]}"
+        assert res[1] == 78236071, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

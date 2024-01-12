@@ -27,14 +27,6 @@ class Interval:
         return self.left < other.left <= self.right <= other.right
 
 
-def parse() -> Tuple[List[int], List[List[str]]]:
-    with open('input.txt', 'r') as file:
-        seeds, mappings = file.read().split("\n\n", 1)
-
-    return [int(seed) for seed in re.findall(f"\d+", seeds)], \
-           [mapping.split("\n")[1:] for mapping in mappings.split("\n\n")]
-
-
 def apply(mapping: List[str], domain: List[Interval]) -> List[Interval]:
     images : List[Interval] = list()
     while domain:
@@ -71,28 +63,31 @@ def seed_to_location(seeds: List[Interval], mappings: List[List[str]]) -> List[I
     return seeds
 
 
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
+        seeds, mappings = file.read().split("\n\n", 1)
+
+    seeds = [int(seed) for seed in re.findall(f"\d+", seeds)]
+    mappings = [mapping.split("\n")[1:] for mapping in mappings.split("\n\n")]
+
+    seed_intervals = [Interval(seed, seed) for seed in seeds]
+    part1 = min(seed_to_location(seed_intervals, mappings)).left
+
+    seed_intervals = [Interval(seed, seed + delta -1) for seed, delta in zip(seeds[::2], seeds[1::2])]
+    part2 = min(seed_to_location(seed_intervals, mappings)).left
+
+    return part1, part2
+
+
 def main():
     import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
     from helpers import Timer
 
-    seeds, mappings = parse()
-
-    # --- Part 1 --- #
     with Timer():
-        seed_intervals = [Interval(seed, seed) for seed in seeds]
-        print("Lowest location number:", min(seed_to_location(seed_intervals, mappings)).left)  # 650599855
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-    # --- Part 2 --- #
-    with Timer():
-        seed_intervals = [Interval(seed, seed + delta -1) for seed, delta in zip(seeds[::2], seeds[1::2])]
-        print("Lowest location number (Part 2):", min(seed_to_location(seed_intervals, mappings)).left) # 1240035
+        assert res[0] == 650599855, f"Part1 = {res[0]}"
+        assert res[1] == 1240035,   f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

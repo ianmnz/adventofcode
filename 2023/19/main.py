@@ -94,35 +94,33 @@ def nb_of_combinations_accepted(parts_range: Dict[str, Tuple[int]], workflows: D
     return nb_combinations
 
 
-def main():
-    import os
-    import sys
-
-    # To be able to import the helpers module
-    sys.path.append(os.path.dirname(                                        # Project
-                        os.path.dirname(                                    # Year
-                            os.path.dirname(os.path.abspath(__file__)))))   # Day
-
-    from helpers import Timer
-
-    with open("input.txt", "r") as file:
+def solve(filename: str) -> Tuple[int, int]:
+    with open(filename, "r") as file:
         temp, parts = file.read().split('\n\n')
 
-        workflows = dict()
-        for workflow in temp.split('\n'):
-            name, rules = workflow.split('{')
-            workflows[name] = rules[:-1]
+    workflows = dict()
+    for workflow in temp.split('\n'):
+        name, rules = workflow.split('{')
+        workflows[name] = rules[:-1]
 
-        parts = [list(map(int, re.findall(r'\d+', part))) for part in parts.split('\n')]
+    parts = [list(map(int, re.findall(r'\d+', part))) for part in parts.split('\n')]
+    part1 = sum_accepted_parts_rating(parts, workflows)
 
-    # --- Part 1 --- #
+    parts_range = {char: (1, 4000) for char in 'xmas'}
+    part2 = nb_of_combinations_accepted(parts_range, workflows)
+
+    return part1, part2
+
+
+def main():
+    import os
+    from helpers import Timer
+
     with Timer():
-        print("Nb of accepted parts:", sum_accepted_parts_rating(parts, workflows))  # 319062
+        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-    # --- Part 2 --- #
-    with Timer():
-        parts_range = {char: (1, 4000) for char in 'xmas'}
-        print("Nb of accepted combinations:", nb_of_combinations_accepted(parts_range, workflows))  # 118638369682135
+        assert res[0] == 319062,          f"Part1 = {res[0]}"
+        assert res[1] == 118638369682135, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":
