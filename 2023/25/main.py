@@ -3,9 +3,12 @@
 
 import collections
 import itertools
-from typing import List, Dict, Set
+import functools
+from typing import List, Dict, Set, Tuple
+from helpers import Timer
 
 
+@Timer.timeit
 def build_graph(network: List[str]) -> Dict[str, Set[str]]:
     graph = collections.defaultdict(set)
 
@@ -20,6 +23,7 @@ def build_graph(network: List[str]) -> Dict[str, Set[str]]:
     return graph
 
 
+@Timer.timeit
 def iterative_split(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
     group = set(graph)
     count_adj_in_group = lambda v : len(graph[v] - group)
@@ -38,8 +42,8 @@ def iterative_split(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
     return len(group) * len(set(graph) - group)
 
 
+@Timer.timeit
 def minimum_cut(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
-    # Read about and maybe implement the Karger's minimum cut algorithm
     import networkx as nx
 
     G = nx.DiGraph()
@@ -56,22 +60,81 @@ def minimum_cut(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
             return len(group1) * len(group2)
 
 
+@Timer.timeit
+def karger_min_cut(graph: Dict[str, Set[str]], monte_carlo_iterations: int = 200, cut_value: int = 3) -> int:
+    import random
+
+    parent: Dict[str, Tuple[str, int]]
+
+    def find(v: str) -> Tuple[str, int]:
+        if parent[v][0] != v:
+            parent[v] = find(parent[v][0])
+        return parent[v]
+
+    def unite(v: str, u: str) -> None:
+        v_group, v_rank = find(v)
+        u_group, u_rank = find(u)
+
+        if v_rank < u_rank:
+            parent[v_group] = (u_group, v_rank)
+        elif v_rank > u_rank:
+            parent[u_group] = (v_group, u_rank)
+        else:
+            parent[u_group] = (v_group, u_rank)
+            parent[v_group] = (v_group, v_rank + 1)
+
+
+    edges = list(set([(min(node, adj), max(node, adj)) for node, adjacency in graph.items() for adj in adjacency]))
+
+    # random.seed(0)
+    for _ in range(monte_carlo_iterations):
+        parent = {v: (v, 0) for v in graph}
+        nb_vertices = len(graph)
+        random.shuffle(edges)
+
+        idx = -1
+        while nb_vertices > 2:
+            idx += 1
+            v, u = edges[idx]
+
+            v_group, _ = find(v)
+            u_group, _ = find(u)
+
+            if v_group != u_group:
+                unite(v_group, u_group)
+                nb_vertices -= 1
+
+        cut_edges = 0
+        for v, u in edges:
+            v_group, _ = find(v)
+            u_group, _ = find(u)
+
+            if v_group != u_group:
+                cut_edges += 1
+
+                if cut_edges > cut_value:
+                    break
+
+        if cut_edges == cut_value:
+            counter = collections.Counter([group for group, _ in parent.values()])
+            return functools.reduce((lambda a, b: a * b), counter.values())
+
+
+@Timer.timeit
 def solve(filename: str) -> int:
     with open(filename, "r") as file:
         network = [line for line in file.read().split('\n')]
 
     # return iterative_split(build_graph(network))
+    # return karger_min_cut(build_graph(network))
     return minimum_cut(build_graph(network))
 
 
 def main() -> None:
     import os
-    from helpers import Timer
 
-    with Timer():
-        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
-
-        assert res == 552695, f"Res = {res}"
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    assert res == 552695, f"Res = {res}"
 
 if __name__ == "__main__":
     main()
