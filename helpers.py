@@ -1,7 +1,8 @@
 # Helpers functions
 
 import time
-from typing import List
+from functools import wraps
+from typing import List, Callable
 
 
 class Timer:
@@ -12,10 +13,18 @@ class Timer:
 
     @staticmethod
     def _print(header: str, elapsed_in_ns: int = 0) -> None:
-        if not elapsed_in_ns:
-            print(f" -- {header} -- ")
-        else:
-            print(f" -- {header} : {elapsed_in_ns * 1.e-6:.3f} ms -- ")
+        print(f" -- {header:<20} : {elapsed_in_ns * 1.e-6:>10.3f} ms -- ")
+
+    @staticmethod
+    def timeit(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            start = time.perf_counter_ns()
+            res = func(*args, **kwargs)
+            end = time.perf_counter_ns()
+            Timer._print(f"{func.__name__!r} took", end - start)
+            return res
+        return wrapper
 
     def __init__(self) -> None:
         self.checkpoints: List[int] = []
@@ -33,4 +42,4 @@ class Timer:
         self.checkpoints.append(time.perf_counter_ns())
         if len(self.checkpoints) > 2:
             self._print('end timer', self.checkpoints[-1] - self.checkpoints[-2])
-        self._print('total elapsed', self.checkpoints[-1] - self.checkpoints[0])
+        self._print('total elapsed time', self.checkpoints[-1] - self.checkpoints[0])
