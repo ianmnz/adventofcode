@@ -3,15 +3,21 @@
 
 from typing import List, Tuple
 
+from helpers import Timer
 
 direction = {
-    'R': ( 0, 1), '0': ( 0, 1),
-    'D': ( 1, 0), '1': ( 1, 0),
-    'L': ( 0,-1), '2': ( 0,-1),
-    'U': (-1, 0), '3': (-1, 0)
+    "R": (0, 1),
+    "0": (0, 1),
+    "D": (1, 0),
+    "1": (1, 0),
+    "L": (0, -1),
+    "2": (0, -1),
+    "U": (-1, 0),
+    "3": (-1, 0),
 }
 
 
+@Timer.timeit
 def dig(plan: List[List[str]], is_color_code: bool = False) -> int:
     def parse(command: List[str]) -> Tuple[int]:
         dir, length, color = command
@@ -29,15 +35,21 @@ def dig(plan: List[List[str]], is_color_code: bool = False) -> int:
         col += length * dy
 
         # internal area + half perimeter
-        area += (col * dx * length) + (length/2)
+        area += (col * dx * length) + (length / 2)
 
     return int(area + 1)
 
 
-def solve(filename: str) -> Tuple[int, int]:
+@Timer.timeit
+def parse(filename: str) -> List[List[str]]:
     with open(filename, "r") as file:
-        plan = [line.split() for line in file.read().split('\n')]
+        plan = [line.split() for line in file.read().split("\n")]
+    return plan
 
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    plan = parse(filename)
     part1 = dig(plan)
     part2 = dig(plan, True)
 
@@ -46,13 +58,11 @@ def solve(filename: str) -> Tuple[int, int]:
 
 def main():
     import os
-    from helpers import Timer
 
-    with Timer():
-        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-        assert res[0] == 50603,          f"Part1 = {res[0]}"
-        assert res[1] == 96556251590677, f"Part2 = {res[1]}"
+    assert res[0] == 50603, f"Part1 = {res[0]}"
+    assert res[1] == 96556251590677, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

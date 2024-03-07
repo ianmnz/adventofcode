@@ -2,9 +2,12 @@
 # https://adventofcode.com/2023/day/2
 
 import re
-from typing import List, Dict, Tuple
+from typing import Dict, List, Tuple
+
+from helpers import Timer
 
 
+@Timer.timeit
 def determine_possible_games(games: Dict[int, List[str]]) -> int:
     sum_possible_games = 0
 
@@ -18,15 +21,14 @@ def determine_possible_games(games: Dict[int, List[str]]) -> int:
                 n, color = cubes.split()
                 n = int(n)
 
-                if (color == 'red') and (n > N_R):
+                if (color == "red") and (n > N_R):
                     return False
-                elif (color == 'green') and (n > N_G):
+                elif (color == "green") and (n > N_G):
                     return False
-                elif (color == 'blue') and (n > N_B):
+                elif (color == "blue") and (n > N_B):
                     return False
 
         return True
-
 
     for game_id, game in games.items():
         if is_game_possible(game):
@@ -35,6 +37,7 @@ def determine_possible_games(games: Dict[int, List[str]]) -> int:
     return sum_possible_games
 
 
+@Timer.timeit
 def determine_minimum_power_set_cubes(games: Dict[int, List[str]]) -> int:
     sum_power_set_cubes = 0
 
@@ -46,15 +49,14 @@ def determine_minimum_power_set_cubes(games: Dict[int, List[str]]) -> int:
                 n, color = cubes.split()
                 n = int(n)
 
-                if (color == 'red'):
+                if color == "red":
                     R = max(R, n)
-                elif (color == 'green'):
+                elif color == "green":
                     G = max(G, n)
-                elif (color == 'blue'):
+                elif color == "blue":
                     B = max(B, n)
 
         return R * G * B
-
 
     for game in games.values():
         sum_power_set_cubes += minimum_possible_game_power(game)
@@ -62,13 +64,21 @@ def determine_minimum_power_set_cubes(games: Dict[int, List[str]]) -> int:
     return sum_power_set_cubes
 
 
-def solve(filename: str) -> Tuple[int, int]:
+@Timer.timeit
+def parse(filename: str) -> Dict[int, List[str]]:
     with open(filename, "r") as file:
         games = dict()
-        for game in file.read().strip().split('\n'):
-            game_id, subsets = game.split(':')
-            games[int(re.findall(f'\d+', game_id)[0])] = [subset.split(',') for subset in subsets.split(';')]
+        for game in file.read().strip().split("\n"):
+            game_id, subsets = game.split(":")
+            games[int(re.findall(f"\d+", game_id)[0])] = [
+                subset.split(",") for subset in subsets.split(";")
+            ]
+    return games
 
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    games = parse(filename)
     part1 = determine_possible_games(games)
     part2 = determine_minimum_power_set_cubes(games)
 
@@ -77,13 +87,11 @@ def solve(filename: str) -> Tuple[int, int]:
 
 def main():
     import os
-    from helpers import Timer
 
-    with Timer():
-        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-        assert res[0] == 2162,  f"Part1 = {res[0]}"
-        assert res[1] == 72513, f"Part2 = {res[1]}"
+    assert res[0] == 2162, f"Part1 = {res[0]}"
+    assert res[1] == 72513, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

@@ -2,9 +2,10 @@
 # https://adventofcode.com/2023/day/25
 
 import collections
-import itertools
 import functools
-from typing import List, Dict, Set, Tuple
+import itertools
+from typing import Dict, List, Set, Tuple
+
 from helpers import Timer
 
 
@@ -13,8 +14,8 @@ def build_graph(network: List[str]) -> Dict[str, Set[str]]:
     graph = collections.defaultdict(set)
 
     for component in network:
-        node, adjacency = component.split(': ')
-        adjacency = adjacency.split(' ')
+        node, adjacency = component.split(": ")
+        adjacency = adjacency.split(" ")
 
         for adj in adjacency:
             graph[node].add(adj)
@@ -26,7 +27,9 @@ def build_graph(network: List[str]) -> Dict[str, Set[str]]:
 @Timer.timeit
 def iterative_split(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
     group = set(graph)
-    count_adj_in_group = lambda v : len(graph[v] - group)
+
+    def count_adj_in_group(v):
+        return len(graph[v] - group)
 
     while group:
         # Count the number of bridges between both groups
@@ -52,7 +55,6 @@ def minimum_cut(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
             G.add_edge(node, adj, capacity=1)
             G.add_edge(adj, node, capacity=1)
 
-
     for source, target in itertools.combinations(graph, 2):
         cut, (group1, group2) = nx.minimum_cut(G, source, target)
 
@@ -61,7 +63,9 @@ def minimum_cut(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
 
 
 @Timer.timeit
-def karger_min_cut(graph: Dict[str, Set[str]], monte_carlo_iterations: int = 200, cut_value: int = 3) -> int:
+def karger_min_cut(
+    graph: Dict[str, Set[str]], monte_carlo_iterations: int = 200, cut_value: int = 3
+) -> int:
     import random
 
     parent: Dict[str, Tuple[str, int]]
@@ -83,8 +87,15 @@ def karger_min_cut(graph: Dict[str, Set[str]], monte_carlo_iterations: int = 200
             parent[u_group] = (v_group, u_rank)
             parent[v_group] = (v_group, v_rank + 1)
 
-
-    edges = list(set([(min(node, adj), max(node, adj)) for node, adjacency in graph.items() for adj in adjacency]))
+    edges = list(
+        set(
+            [
+                (min(node, adj), max(node, adj))
+                for node, adjacency in graph.items()
+                for adj in adjacency
+            ]
+        )
+    )
 
     # random.seed(0)
     for _ in range(monte_carlo_iterations):
@@ -123,7 +134,7 @@ def karger_min_cut(graph: Dict[str, Set[str]], monte_carlo_iterations: int = 200
 @Timer.timeit
 def solve(filename: str) -> int:
     with open(filename, "r") as file:
-        network = [line for line in file.read().split('\n')]
+        network = [line for line in file.read().split("\n")]
 
     # return iterative_split(build_graph(network))
     # return karger_min_cut(build_graph(network))
@@ -135,6 +146,7 @@ def main() -> None:
 
     res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
     assert res == 552695, f"Res = {res}"
+
 
 if __name__ == "__main__":
     main()

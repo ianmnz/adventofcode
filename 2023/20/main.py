@@ -2,32 +2,34 @@
 # https://adventofcode.com/2023/day/20
 
 import math
-from typing import List, Tuple
 from collections import deque
+from typing import List, Tuple
 
+from helpers import Timer
 
 adjacency = {}
 flipflops = {}
 conjunctions = {}
 parent_conjunction_nb_presses = {}
-conj_parent = ''
+conj_parent = ""
 
 
-def build_graph(configuration: List[List[str]], target: str = 'rx') -> None:
+@Timer.timeit
+def build_graph(configuration: List[List[str]], target: str = "rx") -> None:
     adjacency.clear()
     flipflops.clear()
     conjunctions.clear()
 
     for sender, receivers in configuration:
-        if sender[0] == '%':
+        if sender[0] == "%":
             sender = sender[1:]
             flipflops[sender] = False
 
-        elif sender[0] == '&':
+        elif sender[0] == "&":
             sender = sender[1:]
             conjunctions[sender] = dict()
 
-        adjacency[sender] = receivers.split(', ')
+        adjacency[sender] = receivers.split(", ")
 
     for sender, receivers in adjacency.items():
         for receiver in receivers:
@@ -43,7 +45,7 @@ def press(counter: int = 1) -> Tuple[int]:
     nb_low_pulses, nb_high_pulses = 1, 0
 
     queue = deque()
-    for receiver in adjacency['broadcaster']:
+    for receiver in adjacency["broadcaster"]:
         nb_low_pulses += 1
         queue.append(("broadcaster", False, receiver))
 
@@ -54,7 +56,9 @@ def press(counter: int = 1) -> Tuple[int]:
 
         if receiver in conjunctions:
             conjunctions[receiver][sender] = is_pulse_received_high
-            if any(not is_pulse_high for is_pulse_high in conjunctions[receiver].values()):
+            if any(
+                not is_pulse_high for is_pulse_high in conjunctions[receiver].values()
+            ):
                 is_pulse_sent_high = True
 
         elif receiver in flipflops:
@@ -71,7 +75,6 @@ def press(counter: int = 1) -> Tuple[int]:
                 nb_low_pulses += 1
             queue.append((receiver, is_pulse_sent_high, destination))
 
-
         for sender, nb_presses in parent_conjunction_nb_presses.items():
             if conjunctions[conj_parent][sender] and nb_presses < 0:
                 parent_conjunction_nb_presses[sender] = counter
@@ -79,6 +82,7 @@ def press(counter: int = 1) -> Tuple[int]:
     return nb_low_pulses, nb_high_pulses
 
 
+@Timer.timeit
 def prod_low_high_pulses(nb_presses: int = 1000) -> int:
     low, high = 0, 0
     for _ in range(nb_presses):
@@ -88,6 +92,7 @@ def prod_low_high_pulses(nb_presses: int = 1000) -> int:
     return low * high
 
 
+@Timer.timeit
 def get_fewest_nb_presses() -> int:
     for sender in conjunctions[conj_parent]:
         parent_conjunction_nb_presses[sender] = -1
@@ -103,11 +108,18 @@ def get_fewest_nb_presses() -> int:
     return lcm
 
 
-def solve(filename: str) -> Tuple[int, int]:
+@Timer.timeit
+def parse(filename: str) -> List[List[str]]:
     with open(filename, "r") as file:
-        configuration = [line.split(' -> ') for line in file.read().split('\n')]
+        configuration = [line.split(" -> ") for line in file.read().split("\n")]
+    return configuration
 
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    configuration = parse(filename)
     build_graph(configuration)
+
     part1 = prod_low_high_pulses()
 
     build_graph(configuration)
@@ -118,13 +130,11 @@ def solve(filename: str) -> Tuple[int, int]:
 
 def main():
     import os
-    from helpers import Timer
 
-    with Timer():
-        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-        assert res[0] == 873301506,       f"Part1 = {res[0]}"
-        assert res[1] == 241823802412393, f"Part2 = {res[1]}"
+    assert res[0] == 873301506, f"Part1 = {res[0]}"
+    assert res[1] == 241823802412393, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

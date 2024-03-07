@@ -13,7 +13,7 @@ class Timer:
 
     @staticmethod
     def _print(header: str, elapsed_in_ns: int = 0) -> None:
-        print(f" -- {header:<20} : {elapsed_in_ns * 1.e-6:>10.3f} ms -- ")
+        print(f" -- {header:<35} : {elapsed_in_ns * 1.e-6:>10.3f} ms -- ")
 
     @staticmethod
     def timeit(func: Callable) -> Callable:

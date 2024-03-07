@@ -1,19 +1,21 @@
 # Advent of Code : Day 08 - Haunted Wasteland
 # https://adventofcode.com/2023/day/8
 
-import re
 import math
-from typing import List, Dict, Tuple
+import re
+from typing import Dict, List, Tuple
+
+from helpers import Timer
 
 
+@Timer.timeit
 def build_graph(nodes: List[str]) -> Dict[str, Dict[str, str]]:
     graph = dict()
-    pattern = re.compile(r'(\w{3}) = \((\w{3}), (\w{3})\)')
+    pattern = re.compile(r"(\w{3}) = \((\w{3}), (\w{3})\)")
 
     for node in nodes:
         match = pattern.match(node)
-        graph[match.group(1)] = {'L': match.group(2),
-                                 'R': match.group(3)}
+        graph[match.group(1)] = {"L": match.group(2), "R": match.group(3)}
 
     return graph
 
@@ -25,34 +27,36 @@ def follow_sequence(sequence: str, start: str, graph: Dict[str, Dict[str, str]])
     return curr
 
 
+@Timer.timeit
 def count_steps_to_exit(sequence: str, nodes: List[str]) -> int:
     graph = build_graph(nodes)
-    curr = 'AAA'
+    curr = "AAA"
 
     nb_cycles = 0
-    while curr != 'ZZZ':
+    while curr != "ZZZ":
         curr = follow_sequence(sequence, curr, graph)
         nb_cycles += 1
 
     return nb_cycles * len(sequence)
 
 
+@Timer.timeit
 def count_simultaneous_steps_to_exit(sequence: str, nodes: List[str]) -> int:
     graph = build_graph(nodes)
 
     curs = []
     ends = []
     for node in graph.keys():
-        if node.endswith('A'):
+        if node.endswith("A"):
             curs.append(node)
 
-        elif node.endswith('Z'):
+        elif node.endswith("Z"):
             ends.append(node)
 
     nb_cycles_by_start = []
     for curr in curs:
         nb_cycles = 0
-        while (curr not in ends):
+        while curr not in ends:
             curr = follow_sequence(sequence, curr, graph)
             nb_cycles += 1
 
@@ -67,25 +71,29 @@ def count_simultaneous_steps_to_exit(sequence: str, nodes: List[str]) -> int:
     return len(sequence) * lcm(nb_cycles_by_start)
 
 
-def solve(filename: str) -> Tuple[int, int]:
+@Timer.timeit
+def parse(filename: str) -> Tuple[str, str]:
     with open(filename, "r") as file:
-        sequence, nodes = file.read().strip().split('\n\n')
+        sequence, nodes = file.read().strip().split("\n\n")
+    return sequence, nodes
 
-    part1 = count_steps_to_exit(sequence.strip(), nodes.split('\n'))
-    part2 = count_simultaneous_steps_to_exit(sequence.strip(), nodes.split('\n'))
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    sequence, nodes = parse(filename)
+    part1 = count_steps_to_exit(sequence.strip(), nodes.split("\n"))
+    part2 = count_simultaneous_steps_to_exit(sequence.strip(), nodes.split("\n"))
 
     return part1, part2
 
 
 def main():
     import os
-    from helpers import Timer
 
-    with Timer():
-        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-        assert res[0] == 21797,          f"Part1 = {res[0]}"
-        assert res[1] == 23977527174353, f"Part2 = {res[1]}"
+    assert res[0] == 21797, f"Part1 = {res[0]}"
+    assert res[1] == 23977527174353, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

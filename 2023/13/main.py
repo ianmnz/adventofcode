@@ -4,10 +4,13 @@
 
 from typing import List, Tuple
 
+from helpers import Timer
+
 
 def transpose(pattern: List[str]) -> List[str]:
-    return [[pattern[j][i] for j in range(len(pattern))]
-                           for i in range(len(pattern[0]))]
+    return [
+        [pattern[j][i] for j in range(len(pattern))] for i in range(len(pattern[0]))
+    ]
 
 
 def find_reflection_point(pattern: List[str], expected_smudges: int) -> int:
@@ -23,24 +26,33 @@ def find_reflection_point(pattern: List[str], expected_smudges: int) -> int:
         return diffs == expected_smudges
 
     for reflection in range(1, len(pattern)):
-        if check_reflection_point(pattern[reflection - 1::-1], pattern[reflection:]):
+        if check_reflection_point(pattern[reflection - 1 :: -1], pattern[reflection:]):
             return reflection
 
     return 0
 
 
+@Timer.timeit
 def summarize_patterns(patterns: List[List[str]], expected_smudges: int) -> int:
     ans = 0
     for pattern in patterns:
-        ans += 100 * find_reflection_point(pattern, expected_smudges)             # Horizontal symmetry
-        ans += 1 * find_reflection_point(transpose(pattern), expected_smudges)    # Vertical symmetry
+        # Horizontal symmetry
+        ans += 100 * find_reflection_point(pattern, expected_smudges)
+        # Vertical symmetry
+        ans += 1 * find_reflection_point(transpose(pattern), expected_smudges)
     return ans
 
 
-def solve(filename: str) -> Tuple[int, int]:
+@Timer.timeit
+def parse(filename: str) -> List[List[str]]:
     with open(filename, "r") as file:
-        patterns = [line.split('\n') for line in file.read().split('\n\n')]
+        patterns = [line.split("\n") for line in file.read().split("\n\n")]
+    return patterns
 
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    patterns = parse(filename)
     part1 = summarize_patterns(patterns, 0)
     part2 = summarize_patterns(patterns, 1)
 
@@ -49,13 +61,11 @@ def solve(filename: str) -> Tuple[int, int]:
 
 def main():
     import os
-    from helpers import Timer
 
-    with Timer():
-        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-        assert res[0] == 34772, f"Part1 = {res[0]}"
-        assert res[1] == 35554, f"Part2 = {res[1]}"
+    assert res[0] == 34772, f"Part1 = {res[0]}"
+    assert res[1] == 35554, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":

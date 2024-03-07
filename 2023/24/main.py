@@ -5,10 +5,12 @@ import collections
 import itertools
 from typing import List, Tuple
 
+from helpers import Timer
 
-Vector3d = collections.namedtuple('Vector3d', ['x', 'y', 'z'])
+Vector3d = collections.namedtuple("Vector3d", ["x", "y", "z"])
 
 
+@Timer.timeit
 def get_vectors(hailstorm: List[List[str]]) -> List[Tuple[Vector3d]]:
     vectors = []
     for hailstone in hailstorm:
@@ -19,7 +21,10 @@ def get_vectors(hailstorm: List[List[str]]) -> List[Tuple[Vector3d]]:
     return vectors
 
 
-def count_intersections(vectors: List[Tuple[Vector3d]], lower_bound: int, upper_bound: int) -> int:
+@Timer.timeit
+def count_intersections(
+    vectors: List[Tuple[Vector3d]], lower_bound: int, upper_bound: int
+) -> int:
     count = 0
     for (P1, V1), (P2, V2) in itertools.combinations(vectors, 2):
         det = V1.x * V2.y - V1.y * V2.x
@@ -32,10 +37,10 @@ def count_intersections(vectors: List[Tuple[Vector3d]], lower_bound: int, upper_
         dP = Vector3d(P1.x - P2.x, P1.y - P2.y, P1.z - P2.z)
 
         # P1 + t * V1
-        t = 1/det * (-V2.y * dP.x + V2.x * dP.y)
+        t = 1 / det * (-V2.y * dP.x + V2.x * dP.y)
 
         # P2 + s * V2
-        s = 1/det * (-V1.y * dP.x + V1.x * dP.y)
+        s = 1 / det * (-V1.y * dP.x + V1.x * dP.y)
 
         if t < 0 or s < 0:
             continue
@@ -49,16 +54,17 @@ def count_intersections(vectors: List[Tuple[Vector3d]], lower_bound: int, upper_
     return count
 
 
+@Timer.timeit
 def find_rock_launch_vector(vectors: List[Tuple[Vector3d]]) -> Tuple[Vector3d]:
     import sympy
 
-    Px = sympy.Symbol('Px')
-    Py = sympy.Symbol('Py')
-    Pz = sympy.Symbol('Pz')
+    Px = sympy.Symbol("Px")
+    Py = sympy.Symbol("Py")
+    Pz = sympy.Symbol("Pz")
 
-    Vx = sympy.Symbol('Vx')
-    Vy = sympy.Symbol('Vy')
-    Vz = sympy.Symbol('Vz')
+    Vx = sympy.Symbol("Vx")
+    Vy = sympy.Symbol("Vy")
+    Vz = sympy.Symbol("Vz")
 
     variables = [Px, Py, Pz, Vx, Vy, Vz]
     equations = []
@@ -76,7 +82,7 @@ def find_rock_launch_vector(vectors: List[Tuple[Vector3d]]) -> Tuple[Vector3d]:
     our system of equations has a unique solution
     """
     for i, (Pi, Vi) in enumerate(vectors[:3], 1):
-        t = sympy.Symbol(f't{i}')
+        t = sympy.Symbol(f"t{i}")
 
         eq_x = Px + t * Vx - Pi.x - t * Vi.x
         eq_y = Py + t * Vy - Pi.y - t * Vi.y
@@ -86,17 +92,26 @@ def find_rock_launch_vector(vectors: List[Tuple[Vector3d]]) -> Tuple[Vector3d]:
         variables.append(t)
 
     # Using SymPy to symbolic resolve the non-linear system of equations
-    Px, Py, Pz, Vx, Vy, Vz, t1, t2, t3 = sympy.solve_poly_system(equations, *variables)[0]
+    Px, Py, Pz, Vx, Vy, Vz, t1, t2, t3 = sympy.solve_poly_system(equations, *variables)[
+        0
+    ]
 
     return Px + Py + Pz
 
 
-def solve(filename: str) -> Tuple[int, int]:
+@Timer.timeit
+def parse(filename: str) -> List[List[str]]:
     with open(filename, "r") as file:
-        hailstorm = [line.split('@') for line in file.read().split('\n')]
+        hailstorm = [line.split("@") for line in file.read().split("\n")]
+    return hailstorm
 
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    hailstorm = parse(filename)
     vectors = get_vectors(hailstorm)
     part1 = count_intersections(vectors, 200_000_000_000_000, 400_000_000_000_000)
+    # Try with numpy and Newtons-Raphson algo
     part2 = find_rock_launch_vector(vectors)
 
     return part1, part2
@@ -104,13 +119,11 @@ def solve(filename: str) -> Tuple[int, int]:
 
 def main() -> None:
     import os
-    from helpers import Timer
 
-    with Timer():
-        res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-        assert res[0] == 31921, f"Part1 = {res[0]}"
-        assert res[1] == 761691907059631, f"Part2 = {res[1]}"
+    assert res[0] == 31921, f"Part1 = {res[0]}"
+    assert res[1] == 761691907059631, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":
