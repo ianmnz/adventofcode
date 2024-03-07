@@ -1,39 +1,44 @@
 # Advent of Code : Day 01 - Calorie Counting
 # https://adventofcode.com/2022/day/1
 
-import collections
-import operator
+import functools
+from typing import List, Tuple
+
+from helpers import Timer
+
+
+@Timer.timeit
+def parse(filename: str) -> List[Tuple[str, int]]:
+    with open(filename, "r") as file:
+        inventory = [
+            sum(map(int, items.split("\n")))
+            for items in file.read().strip().split("\n\n")
+        ]
+    return inventory
+
+
+@Timer.timeit
+def sum_k_first_elements(array: List[int], k: int) -> int:
+    return functools.reduce(lambda x, y: x + y, array[:k])
+
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    inventory = parse(filename)
+    inventory = sorted(inventory, reverse=True)
+    part1 = sum_k_first_elements(inventory, 1)
+    part2 = sum_k_first_elements(inventory, 3)
+
+    return part1, part2
 
 
 def main() -> None:
-    elves = collections.defaultdict(int)
+    import os
 
-    with open("input.txt", 'r') as file:
-        id_elf = 1
-        for line in file:
-            if line == '\n':
-                id_elf += 1
-            else:
-                elves[id_elf] += int(line)
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-
-    elves = sorted(elves.items(), key=operator.itemgetter(1), reverse=True)
-
-    # Answer part 1 :
-    print(f"First elf: {elves[0][0]}") # 128
-    print(f"Max calories: {elves[0][1]}") # 71934
-
-    # --- Part 2 ---
-    nb_elves = 3
-    id_elves = []
-    sum_calories = 0
-    for i in range(nb_elves):
-        id_elves.append(elves[i])
-        sum_calories += elves[i][1]
-
-    # Answer part 2 :
-    print(f"First {nb_elves} elves: {id_elves}") # [(128, 71934), (27, 69849), (165, 69664)]
-    print(f"Sum of first {nb_elves} max calories: {sum_calories}") # 211447
+    assert res[0] == 71934, f"Part1 = {res[0]}"
+    assert res[1] == 211447, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":
