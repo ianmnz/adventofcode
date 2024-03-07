@@ -2,8 +2,11 @@
 
 import time
 from functools import wraps
-from typing import List, Callable
+from typing import List, Callable, TypeVar
+from typing_extensions import ParamSpec     # After 3.10, import directly from typing
 
+R = TypeVar("R")    # Callable return type
+P = ParamSpec("P")  # Callable parameters type
 
 class Timer:
     """
@@ -16,9 +19,9 @@ class Timer:
         print(f" -- {header:<35} : {elapsed_in_ns * 1.e-6:>10.3f} ms -- ")
 
     @staticmethod
-    def timeit(func: Callable) -> Callable:
+    def timeit(func: Callable[P, R]) -> Callable[P, R]:
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
             start = time.perf_counter_ns()
             res = func(*args, **kwargs)
             end = time.perf_counter_ns()
