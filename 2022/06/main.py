@@ -1,59 +1,47 @@
 # Advent of Code : Day 06 - Tuning Trouble
 # https://adventofcode.com/2022/day/6
 
+from typing import Tuple
+
+from helpers import Timer
+
+SoP_marker_length = 4  # Start-of-Packet
+SoM_marker_length = 14  # Start-of-Message
+
+
+@Timer.timeit
+def find_marker_index(buffer: str, marker_length: int, start: int) -> int:
+    for idx in range(start, len(buffer)):
+        subbuffer = set(buffer[idx - (marker_length - 1) : idx + 1])
+
+        if len(subbuffer) == marker_length:
+            return idx + 1
+
+
+@Timer.timeit
+def parse(filename: str) -> str:
+    with open(filename, "r") as file:
+        buffer = file.read().rstrip("\n")
+    return buffer
+
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    buffer = parse(filename)
+    part1 = find_marker_index(buffer, SoP_marker_length, SoP_marker_length - 1)
+    # We assume here that the start-of-message comes after the start-of-packet
+    part2 = find_marker_index(buffer, SoM_marker_length, part1)
+
+    return part1, part2
+
 
 def main() -> None:
-    buffer = ''
+    import os
 
-    start_of_packet_marker_idx = 0
-    start_of_packet_marker_length = 4
-    start_of_packet_marker = ''
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-    start_of_message_marker_idx = 0
-    start_of_message_marker_length = 14
-    start_of_message_marker = ''
-
-    with open('input.txt', 'r') as file:
-        for line in file:
-            buffer += line
-
-    found_packet = False
-    found_message = False
-
-    # We assume that start_of_packet_marker_length < start_of_message_marker_length
-    for idx in range(start_of_packet_marker_length - 1, len(buffer)):
-
-        subbuffer_packet = \
-            buffer[idx - (start_of_packet_marker_length - 1) : idx + 1]
-
-        if (not found_packet) and \
-            (len(set(subbuffer_packet)) == start_of_packet_marker_length):
-            start_of_packet_marker_idx = idx + 1
-            start_of_packet_marker = subbuffer_packet
-            found_packet = True
-
-        if idx < (start_of_message_marker_length - 1):
-            continue
-
-        subbuffer_message = \
-            buffer[idx - (start_of_message_marker_length - 1) : idx + 1]
-
-        if (not found_message) and \
-            (len(set(subbuffer_message)) == start_of_message_marker_length):
-            start_of_message_marker_idx = idx + 1
-            start_of_message_marker = subbuffer_message
-            found_message = True
-
-        if found_packet and found_message:
-            break
-
-    # Answer part 1 :
-    print(f'Start-of-packet marker index: {start_of_packet_marker_idx}') # 1833
-    print(f'Start-of-packet marker: {start_of_packet_marker}') # wbcl
-
-    # Answer part 2 :
-    print(f'Start-of-message marker index: {start_of_message_marker_idx}') # 3425
-    print(f'Start-of-message marker: {start_of_message_marker}') # vbnwqdhtlsfcjz
+    assert res[0] == 1833, f"Part1 = {res[0]}"
+    assert res[1] == 3425, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":
