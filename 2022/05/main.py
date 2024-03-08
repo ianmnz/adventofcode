@@ -2,109 +2,99 @@
 # https://adventofcode.com/2022/day/5
 
 import collections
-from typing import Dict
+import copy
+import re
+from typing import Dict, List, NamedTuple, Tuple
 
-class Cargo:
-    cargo: Dict[int, collections.deque]
+from helpers import Timer
 
-    def __init__(self, nb_stack: int) -> None:
-        self.cargo = dict()
-        for i in range(1, nb_stack + 1):
-            self.cargo[i] = collections.deque()
 
-    def append(self, stack: int, crate: str) -> None:
-        self.cargo[stack].append(crate)
+class Move(NamedTuple):
+    nb: int  # Nb of crates moved
+    fr: int  # Origin stack
+    to: int  # Destination stack
 
-    def pop(self, stack: int) -> str:
-        return self.cargo[stack].pop()
 
-    def head(self, stack: int) -> str:
-        return self.cargo[stack][-1]
+@Timer.timeit
+def move_crates_changing_order(
+    stacks: Dict[int, collections.deque], moves: List[Move]
+) -> None:
+    for move in moves:
+        for _ in range(move.nb):
+            crate = stacks[move.fr].pop()
+            stacks[move.to].append(crate)
 
-    def show(self) -> None:
-        for id, stack in self.cargo.items():
-            print(id, ' : ', stack)
 
-    def move1(self, nb_crates: int, from_stack: int, to_stack: int) -> None:
-        for _ in range(nb_crates):
-            crate = self.pop(from_stack)
-            self.append(to_stack, crate)
-
-    def move2(self, nb_crates: int, from_stack: int, to_stack: int) -> None:
-        moved_crates = collections.deque()
-        for _ in range(nb_crates):
-            crate = self.pop(from_stack)
+@Timer.timeit
+def move_crates_preserving_order(
+    stacks: Dict[int, collections.deque], moves: List[Move]
+) -> None:
+    for move in moves:
+        moved_crates = []
+        for _ in range(move.nb):
+            crate = stacks[move.fr].pop()
             moved_crates.append(crate)
 
-        for _ in range(len(moved_crates)):
+        while moved_crates:
             crate = moved_crates.pop()
-            self.append(to_stack, crate)
-
-    @property
-    def answer(self) -> str:
-        answer = ''
-        for id in self.cargo.keys():
-            answer += self.head(id)
-        return answer
+            stacks[move.to].append(crate)
 
 
-def main():
-    stacks = []
+@Timer.timeit
+def read_top_of_stacks(stacks: Dict[int, collections.deque]) -> str:
+    return "".join(stacks[key][-1] for key in sorted(stacks.keys()))
+
+
+@Timer.timeit
+def parse(filename: str) -> Tuple[Dict[int, collections.deque], List[Move]]:
+    with open(filename, "r") as file:
+        initial_arrangement, rearrangements = file.read().strip().split("\n\n")
+
+    spacing = 4
+    stacks = collections.defaultdict(collections.deque)
+    for line in initial_arrangement.split("\n")[:-1]:
+        for i, crate in enumerate(
+            (
+                line[i : i + spacing].strip().lstrip("[").rstrip("]")
+                for i in range(0, len(line), spacing)
+            ),
+            1,
+        ):
+            if crate:
+                stacks[i].appendleft(crate)
+
+    pattern = re.compile(r"move (\d+) from (\d+) to (\d+)")
     moves = []
+    for line in rearrangements.split("\n"):
+        match = pattern.match(line)
+        moves.append(
+            Move(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+        )
 
-    with open('input.txt', 'r') as file:
-        # Read initial cargo
-        for line in file:
-            if line == '\n':
-                # Separates the initial stacks from
-                # the moves
-                break
+    return stacks, moves
 
-            elif line.startswith(' '):
-                # It implicitly considers that the first stack
-                # is one of the biggest ones
-                continue
 
-            line = line.replace('    ', ' []').rstrip().split()
-            stacks.append([crate.rstrip(']').lstrip('[') for crate in line])
+@Timer.timeit
+def solve(filename: str) -> Tuple[str, str]:
+    stacks, moves = parse(filename)
+    stacks_cp = copy.deepcopy(stacks)
 
-        # Read moves
-        # Since variable 'file' is a generator
-        # it picks up from the last read line
-        for line in file:
-            line = line.strip().split()
+    move_crates_changing_order(stacks, moves)
+    move_crates_preserving_order(stacks_cp, moves)
 
-            nb_crates = int(line[1])
-            from_stack = int(line[3])
-            to_stack = int(line[5])
+    part1 = read_top_of_stacks(stacks)
+    part2 = read_top_of_stacks(stacks_cp)
 
-            moves.append((nb_crates, from_stack, to_stack))
+    return part1, part2
 
-    # Initialize cargos
-    cargo1 = Cargo(len(stacks[0])) # Answer 1
-    cargo2 = Cargo(len(stacks[0])) # Answer 2
 
-    for row in reversed(stacks):
-        for stack, crate in enumerate(row, start=1):
-            if crate != '':
-                cargo1.append(stack, crate)
-                cargo2.append(stack, crate)
+def main() -> None:
+    import os
 
-    # cargo1.show()
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
 
-    # Move crates
-    for nb_crates, from_stack, to_stack in moves:
-        cargo1.move1(nb_crates, from_stack, to_stack)
-        cargo2.move2(nb_crates, from_stack, to_stack)
-
-    # cargo1.show()
-    # cargo2.show()
-
-    # Answer part 1 :
-    print(f'Head of crates for CraneMover9000: {cargo1.answer}') # QNNTGTPFN
-
-    # Answer part 2 :
-    print(f'Head of crates for CraneMover9001: {cargo2.answer}') # GGNPJBTTR
+    assert res[0] == "QNNTGTPFN", f"Part1 = {res[0]}"
+    assert res[1] == "GGNPJBTTR", f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":
