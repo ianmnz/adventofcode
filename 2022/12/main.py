@@ -2,185 +2,166 @@
 # https://adventofcode.com/2022/day/12
 
 
-import numpy as np
-from typing import Tuple, Optional, Dict, Set
+from collections import deque
+from dataclasses import dataclass, field
+from typing import Dict, List, Tuple
 
-
-class Node:
-    def __init__(self, pos: Tuple[int, int], target: Tuple[int, int], parent: Optional['Node'] = None) -> None:
-        self.pos: Tuple[int, int] = pos
-        self.parent: Optional['Node'] = parent
-
-        self.g: int = 0
-        if parent is not None:
-            self.g = parent.g + 1
-
-        # Manhattan distance
-        self.h: int = abs(target[0] - self.pos[0]) + abs(target[1] - self.pos[1])
-
-        self.f: int = self.g + self.h
-
-
-def current(openlist: Dict[Tuple[int, int], Node]) -> Node:
-    curr = openlist[next(iter(openlist))]
-    for node in openlist.values():
-        if node.f < curr.f:
-            curr = node
-    return curr
-
-
-def successors(node: Node, target: Tuple[int, int], graph: np.array) -> Set[Node]:
-    x, y = node.pos
-    corr_x, corr_y = x + 1, y + 1 # Padding correction
-    height = graph[corr_x][corr_y]
-
-    successorslist = set()
-
-    if graph[corr_x + 1][corr_y] <= height + 1:
-        rsuccessor = Node((x + 1, y), target, node)
-        successorslist.add(rsuccessor)
-
-    if graph[corr_x - 1][corr_y] <= height + 1:
-        lsuccessor = Node((x - 1, y), target, node)
-        successorslist.add(lsuccessor)
-
-    if graph[corr_x][corr_y + 1] <= height + 1:
-        usuccessor = Node((x, y + 1), target, node)
-        successorslist.add(usuccessor)
-
-    if graph[corr_x][corr_y - 1] <= height + 1:
-        dsuccessor = Node((x, y - 1), target, node)
-        successorslist.add(dsuccessor)
-
-    return successorslist
-
-
-def search(start: Tuple[int, int], target: Tuple[int, int], heightmap: np.array) -> Set[Node]:
-    openlist: Dict[Tuple[int, int], Node] = dict()
-    closedlist: Dict[Tuple[int, int],Node] = dict()
-    path_tails: Set[Node] = set()
-
-    # Search
-    openlist[start] = Node(start, target)
-
-    while openlist:
-        curr = current(openlist)
-
-        del openlist[curr.pos]
-
-        successorslist = successors(curr, target, heightmap)
-
-        for successor in successorslist:
-            if successor.h == 0:
-                path_tails.add(successor)
-                continue
-
-            if (successor.pos in openlist) and (openlist[successor.pos].f < successor.f):
-                continue
-
-            if (successor.pos in closedlist) and (closedlist[successor.pos].f < successor.f):
-                continue
-
-            openlist[successor.pos] = successor
-
-        closedlist[curr.pos] = curr
-
-    return path_tails
+from helpers import Timer
 
 
 def char_to_int(item: str) -> int:
     d = {
-        'a' :  1,
-        'b' :  2,
-        'c' :  3,
-        'd' :  4,
-        'e' :  5,
-        'f' :  6,
-        'g' :  7,
-        'h' :  8,
-        'i' :  9,
-        'j' : 10,
-        'k' : 11,
-        'l' : 12,
-        'm' : 13,
-        'n' : 14,
-        'o' : 15,
-        'p' : 16,
-        'q' : 17,
-        'r' : 18,
-        's' : 19,
-        't' : 20,
-        'u' : 21,
-        'v' : 22,
-        'w' : 23,
-        'x' : 24,
-        'y' : 25,
-        'z' : 26
+        "S": 1,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+        "d": 4,
+        "e": 5,
+        "f": 6,
+        "g": 7,
+        "h": 8,
+        "i": 9,
+        "j": 10,
+        "k": 11,
+        "l": 12,
+        "m": 13,
+        "n": 14,
+        "o": 15,
+        "p": 16,
+        "q": 17,
+        "r": 18,
+        "s": 19,
+        "t": 20,
+        "u": 21,
+        "v": 22,
+        "w": 23,
+        "x": 24,
+        "y": 25,
+        "z": 26,
+        "E": 26,
     }
     return d[item]
 
-def main():
-    heightmap = []
-    starts = []
 
-    with open('input.txt', 'r') as file:
-        found_start = False
-        found_target = False
-        for i, line in enumerate(file):
-            row = list(line.strip())
+@dataclass
+class Node:
+    pos: complex
+    val: int
+    adj: List[complex] = field(init=False, default_factory=list)
 
-            if (not found_start) and ('S' in row):
-                found_start = True
-                j = row.index('S')
-                start_S = (i, j)
-                row[j] = 'a'
 
-            if (not found_target) and ('E' in row):
-                found_target = True
-                j = row.index('E')
-                target = (i, j)
-                row[j] = 'z'
+@Timer.timeit
+def build_graph(
+    heightmap: List[str],
+) -> Tuple[Dict[complex, Node], complex, complex, List[complex]]:
+    m, n = len(heightmap), len(heightmap[0])
 
-            for j, char in enumerate(row):
-                if char == 'a':
-                    starts.append((i, j))
+    is_valid = lambda x, y: (0 <= x < m) and (0 <= y < n)
+    height = lambda x, y: char_to_int(heightmap[x][y])
 
-            heightmap.append(list(map(char_to_int, row)))
+    start = 0j
+    target = 0j
+    candidates = []
+    nodes = {}
+    for i, row in enumerate(heightmap):
+        for j, col in enumerate(row):
+            node = Node(complex(i, j), char_to_int(col))
 
-    heightmap = np.pad(np.array(heightmap), 1, 'constant', constant_values=1000)
+            if col == "S":
+                start = node.pos
+            elif col == "E":
+                target = node.pos
+            elif col == "a":
+                candidates.append(node.pos)
 
-    path_tails = search(start_S, target, heightmap)
-    min_path_length = 10000
+            if is_valid(i - 1, j) and height(i - 1, j) <= node.val + 1:
+                node.adj.append(complex(i - 1, j))  # Up
 
-    for node in path_tails:
-        path_length = 0
-        while node.parent is not None:
-            path_length += 1
-            node = node.parent
+            if is_valid(i + 1, j) and height(i + 1, j) <= node.val + 1:
+                node.adj.append(complex(i + 1, j))  # Down
 
-        if path_length < min_path_length:
-            min_path_length = path_length
+            if is_valid(i, j - 1) and height(i, j - 1) <= node.val + 1:
+                node.adj.append(complex(i, j - 1))  # Left
 
-    # Answer part 1 :
-    print(f"Number of steps on the smallest path: {min_path_length}") # 517
+            if is_valid(i, j + 1) and height(i, j + 1) <= node.val + 1:
+                node.adj.append(complex(i, j + 1))  # Right
 
-    min_path_length = 10000
-    min_path_start = (0, 0)
-    for start in starts:
-        path_tails = search(start, target, heightmap)
+            nodes[node.pos] = node
 
-        for node in path_tails:
-            path_length = 0
-            while node.parent is not None:
-                path_length += 1
-                node = node.parent
+    return nodes, target, start, candidates
 
-            if path_length < min_path_length:
-                min_path_length = path_length
-                min_path_start = start
 
-    # Answer part 2 :
-    print(f"Number of steps on the smallest path starting from {min_path_start}: {min_path_length}") # (13, 0) - 512
+def bfs(graph: Dict[complex, Node], start: complex, target: complex) -> int:
+    queue = deque([(0, graph[start])])
+    visited = {start}
+
+    while queue:
+        nb_steps, curr = queue.popleft()
+
+        if curr.pos == target:
+            return nb_steps
+
+        for adj in curr.adj:
+            successor = graph[adj]
+
+            if successor.pos in visited:  # Visited already
+                continue
+
+            visited.add(successor.pos)
+            queue.append((nb_steps + 1, successor))
+
+    return -1
+
+
+def A_star_search(graph: Dict[complex, Node], start: complex, target: complex) -> int:
+    ...
+
+
+@Timer.timeit
+def find_best_path_from_start(
+    graph: Dict[complex, Node], target: complex, start: complex
+) -> int:
+    return bfs(graph, start, target)
+
+
+@Timer.timeit
+def find_best_start(
+    graph: Dict[complex, Node], target: complex, candidates: List[complex]
+) -> int:
+    return min(
+        (
+            nb_steps
+            for candidate in candidates
+            if (nb_steps := bfs(graph, candidate, target)) > 0
+        )
+    )
+
+
+@Timer.timeit
+def parse(filename: str) -> List[Tuple[str, int]]:
+    with open(filename, "r") as file:
+        heightmap = file.read().strip().split("\n")
+    return heightmap
+
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    heightmap = parse(filename)
+    graph, target, start, candidates = build_graph(heightmap)
+    part1 = find_best_path_from_start(graph, target, start)
+    part2 = find_best_start(graph, target, candidates)
+
+    return part1, part2
+
+
+def main() -> None:
+    import os
+
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+    assert res[0] == 517, f"Part1 = {res[0]}"
+    assert res[1] == 512, f"Part2 = {res[1]}"
+
 
 if __name__ == "__main__":
     main()
