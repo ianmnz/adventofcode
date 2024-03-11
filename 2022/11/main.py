@@ -1,131 +1,142 @@
 # Advent of Code : Day 11 - Monkey in the Middle
 # https://adventofcode.com/2022/day/11
 
-# CAN BE IMPROVED :
-# PARSE CAN BE DONE BY YAML READER
-# THE DATE STRUCTURE CAN BE LIGHTER
-
-import collections
+import copy
+import functools
 import operator
-from typing import List, Dict, Callable
+import re
+from dataclasses import dataclass, field
+from typing import Callable, Dict, List, Optional, Tuple
+
+from helpers import Timer
 
 
-class Item:
-    def __init__(self, id: int, val: int) -> None:
-        self.id = id
-        self.worry = val
+@dataclass
+class WorryEval:
+    func: Callable[[int], int]
+    relief_factor: int = field(init=False, default=3)
+    mod_factor: int = field(init=False, default=1.0e7)
+
+    def __call__(self, x: int) -> int:
+        return (self.func(x) // self.relief_factor) % self.mod_factor
 
 
+@dataclass(frozen=True)
+class Decision:
+    divisor: int
+    send_if_divisible: int
+    send_if_not_divisible: int
+
+    def send_to(self, item: int) -> int:
+        return (
+            self.send_if_not_divisible
+            if item % self.divisor
+            else self.send_if_divisible
+        )
+
+
+@dataclass
 class Monkey:
-    def __init__(self, id: int) -> None:
-        self.id: int = id
-        self.items: List[Item] = []
-        self.operator: Callable[[int], int] = None
-        self.probe: int = -1
-        self.true: int = -1
-        self.false: int = -1
+    id: int
 
-    def add_item(self, item: Item) -> None:
+    worry_eval: Optional[WorryEval] = field(init=False, default=None)
+    decision: Optional[Decision] = field(init=False, default=None)
+
+    items: List[int] = field(init=False, default_factory=list)
+    nb_inspected_items: int = field(init=False, default=0)
+
+    def receive_item(self, item: int) -> None:
         self.items.append(item)
 
-    def inspect(self, monkeys: Dict[int, 'Monkey'], mod: int = 1) -> None:
+    def inspect_items(self, monkeys: Dict[int, "Monkey"]) -> None:
         for item in self.items:
-            item.worry = self.operator(item.worry)
-            # item.worry = item.worry // 3
-            item.worry = item.worry % mod
+            item = self.worry_eval(item)
+            send_to = self.decision.send_to(item)
+            monkeys[send_to].receive_item(item)
 
-            if item.worry % self.probe == 0:
-                to_monkey = monkeys[self.true]
-            else:
-                to_monkey = monkeys[self.false]
-
-            to_monkey.add_item(item)
-
+        self.nb_inspected_items += len(self.items)
         self.items = []
 
 
-def round(monkeys: Dict[int, Monkey], nb_inspected_items_by_monkey: Dict[int, int], mod: int = 1) -> None:
-    for monkey_id, monkey in monkeys.items():
-        nb_inspected_items_by_monkey[monkey_id] += len(monkey.items)
-        monkey.inspect(monkeys, mod)
-
-
-def main():
-    monkeys: Dict[int, Monkey] = dict()
-    count_items = 0
-    curr_monkey = None
-    # nb_rounds = 20
-    nb_rounds = 10000
-
-    nb_inspected_items_by_monkey: Dict[int, int] = collections.defaultdict(int)
-    monkey_business = 0
-
-    with open('input.txt', 'r') as file:
-        for line in file:
-            line = line.strip().split()
-
-            if not line:
-                continue
-
-            elif line[0] == "Monkey":
-                monkey_id = int(line[1].strip(':'))
-                curr_monkey = Monkey(monkey_id)
-                monkeys[monkey_id] = curr_monkey
-
-            elif line[0] == "Starting":
-                for i in range(2, len(line)):
-                    item = Item(count_items, int(line[i].strip(',')))
-                    curr_monkey.add_item(item)
-                    count_items += 1
-
-            elif line[0] == "Operation:":
-                if line[4] == '+':
-                    if line[5].isnumeric():
-                        func = lambda old, val=int(line[5]) : old + val
-                    else:
-                        func = lambda old : old + old
-
-                elif line[4] == '*':
-                    if line[5].isnumeric():
-                        func = lambda old, val=int(line[5]) : old * val
-                    else:
-                        func = lambda old : old * old
-
-                curr_monkey.operator = func
-
-            elif line[0] == "Test:":
-                probe = int(line[3])
-                curr_monkey.probe = probe
-
-            elif line[1] == "true:":
-                to_monkey_id = int(line[5])
-                curr_monkey.true = to_monkey_id
-
-            elif line[1] == "false:":
-                to_monkey_id = int(line[5])
-                curr_monkey.false = to_monkey_id
-
-    mod = 1
+@Timer.timeit
+def update_worry_evaluation(monkeys: Dict[int, Monkey], relief_factor: int = 1) -> None:
+    mod = functools.reduce(
+        operator.mul, (monkey.decision.divisor for monkey in monkeys.values())
+    )
     for monkey in monkeys.values():
-        mod *= monkey.probe
+        monkey.worry_eval.relief_factor = relief_factor
+        monkey.worry_eval.mod_factor = mod
 
+
+@Timer.timeit
+def compute_monkey_business(nb_rounds: int, monkeys: Dict[int, Monkey]) -> int:
     for _ in range(nb_rounds):
-        round(monkeys, nb_inspected_items_by_monkey, mod)
+        for monkey in monkeys.values():
+            monkey.inspect_items(monkeys)
 
-    sorted_dict = sorted(nb_inspected_items_by_monkey.items(), key=operator.itemgetter(1), reverse=True)
-    monkey_business = sorted_dict[0][1] * sorted_dict[1][1]
-    # print(nb_inspected_items_by_monkey)
-    # print(sorted_dict)
+    most_active_monkeys = sorted(
+        (monkey.nb_inspected_items for monkey in monkeys.values()), reverse=True
+    )
+    return most_active_monkeys[0] * most_active_monkeys[1]
 
-    # Answer part 1 : nb_rounds = 20
-    print(f'The two most active monkeys: {sorted_dict[0][0]}, {sorted_dict[1][0]}') # 5, 3
-    print(f'Number of inspections of the 2 most active monkeys: {sorted_dict[0][1]}, {sorted_dict[1][1]}') # 358, 308
-    print(f'Monkey business: {monkey_business}') # 110264
 
-    # Answer part 2 : nb_rounds = 10'000
-    print(f'The two most active monkeys: {sorted_dict[0][0]}, {sorted_dict[1][0]}') # 5, 3
-    print(f'Number of inspections of the 2 most active monkeys: {sorted_dict[0][1]}, {sorted_dict[1][1]}') # 168658, 140002
-    print(f'Monkey business: {monkey_business}') # 23612457316
+@Timer.timeit
+def parse(filename: str) -> Dict[int, Monkey]:
+    with open(filename, "r") as file:
+        notes = file.read().strip().split("\n\n")
+
+    monkey_id = re.compile(r"Monkey (\d+):")
+    items = re.compile(r"Starting items: (.*)")
+    operation = re.compile(r"Operation: new = (.*)")
+    divisor = re.compile(r"divisible by (\d+)")
+    throw_to_if_true = re.compile(r"If true: throw to monkey (\d+)")
+    throw_to_if_false = re.compile(r"If false: throw to monkey (\d+)")
+
+    monkeys = {}
+    for note in notes:
+        match = monkey_id.search(note)
+        monkey = Monkey(int(match.group(1)))
+
+        match = items.search(note)
+        for worry in match.group(1).split():
+            monkey.receive_item(int(worry.rstrip(",")))
+
+        match = operation.search(note)
+        monkey.worry_eval = WorryEval(eval(f"lambda old: {match.group(1)}"))
+
+        match = divisor.search(note)
+        div = int(match.group(1))
+        match = throw_to_if_true.search(note)
+        send_if_true = int(match.group(1))
+        match = throw_to_if_false.search(note)
+        send_if_false = int(match.group(1))
+
+        monkey.decision = Decision(div, send_if_true, send_if_false)
+
+        monkeys[monkey.id] = monkey
+
+    return monkeys
+
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    monkeys = parse(filename)
+    monkeys_cp = copy.deepcopy(monkeys)
+    update_worry_evaluation(monkeys_cp)
+
+    part1 = compute_monkey_business(20, monkeys)
+    part2 = compute_monkey_business(10_000, monkeys_cp)
+
+    return part1, part2
+
+
+def main() -> None:
+    import os
+
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+    assert res[0] == 110_264, f"Part1 = {res[0]}"
+    assert res[1] == 23_612_457_316, f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":
