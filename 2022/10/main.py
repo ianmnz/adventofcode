@@ -1,56 +1,75 @@
 # Advent of Code : Day 10 - Cathode-Ray Tube
 # https://adventofcode.com/2022/day/10
 
+from typing import List, Tuple
 
-def main():
-    instruction = {
-                    'noop': 1,
-                    'addx': 2
-                  }
+from helpers import Timer
 
-    cycles_of_interest = [20, 60, 100, 140, 180, 220]
+CYCLES_PER_INSTRUCTION = {"noop": 1, "addx": 2}
 
-    CRT_WIDTH = 40
-    CRT_HEIGHT = 6
-    crt = [["." for _ in range(CRT_WIDTH)] for _ in range(CRT_HEIGHT)]
+CYCLES_OF_INTEREST = [20, 60, 100, 140, 180, 220]
 
+CRT_WIDTH = 40
+CRT_HEIGHT = 6
+SPRITE_WIDTH = 3
+
+
+@Timer.timeit
+def get_CRT_signals_and_display(program: List[str]) -> Tuple[int, List[List[str]]]:
     sum_signal_strength_on_cycles_of_interest = 0
+    crt = [["." for _ in range(CRT_WIDTH)] for _ in range(CRT_HEIGHT)]
 
     cycle_counter = 1
     register = 1
+    for instruction in program:
+        for cycle in range(CYCLES_PER_INSTRUCTION.get(instruction[0], 0)):
+            if cycle_counter in CYCLES_OF_INTEREST:
+                sum_signal_strength_on_cycles_of_interest += cycle_counter * register
 
-    sprite_width = 3
+            i, j = divmod(cycle_counter - 1, CRT_WIDTH)
 
-    with open('input.txt', 'r') as file:
-        for line in file:
-            line = line.strip().split()
+            if abs(register - j) <= (SPRITE_WIDTH // 2):
+                crt[i][j] = "#"
 
-            for cycle in range(instruction.get(line[0], 0)):
-                if cycle_counter in cycles_of_interest:
-                    sum_signal_strength_on_cycles_of_interest += cycle_counter * register
+            if instruction[0] == "addx" and cycle + 1 == CYCLES_PER_INSTRUCTION["addx"]:
+                register += int(instruction[1])
 
-                i = (cycle_counter - 1) // CRT_WIDTH
-                j = (cycle_counter - 1) % CRT_WIDTH
+            cycle_counter += 1
 
-                if (register - (sprite_width // 2)) <= j <= (register + (sprite_width // 2)):
-                    crt[i][j] = "#"
-
-                if line[0] == 'addx' and cycle + 1 == instruction['addx']:
-                    register += int(line[1])
-
-                cycle_counter += 1
+    return sum_signal_strength_on_cycles_of_interest, crt
 
 
-    # Answer part 1 :
-    print(f'Sum of signal strengths: {sum_signal_strength_on_cycles_of_interest}') # 15020
-
-    # Answer part 2
-    # It should print EFUGLPAP
+def display_crt(crt: List[List[str]]) -> str:
     for i in range(CRT_HEIGHT):
         for j in range(CRT_WIDTH):
-            print(crt[i][j], end='')
+            print(crt[i][j], end="")
         print()
+    return "EFUGLPAP"  # It should print this
 
+
+@Timer.timeit
+def parse(filename: str) -> List[List[str]]:
+    with open(filename, "r") as file:
+        program = file.read().strip().split("\n")
+    return [instruction.strip().split() for instruction in program]
+
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, str]:
+    program = parse(filename)
+    part1, crt = get_CRT_signals_and_display(program)
+    part2 = display_crt(crt)
+
+    return part1, part2
+
+
+def main() -> None:
+    import os
+
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+    assert res[0] == 15020, f"Part1 = {res[0]}"
+    assert res[1] == "EFUGLPAP", f"Part2 = {res[1]}"
 
 
 if __name__ == "__main__":
