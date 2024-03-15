@@ -1,138 +1,118 @@
 # Advent of Code : Day 14 - Regolith Reservoir
 # https://adventofcode.com/2022/day/14
 
-# RE-DO BECAUSE UGLY
+from typing import List, Set, Tuple
 
-import numpy as np
+from helpers import Timer
 
-WALL = 8
-EMPTY = 1
-SAND = 2
-SOURCE = 0
+Coordinate = Tuple[int, int]
+Scanner = Set[Coordinate]
 
-
-def draw(interval_x: tuple, interval_y: tuple, source: tuple, walls: list) -> np.array:
-    min_x, max_x = interval_x
-    min_y, max_y = interval_y
-
-    grid = EMPTY * np.ones((max_y - min_y + 3, max_x - min_x + 3), dtype=int)
-
-    source_x, source_y = source
-
-    source_x -= min_x - 1
-    source_y -= min_y
-
-    grid[source_y, source_x] = SOURCE
-
-    for wall in walls:
-        curr_x, curr_y = wall[0]
-
-        curr_x -= min_x - 1
-        curr_y -= min_y - 1
-
-        grid[curr_y, curr_x] = WALL
-        for idx in range(1, len(wall)):
-            next_x, next_y = wall[idx]
-
-            next_x -= min_x - 1
-            next_y -= min_y - 1
-
-            grid[next_y, next_x] = WALL
-
-            if curr_y == next_y: # Vertical line
-                for i in range(min(curr_x, next_x) + 1, max(curr_x, next_x)):
-                    grid[curr_y, i] = WALL
-
-            elif curr_x == next_x: # Horizontal line
-                for j in range(min(curr_y, next_y) + 1, max(curr_y, next_y)):
-                    grid[j, curr_x] = WALL
-
-            curr_x, curr_y = next_x, next_y
-
-    return grid
+BOTTOM = 0
 
 
-def main():
-    source = (500, 0)
-    min_x = 10000
-    max_x = -10000
-    min_y = 0 # We add the source to the grid
-    max_y = -10000
+@Timer.timeit
+def scan(cave: List[List[str]]) -> Scanner:
+    scanner: Scanner = set()
 
-    walls = []
+    global BOTTOM
 
-    with open('input.txt', 'r') as file:
-        for line in file:
-            line = line.strip().split(' -> ')
+    for walls in cave:
+        for curr, next in zip(walls[:-1], walls[1:]):
+            curr_x, curr_y = map(int, curr.split(","))
+            next_x, next_y = map(int, next.split(","))
 
-            wall = []
-            for pair in line:
-                x, y = [int(val) for val in pair.split(',')]
+            lower_x, upper_x = sorted((curr_x, next_x))
+            lower_y, upper_y = sorted((curr_y, next_y))
 
-                wall.append((x, y))
+            for x in range(lower_x, upper_x + 1):
+                for y in range(lower_y, upper_y + 1):
+                    scanner.add((x, y))  # Rocks
+                    BOTTOM = max(BOTTOM, y)
 
-                if x < min_x:
-                    min_x = x
+    BOTTOM += 2
+    return scanner
 
-                if x > max_x:
-                    max_x = x
 
-                if y < min_y:
-                    min_y = y
+def simulate_sand_fall(scanner: Scanner, source: Coordinate) -> Coordinate:
+    curr_x, curr_y = source
 
-                if y > max_y:
-                    max_y = y
+    while True:
+        if curr_y + 1 >= BOTTOM:
+            break  # Reached bottom
 
-            walls.append(wall)
-    # print(min_x, max_x, min_y, max_y)
+        if (curr_x, curr_y + 1) not in scanner:
+            curr_y += 1
 
-    # --- For part2 ---
-    max_y += 2
-    max_x += max_y
-    min_x -= max_y
-    walls.append([(min_x - 1, max_y), (max_x + 1, max_y)])
-    # --- ---
+        elif (curr_x - 1, curr_y + 1) not in scanner:
+            curr_x -= 1
+            curr_y += 1
 
-    grid = draw((min_x, max_x), (min_y, max_y), source, walls)
-    # print(grid)
+        elif (curr_x + 1, curr_y + 1) not in scanner:
+            curr_x += 1
+            curr_y += 1
 
-    found = False
-    nb_sand_units_that_rest = 0
-    while not found:
-        sand_x, sand_y = source
+        else:
+            break  # Sand came to rest
 
-        sand_x -= min_x - 1
-        sand_y -= min_y - 1
+    scanner.add((curr_x, curr_y))
+    return (curr_x, curr_y)
 
-        while True:
-            if not (0 <= sand_y < (max_y - min_y + 3) - 1):
-               found = True
-               break
 
-            if grid[sand_y + 1, sand_x] == EMPTY:
-                sand_y += 1
-            elif grid[sand_y + 1, sand_x - 1] == EMPTY:
-                sand_x -= 1
-                sand_y += 1
-            elif grid[sand_y + 1, sand_x + 1] == EMPTY:
-                sand_x += 1
-                sand_y += 1
-            else:
-                nb_sand_units_that_rest += 1
-                grid[sand_y, sand_x] = SAND
-                # print(nb_sand_units_that_rest)
-                # print(grid)
-                if sand_y == 1:
-                    found = True
-                break
+@Timer.timeit
+def simulate_up_to_reaching_bottom(
+    scanner: Scanner, source: Coordinate = (500, 0)
+) -> int:
+    nb_sand_units_that_came_to_rest = 0
+    while sand := simulate_sand_fall(scanner, source):
+        if sand[1] + 1 >= BOTTOM:
+            break
 
-    # Answer part 1 :
-    print(f"Number of units of sand that come "
-        f"to rest before falling eternally: {nb_sand_units_that_rest}") # 843
+        nb_sand_units_that_came_to_rest += 1
+    return nb_sand_units_that_came_to_rest
 
-    # Answer part 2 :
-    print(f"Number of units of sand that come "
-        f"to rest before blocking the source: {nb_sand_units_that_rest}") # 27625
+
+@Timer.timeit
+def simulate_up_to_blocking_source(
+    scanner: Scanner, source: Coordinate = (500, 0)
+) -> int:
+    nb_sand_units_that_came_to_rest = 0
+    while sand := simulate_sand_fall(scanner, source):
+        nb_sand_units_that_came_to_rest += 1
+
+        if sand == source:
+            break
+
+    return nb_sand_units_that_came_to_rest
+
+
+@Timer.timeit
+def parse(filename: str) -> List[List[str]]:
+    with open(filename, "r") as file:
+        cave = [line.strip().split(" -> ") for line in file.read().strip().split("\n")]
+    return cave
+
+
+@Timer.timeit
+def solve(filename: str) -> Coordinate:
+    cave = parse(filename)
+    scanner = scan(cave)
+    part1 = simulate_up_to_reaching_bottom(scanner)
+    # For performance purposes, i.e., avoid redoing the first part
+    # we just complete the simulation with a +1 factor of correction
+    part2 = (part1 + 1) + simulate_up_to_blocking_source(scanner)
+
+    return part1, part2
+
+
+def main() -> None:
+    import os
+
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+    assert res[0] == 843, f"Part1 = {res[0]}"
+    assert res[1] == 27625, f"Part2 = {res[1]}"
+
 
 if __name__ == "__main__":
     main()
