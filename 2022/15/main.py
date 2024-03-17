@@ -14,6 +14,12 @@ class Beacon(NamedTuple):
     y: int
 
 
+class Line(NamedTuple):
+    # y = m * x + b
+    m: int
+    b: int
+
+
 class Sensor(NamedTuple):
     x: int
     y: int
@@ -117,6 +123,38 @@ def get_uncovered_position(sensors: List[Sensor], boundary: int = 4_000_000) -> 
 
 
 @Timer.timeit
+def get_uncovered_position_by_line_intersection(
+    sensors: List[Sensor], boundary: int = 4_000_000
+) -> int:
+    # Based on https://www.reddit.com/r/adventofcode/comments/zmcn64/comment/j0b90nr/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+    pos_lines = set()
+    neg_lines = set()
+    for sensor in sensors:
+        neg_lines.add(Line(-1, (sensor.x + sensor.y) + (sensor.coverage + 1)))
+        neg_lines.add(Line(-1, (sensor.x + sensor.y) - (sensor.coverage + 1)))
+
+        pos_lines.add(Line(1, (sensor.y - sensor.x) + (sensor.coverage + 1)))
+        pos_lines.add(Line(1, (sensor.y - sensor.x) - (sensor.coverage + 1)))
+
+    for pos_line in pos_lines:
+        for neg_line in neg_lines:
+            x = (neg_line.b - pos_line.b) // 2
+            y = (neg_line.b + pos_line.b) // 2
+
+            if (
+                (0 <= x <= boundary)
+                and (0 <= y <= boundary)
+                and all(
+                    abs(x - sensor.x) + abs(y - sensor.y) > sensor.coverage
+                    for sensor in sensors
+                )
+            ):
+                return x * boundary + y
+
+    return -1
+
+
+@Timer.timeit
 def parse(filename: str) -> List[str]:
     with open(filename, "r") as file:
         coverage = file.read().strip().split("\n")
@@ -128,7 +166,8 @@ def solve(filename: str) -> Tuple[int, int]:
     coverage = parse(filename)
     sensors, beacons = build_coverage(coverage)
     part1 = get_nb_covered_positions_on_row(sensors, beacons)
-    part2 = get_uncovered_position(sensors)
+    # part2 = get_uncovered_position(sensors)
+    part2 = get_uncovered_position_by_line_intersection(sensors)
 
     return part1, part2
 
