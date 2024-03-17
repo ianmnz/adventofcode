@@ -1,135 +1,146 @@
 # Advent of Code : Day 15 - Beacon Exclusion Zone
 # https://adventofcode.com/2022/day/15
 
+import bisect
+import re
+from dataclasses import dataclass
+from typing import List, NamedTuple, Set, Tuple
 
-def merge_intervals(intervals: list) -> list:
-    intervals.sort()
-    stack = [intervals[0]]
-
-    for i in intervals[1:]:
-        if stack[-1][0] <= i[0] <= stack[-1][1]:
-            # If interval overlap
-            stack[-1] = (stack[-1][0], max(stack[-1][1], i[1]))
-        else:
-            stack.append(i)
-
-    # print(stack)
-    return stack
+from helpers import Timer
 
 
-def row_coverage(row: int, sensors: list, distances: list,
-                 lower_bound: int = None, upper_bound: int = None) -> tuple:
-    row_coverage = []
-    nb_positions_covered = 0
-
-    for (sensor_x, sensor_y), dist in zip(sensors, distances):
-        y_offset = abs(row - sensor_y)
-        x_margin = dist - y_offset
-
-        # print(f"{sensor_x=} {sensor_y=} {dist=} {y_offset=} {x_margin=}")
-
-        if x_margin < 0:
-            continue
-
-        lower = sensor_x - x_margin
-        upper = sensor_x + x_margin
-
-        # print(lower, upper)
-
-        if lower_bound is not None:
-            lower = max(lower_bound, lower)
-            upper = max(lower_bound, upper)
-
-        if upper_bound is not None:
-            lower = min(upper_bound, lower)
-            upper = min(upper_bound, upper)
-
-        # print(lower, upper)
-
-        row_coverage.append((lower, upper))
-
-    row_coverage = merge_intervals(row_coverage)
-
-    for lower, upper in row_coverage:
-        nb_positions_covered += upper - lower + 1
-
-    return row_coverage, nb_positions_covered
+class Beacon(NamedTuple):
+    x: int
+    y: int
 
 
-def main():
+class Sensor(NamedTuple):
+    x: int
+    y: int
+    coverage: int
+
+
+@dataclass
+class Interval:
+    lb: int
+    ub: int
+
+    def __lt__(self, other: "Interval") -> bool:
+        if self.lb == other.lb:
+            return self.ub < other.ub
+        return self.lb < other.lb
+
+    def __and__(self, other: "Interval") -> bool:
+        return (other.lb <= self.ub <= other.ub) or (self.lb <= other.ub <= self.ub)
+
+    def __add__(self, other: "Interval") -> "Interval":
+        return Interval(min(self.lb, other.lb), max(self.ub, other.ub))
+
+    def __len__(self) -> int:
+        return self.ub - self.lb + 1
+
+
+@Timer.timeit
+def build_coverage(coverage: List[str]) -> Tuple[List[Sensor], Set[Beacon]]:
     sensors = []
-    beacons = []
-    distances = []
+    beacons = set()
+    pattern = re.compile(
+        r"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)"
+    )
 
-    lower_bound, upper_bound = 0, 4000000
-    freq_constant = 4000000
-    distress_beacons_freq = []
+    for sensor in coverage:
+        match = pattern.match(sensor)
+        if match is not None:
+            sensor_x, sensor_y = int(match.group(1)), int(match.group(2))
+            beacon_x, beacon_y = int(match.group(3)), int(match.group(4))
+            distance = abs(beacon_x - sensor_x) + abs(beacon_y - sensor_y)
 
-    row_of_interest = 2000000
-    beacons_on_row_of_interest = set()
-    nb_covered_positions_on_row_of_interest = 0
+            sensors.append(Sensor(sensor_x, sensor_y, distance))
+            beacons.add(Beacon(beacon_x, beacon_y))
 
-    with open('input.txt', 'r') as file:
-        for line in file:
-            line = line.strip().split()
-
-            sensor_x = int(line[2].rstrip(',').lstrip('x='))
-            sensor_y = int(line[3].rstrip(':').lstrip('y='))
-
-            beacon_x = int(line[8].rstrip(',').lstrip('x='))
-            beacon_y = int(line[9].lstrip('y='))
-
-            dist = abs(beacon_x - sensor_x) + abs(beacon_y - sensor_y)
-
-            if beacon_y == row_of_interest:
-                beacons_on_row_of_interest.add(beacon_y)
-
-            sensors.append((sensor_x, sensor_y))
-            beacons.append((beacon_x, beacon_y))
-            distances.append(dist)
-
-    _, row_of_interest_coverage = row_coverage(row_of_interest, sensors, distances)
-
-    # print(row_of_interest_coverage)
-    # print(len(beacons_on_row_of_interest))
-
-    nb_covered_positions_on_row_of_interest = row_of_interest_coverage - len(beacons_on_row_of_interest)
-
-    # Answer part 1 :
-    print(f"Nb of positions that cannot contain a beacon on row y="
-          f"{row_of_interest}: {nb_covered_positions_on_row_of_interest}") # 4725496
+    return sensors, beacons
 
 
-    # --- Part II ---
-    for y in range(lower_bound, upper_bound + 1):
-        coverage, nb_positions_covered = row_coverage(y, sensors, distances, lower_bound, upper_bound)
+def _get_row_coverage(
+    sensors: List[Sensor],
+    row: int,
+    lower: float = float("-inf"),
+    upper: float = float("inf"),
+) -> List[Interval]:
+    intervals = []
+    for sensor in sensors:
+        x_margin = sensor.coverage - abs(row - sensor.y)
+        if x_margin >= 0:
+            # We keep only those intervals that cover
+            # some part of the row and sort them
+            lb = int(max(lower, sensor.x - x_margin))
+            ub = int(min(upper, sensor.x + x_margin))
+            bisect.insort(intervals, Interval(lb, ub))
 
-        # print(row, coverage, nb_positions_covered)
+    # We fuse intercepting intervals
+    # Since they are already sorted,
+    # we only need to check the current
+    # interval against the top of the stack
+    fused_intervals = [intervals[0]]
+    for interval in intervals[1:]:
+        top = fused_intervals.pop()
+        if top & interval:
+            fused_intervals.append(top + interval)
+        else:
+            fused_intervals.append(top)
+            fused_intervals.append(interval)
 
-        if nb_positions_covered == (upper_bound - lower_bound + 1):
-            # Covers all the row
+    return fused_intervals
+
+
+@Timer.timeit
+def get_nb_covered_positions_on_row(
+    sensors: List[Sensor], beacons: Set[Beacon], row: int = 2_000_000
+) -> int:
+    return sum(len(interval) for interval in _get_row_coverage(sensors, row)) - len(
+        [beacon for beacon in beacons if beacon.y == row]
+    )
+
+
+@Timer.timeit
+def get_uncovered_position(sensors: List[Sensor], boundary: int = 4_000_000) -> int:
+    for y in range(boundary, -1, -1):
+        coverage = _get_row_coverage(sensors, y, 0, boundary)
+
+        if len(coverage) == 1:
             continue
 
-        x = lower_bound
-        while lower_bound <= x <= upper_bound:
-            for lower, upper in coverage:
-                if x > upper:
-                    continue
+        x = coverage[0].ub + 1
+        return x * boundary + y
 
-                elif lower <= x <= upper:
-                    x = upper + 1
-                    continue
+    return -1
 
-                else:
-                    distress_beacon_freq = x * freq_constant + y
-                    distress_beacons_freq.append((x, y, distress_beacon_freq))
-                    x += 1
-                    # print(f"({x=}, {y=}) => {distress_beacon_freq}")
-                    break
 
-    # # Answer part 2 :
-    print(f"Tuning frequency of distress beacon" # x = 3012821, y = 3042458
-          f": {distress_beacons_freq}") # 12051287042458
+@Timer.timeit
+def parse(filename: str) -> List[str]:
+    with open(filename, "r") as file:
+        coverage = file.read().strip().split("\n")
+    return coverage
+
+
+@Timer.timeit
+def solve(filename: str) -> Tuple[int, int]:
+    coverage = parse(filename)
+    sensors, beacons = build_coverage(coverage)
+    part1 = get_nb_covered_positions_on_row(sensors, beacons)
+    part2 = get_uncovered_position(sensors)
+
+    return part1, part2
+
+
+def main() -> None:
+    import os
+
+    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+
+    assert res[0] == 4_725_496, f"Part1 = {res[0]}"
+    assert res[1] == 12_051_287_042_458, f"Part2 = {res[1]}"
+
 
 if __name__ == "__main__":
     main()
