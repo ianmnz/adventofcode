@@ -8,18 +8,18 @@ from helpers import Timer
 
 
 @Timer.timeit
-def parse(filename: str) -> List[Tuple[str, int]]:
+def sum_k_first_elements(array: List[int], k: int) -> int:
+    return functools.reduce(lambda x, y: x + y, array[:k])
+
+
+@Timer.timeit
+def parse(filename: str) -> List[int]:
     with open(filename, "r") as file:
         inventory = [
             sum(map(int, items.split("\n")))
             for items in file.read().strip().split("\n\n")
         ]
     return inventory
-
-
-@Timer.timeit
-def sum_k_first_elements(array: List[int], k: int) -> int:
-    return functools.reduce(lambda x, y: x + y, array[:k])
 
 
 @Timer.timeit
