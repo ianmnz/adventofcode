@@ -61,6 +61,8 @@ def minimum_cut(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
         if cut == cut_value:
             return len(group1) * len(group2)
 
+    return -1
+
 
 @Timer.timeit
 def karger_min_cut(
@@ -129,6 +131,8 @@ def karger_min_cut(
         if cut_edges == cut_value:
             counter = collections.Counter([group for group, _ in parent.values()])
             return functools.reduce((lambda a, b: a * b), counter.values())
+
+    return -1
 
 
 @Timer.timeit
