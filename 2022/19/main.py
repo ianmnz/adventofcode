@@ -1,6 +1,7 @@
 # Advent of Code : Day 19 - Not Enough Minerals
 # https://adventofcode.com/2022/day/19
 
+import os
 import re
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, TypedDict
@@ -146,7 +147,7 @@ def get_product_of_nb_opened(blueprints: List[Blueprint], T: int, n: int) -> int
 
 
 @Timer.timeit
-def parse(filename: str) -> List[Blueprint]:
+def parse(filename: os.PathLike) -> List[Blueprint]:
     with open(filename, "r") as file:
         lines = file.read().strip().split("\n")
 
@@ -175,7 +176,7 @@ def parse(filename: str) -> List[Blueprint]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     blueprints = parse(filename)
     part1 = get_sum_of_quality_level(blueprints, 24)
     part2 = get_product_of_nb_opened(blueprints, 32, 3)
@@ -184,9 +185,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 1127, f"Part1 = {res[0]}"
     assert res[1] == 21546, f"Part2 = {res[1]}"

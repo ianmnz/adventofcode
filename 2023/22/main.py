@@ -2,6 +2,7 @@
 # https://adventofcode.com/2023/day/22
 
 import collections
+import os
 from dataclasses import dataclass, field
 from typing import Dict, Iterable, List, Set, Tuple
 
@@ -113,7 +114,7 @@ def bricks_to_disintegrate(data: List[Brick]) -> Tuple[int]:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[Brick]:
+def parse(filename: os.PathLike) -> List[Brick]:
     with open(filename, "r") as file:
         snapshot = [line.split("~") for line in file.read().split("\n")]
 
@@ -127,15 +128,15 @@ def parse(filename: str) -> List[Brick]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     data = parse(filename)
     return bricks_to_disintegrate(data)
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 468, f"Part1 = {res[0]}"
     assert res[1] == 75358, f"Part2 = {res[1]}"

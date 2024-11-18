@@ -2,6 +2,7 @@
 # https://adventofcode.com/2023/day/20
 
 import math
+import os
 from collections import deque
 from typing import List, Tuple
 
@@ -109,14 +110,14 @@ def get_fewest_nb_presses() -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[List[str]]:
+def parse(filename: os.PathLike) -> List[List[str]]:
     with open(filename, "r") as file:
         configuration = [line.split(" -> ") for line in file.read().split("\n")]
     return configuration
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     configuration = parse(filename)
     build_graph(configuration)
 
@@ -129,9 +130,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 873301506, f"Part1 = {res[0]}"
     assert res[1] == 241823802412393, f"Part2 = {res[1]}"

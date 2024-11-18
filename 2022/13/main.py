@@ -2,6 +2,7 @@
 # https://adventofcode.com/2022/day/13
 
 import bisect
+import os
 from dataclasses import dataclass
 from functools import reduce
 from typing import List, Tuple, Union
@@ -72,7 +73,7 @@ def get_distress_signal_decoder_key(
 
 
 @Timer.timeit
-def parse(filename: str) -> List[Tuple[Value, Value]]:
+def parse(filename: os.PathLike) -> List[Tuple[Value, Value]]:
     with open(filename, "r") as file:
         packets = [
             tuple(map(eval, pair.split("\n")))
@@ -82,7 +83,7 @@ def parse(filename: str) -> List[Tuple[Value, Value]]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     packets = parse(filename)
     part1 = get_sum_of_indices(packets)
     part2 = get_distress_signal_decoder_key(packets)
@@ -91,9 +92,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 5825, f"Part1 = {res[0]}"
     assert res[1] == 24477, f"Part2 = {res[1]}"

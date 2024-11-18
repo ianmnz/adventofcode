@@ -1,6 +1,7 @@
 # Advent of Code : Day 09 - Rope Bridge
 # https://adventofcode.com/2022/day/9
 
+import os
 from dataclasses import dataclass, field
 from typing import List, Optional, Set, Tuple
 
@@ -91,6 +92,9 @@ class Rope:
     tail: Optional[Knot] = field(default=None)
 
     def move(self, to: str, dist: int) -> None:
+        if self.head is None:
+            return
+
         for _ in range(dist):
             self.head.move(to)
 
@@ -120,18 +124,22 @@ def get_nb_visited_positions_by_tail(motions: List[str], nb_knots: int) -> int:
     for motion in motions:
         to, dist = motion.strip().split()
         rope.move(to, int(dist))
-    return len(rope.tail.visited)
+
+    if rope.tail is None:
+        return -1
+    else:
+        return len(rope.tail.visited)
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         motions = file.read().strip().split("\n")
     return motions
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     motions = parse(filename)
     part1 = get_nb_visited_positions_by_tail(motions, 2)
     part2 = get_nb_visited_positions_by_tail(motions, 10)
@@ -140,9 +148,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 6197, f"Part1 = {res[0]}"
     assert res[1] == 2562, f"Part2 = {res[1]}"

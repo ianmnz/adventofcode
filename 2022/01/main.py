@@ -2,6 +2,7 @@
 # https://adventofcode.com/2022/day/1
 
 import functools
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -13,7 +14,7 @@ def sum_k_first_elements(array: List[int], k: int) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[int]:
+def parse(filename: os.PathLike) -> List[int]:
     with open(filename, "r") as file:
         inventory = [
             sum(map(int, items.split("\n")))
@@ -23,7 +24,7 @@ def parse(filename: str) -> List[int]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     inventory = parse(filename)
     inventory = sorted(inventory, reverse=True)
     part1 = sum_k_first_elements(inventory, 1)
@@ -33,9 +34,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 71934, f"Part1 = {res[0]}"
     assert res[1] == 211447, f"Part2 = {res[1]}"

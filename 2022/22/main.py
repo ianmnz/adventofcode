@@ -2,6 +2,7 @@
 # https://adventofcode.com/2022/day/22
 
 import math
+import os
 import re
 from dataclasses import dataclass, field
 from typing import Dict, List, Set, Tuple
@@ -275,7 +276,7 @@ def get_final_password(
 
 
 @Timer.timeit
-def parse(filename: str) -> Tuple[List[List[str]], List[str]]:
+def parse(filename: os.PathLike) -> Tuple[List[List[str]], List[str]]:
     with open(filename, "r") as file:
         lines, path = file.read().rstrip().split("\n\n")
 
@@ -286,7 +287,7 @@ def parse(filename: str) -> Tuple[List[List[str]], List[str]]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     board, instructions = parse(filename)
     start = find_start(board)
     torus, cube = build_wrappers(board)
@@ -297,9 +298,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 123_046, f"Part1 = {res[0]}"
     assert res[1] == 195_032, f"Part2 = {res[1]}"

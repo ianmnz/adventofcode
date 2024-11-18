@@ -4,6 +4,7 @@
 # For some more explanation
 # https://www.reddit.com/r/adventofcode/comments/18ghux0/comment/kd0npmi/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 
+import os
 from functools import lru_cache
 from typing import List, Tuple
 
@@ -43,7 +44,7 @@ def nb_arrangements(record: str, duplicate: Tuple[int]) -> int:
 
 
 @Timer.timeit
-def sum_arrangements(records: List[Tuple[str]]) -> int:
+def sum_arrangements(records: List[Tuple[str, ...]]) -> int:
     ans = 0
     for record in records:
         ans += nb_arrangements(record[0] + "?", eval(record[1]))
@@ -51,7 +52,7 @@ def sum_arrangements(records: List[Tuple[str]]) -> int:
 
 
 @Timer.timeit
-def sum_unfolded_arrangements(records: List[Tuple[str]]) -> int:
+def sum_unfolded_arrangements(records: List[Tuple[str, ...]]) -> int:
     ans = 0
     unfold = 5
     for record in records:
@@ -60,14 +61,14 @@ def sum_unfolded_arrangements(records: List[Tuple[str]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[Tuple[str]]:
+def parse(filename: os.PathLike) -> List[Tuple[str, ...]]:
     with open(filename, "r") as file:
         records = [tuple(line.split()) for line in file.read().split("\n")]
     return records
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     records = parse(filename)
     part1 = sum_arrangements(records)
     part2 = sum_unfolded_arrangements(records)
@@ -76,9 +77,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 7460, f"Part1 = {res[0]}"
     assert res[1] == 6720660274964, f"Part2 = {res[1]}"

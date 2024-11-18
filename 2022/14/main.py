@@ -1,6 +1,7 @@
 # Advent of Code : Day 14 - Regolith Reservoir
 # https://adventofcode.com/2022/day/14
 
+import os
 from typing import List, Set, Tuple
 
 from helpers import Timer
@@ -87,14 +88,14 @@ def simulate_up_to_blocking_source(
 
 
 @Timer.timeit
-def parse(filename: str) -> List[List[str]]:
+def parse(filename: os.PathLike) -> List[List[str]]:
     with open(filename, "r") as file:
         cave = [line.strip().split(" -> ") for line in file.read().strip().split("\n")]
     return cave
 
 
 @Timer.timeit
-def solve(filename: str) -> Coordinate:
+def solve(filename: os.PathLike) -> Coordinate:
     cave = parse(filename)
     scanner = scan(cave)
     part1 = simulate_up_to_reaching_bottom(scanner)
@@ -106,9 +107,9 @@ def solve(filename: str) -> Coordinate:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 843, f"Part1 = {res[0]}"
     assert res[1] == 27625, f"Part2 = {res[1]}"

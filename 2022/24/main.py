@@ -2,6 +2,7 @@
 # https://adventofcode.com/2022/day/24
 
 import heapq
+import os
 from typing import List, Set, Tuple
 
 from helpers import Timer
@@ -105,7 +106,7 @@ def get_time_to_cross_valley(grid: Grid, with_return: bool = False) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> Grid:
+def parse(filename: os.PathLike) -> Grid:
     with open(filename, "r") as file:
         grid = [
             [bitmask[char] for char in line] for line in file.read().strip().split("\n")
@@ -114,7 +115,7 @@ def parse(filename: str) -> Grid:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     grid = parse(filename)
     part1 = get_time_to_cross_valley(grid)
     part2 = get_time_to_cross_valley(grid, True)
@@ -123,9 +124,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 322, f"Part1 = {res[0]}"
     assert res[1] == 974, f"Part2 = {res[1]}"

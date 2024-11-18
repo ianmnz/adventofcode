@@ -4,6 +4,7 @@
 import collections
 import functools
 import itertools
+import os
 from typing import Dict, List, Set, Tuple
 
 from helpers import Timer
@@ -136,7 +137,7 @@ def karger_min_cut(
 
 
 @Timer.timeit
-def solve(filename: str) -> int:
+def solve(filename: os.PathLike) -> int:
     with open(filename, "r") as file:
         network = [line for line in file.read().split("\n")]
 
@@ -146,9 +147,9 @@ def solve(filename: str) -> int:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
     assert res == 552695, f"Res = {res}"
 
 

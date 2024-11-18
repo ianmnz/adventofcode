@@ -1,7 +1,7 @@
 # Advent of Code : Day 11 - Cosmic Expansion
 # https://adventofcode.com/2023/day/11
 
-
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -53,14 +53,14 @@ def calculate_sum_of_distances(image: List[str], expansion: int) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         image = file.read().split("\n")
     return image
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     image = parse(filename)
     part1 = calculate_sum_of_distances(image, 2)
     part2 = calculate_sum_of_distances(image, 1_000_000)
@@ -69,9 +69,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 9445168, f"Part1 = {res[0]}"
     assert res[1] == 742305960572, f"Part2 = {res[1]}"

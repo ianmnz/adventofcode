@@ -1,6 +1,7 @@
 # Advent of Code : Day 17 - Clumsy Crucible
 # https://adventofcode.com/2023/day/17
 
+import os
 from heapq import heappop, heappush
 from typing import Dict, List, Tuple
 
@@ -47,7 +48,7 @@ def find_shortest_path(graph: Dict[Tuple[int], int], lower: int, upper: int) -> 
 
 
 @Timer.timeit
-def parse(filename: str) -> List[List[int]]:
+def parse(filename: os.PathLike) -> List[List[int]]:
     with open(filename, "r") as file:
         heatmap = [
             [int(heatloss) for heatloss in line] for line in file.read().split("\n")
@@ -56,7 +57,7 @@ def parse(filename: str) -> List[List[int]]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     heatmap = parse(filename)
     graph = build_graph(heatmap)
     part1 = find_shortest_path(graph, 1, 3)
@@ -66,9 +67,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 674, f"Part1 = {res[0]}"
     assert res[1] == 773, f"Part2 = {res[1]}"

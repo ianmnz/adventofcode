@@ -1,13 +1,13 @@
 # Advent of Code : Day 13 - Point of Incidence
 # https://adventofcode.com/2023/day/13
 
-
+import os
 from typing import List, Tuple
 
 from helpers import Timer
 
 
-def transpose(pattern: List[str]) -> List[str]:
+def transpose(pattern: List[str]) -> List[List[str]]:
     return [
         [pattern[j][i] for j in range(len(pattern))] for i in range(len(pattern[0]))
     ]
@@ -44,14 +44,14 @@ def summarize_patterns(patterns: List[List[str]], expected_smudges: int) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[List[str]]:
+def parse(filename: os.PathLike) -> List[List[str]]:
     with open(filename, "r") as file:
         patterns = [line.split("\n") for line in file.read().split("\n\n")]
     return patterns
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     patterns = parse(filename)
     part1 = summarize_patterns(patterns, 0)
     part2 = summarize_patterns(patterns, 1)
@@ -60,9 +60,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 34772, f"Part1 = {res[0]}"
     assert res[1] == 35554, f"Part2 = {res[1]}"

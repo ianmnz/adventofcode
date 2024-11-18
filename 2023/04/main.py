@@ -1,6 +1,7 @@
 # Advent of Code : Day 04 - Scratchcards
 # https://adventofcode.com/2023/day/4
 
+import os
 import re
 from typing import List, Tuple
 
@@ -37,7 +38,7 @@ def compute_total_scratchcards(cards: List[str]) -> int:
         card_id, numbers = card.split(":")
         nb_copies = compute_card_winnings(numbers)
 
-        card_id = int(re.findall(f"\d+", card_id)[0]) - 1
+        card_id = int(re.findall(rf"\d+", card_id)[0]) - 1
         total_scratchcards += scratchcards[card_id]
 
         if nb_copies > 0:
@@ -48,14 +49,14 @@ def compute_total_scratchcards(cards: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         cards = file.read().split("\n")
     return cards
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     cards = parse(filename)
     part1 = compute_total_points(cards)
     part2 = compute_total_scratchcards(cards)
@@ -64,9 +65,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 24733, f"Part1 = {res[0]}"
     assert res[1] == 5422730, f"Part2 = {res[1]}"

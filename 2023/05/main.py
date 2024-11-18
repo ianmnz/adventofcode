@@ -1,6 +1,7 @@
 # Advent of Code : Day 05 - If You Give A Seed A Fertilizer
 # https://adventofcode.com/2023/day/5
 
+import os
 import re
 from dataclasses import dataclass
 from typing import List, Tuple
@@ -82,18 +83,18 @@ def seed_to_location(
 
 
 @Timer.timeit
-def parse(filename: str) -> Tuple[List[int], List[List[str]]]:
+def parse(filename: os.PathLike) -> Tuple[List[int], List[List[str]]]:
     with open(filename, "r") as file:
         seeds, mappings = file.read().split("\n\n", 1)
 
-    seeds = [int(seed) for seed in re.findall(f"\d+", seeds)]
+    seeds = [int(seed) for seed in re.findall(rf"\d+", seeds)]
     mappings = [mapping.split("\n")[1:] for mapping in mappings.split("\n\n")]
 
     return seeds, mappings
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     seeds, mappings = parse(filename)
 
     seed_intervals = [Interval(seed, seed) for seed in seeds]
@@ -108,9 +109,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 650599855, f"Part1 = {res[0]}"
     assert res[1] == 1240035, f"Part2 = {res[1]}"

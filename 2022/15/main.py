@@ -2,6 +2,7 @@
 # https://adventofcode.com/2022/day/15
 
 import bisect
+import os
 import re
 from dataclasses import dataclass
 from typing import List, NamedTuple, Set, Tuple
@@ -155,14 +156,14 @@ def get_uncovered_position_by_line_intersection(
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         coverage = file.read().strip().split("\n")
     return coverage
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     coverage = parse(filename)
     sensors, beacons = build_coverage(coverage)
     part1 = get_nb_covered_positions_on_row(sensors, beacons)
@@ -173,9 +174,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 4_725_496, f"Part1 = {res[0]}"
     assert res[1] == 12_051_287_042_458, f"Part2 = {res[1]}"

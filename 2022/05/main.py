@@ -3,6 +3,7 @@
 
 import collections
 import copy
+import os
 import re
 from typing import Dict, List, NamedTuple, Tuple
 
@@ -46,7 +47,7 @@ def read_top_of_stacks(stacks: Dict[int, collections.deque]) -> str:
 
 
 @Timer.timeit
-def parse(filename: str) -> Tuple[Dict[int, collections.deque], List[Move]]:
+def parse(filename: os.PathLike) -> Tuple[Dict[int, collections.deque], List[Move]]:
     with open(filename, "r") as file:
         initial_arrangement, rearrangements = file.read().strip().split("\n\n")
 
@@ -67,6 +68,10 @@ def parse(filename: str) -> Tuple[Dict[int, collections.deque], List[Move]]:
     moves = []
     for line in rearrangements.split("\n"):
         match = pattern.match(line)
+
+        if match is None:
+            continue
+
         moves.append(
             Move(int(match.group(1)), int(match.group(2)), int(match.group(3)))
         )
@@ -75,7 +80,7 @@ def parse(filename: str) -> Tuple[Dict[int, collections.deque], List[Move]]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[str, str]:
+def solve(filename: os.PathLike) -> Tuple[str, str]:
     stacks, moves = parse(filename)
     stacks_cp = copy.deepcopy(stacks)
 
@@ -89,9 +94,9 @@ def solve(filename: str) -> Tuple[str, str]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == "QNNTGTPFN", f"Part1 = {res[0]}"
     assert res[1] == "GGNPJBTTR", f"Part2 = {res[1]}"

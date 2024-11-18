@@ -4,6 +4,7 @@
 import copy
 import functools
 import operator
+import os
 import re
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Tuple
@@ -15,7 +16,7 @@ from helpers import Timer
 class WorryEval:
     func: Callable[[int], int]
     relief_factor: int = field(init=False, default=3)
-    mod_factor: int = field(init=False, default=1.0e7)
+    mod_factor: int = field(init=False, default=int(1.0e7))
 
     def __call__(self, x: int) -> int:
         return (self.func(x) // self.relief_factor) % self.mod_factor
@@ -81,7 +82,7 @@ def compute_monkey_business(nb_rounds: int, monkeys: Dict[int, Monkey]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> Dict[int, Monkey]:
+def parse(filename: os.PathLike) -> Dict[int, Monkey]:
     with open(filename, "r") as file:
         notes = file.read().strip().split("\n\n")
 
@@ -95,6 +96,10 @@ def parse(filename: str) -> Dict[int, Monkey]:
     monkeys = {}
     for note in notes:
         match = monkey_id.search(note)
+
+        if match is None:
+            continue
+
         monkey = Monkey(int(match.group(1)))
 
         match = items.search(note)
@@ -119,7 +124,7 @@ def parse(filename: str) -> Dict[int, Monkey]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     monkeys = parse(filename)
     monkeys_cp = copy.deepcopy(monkeys)
     update_worry_evaluation(monkeys_cp)
@@ -131,9 +136,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 110_264, f"Part1 = {res[0]}"
     assert res[1] == 23_612_457_316, f"Part2 = {res[1]}"

@@ -1,6 +1,7 @@
 # Advent of Code : Day 02 - Cube Conundrum
 # https://adventofcode.com/2023/day/2
 
+import os
 import re
 from typing import Dict, List, Tuple
 
@@ -8,7 +9,7 @@ from helpers import Timer
 
 
 @Timer.timeit
-def determine_possible_games(games: Dict[int, List[str]]) -> int:
+def determine_possible_games(games: Dict[int, List[List[str]]]) -> int:
     sum_possible_games = 0
 
     N_R = 12
@@ -38,7 +39,7 @@ def determine_possible_games(games: Dict[int, List[str]]) -> int:
 
 
 @Timer.timeit
-def determine_minimum_power_set_cubes(games: Dict[int, List[str]]) -> int:
+def determine_minimum_power_set_cubes(games: Dict[int, List[List[str]]]) -> int:
     sum_power_set_cubes = 0
 
     def minimum_possible_game_power(game: List[List[str]]) -> int:
@@ -65,19 +66,19 @@ def determine_minimum_power_set_cubes(games: Dict[int, List[str]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> Dict[int, List[str]]:
+def parse(filename: os.PathLike) -> Dict[int, List[List[str]]]:
     with open(filename, "r") as file:
         games = dict()
         for game in file.read().strip().split("\n"):
             game_id, subsets = game.split(":")
-            games[int(re.findall(f"\d+", game_id)[0])] = [
+            games[int(re.findall(rf"\d+", game_id)[0])] = [
                 subset.split(",") for subset in subsets.split(";")
             ]
     return games
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     games = parse(filename)
     part1 = determine_possible_games(games)
     part2 = determine_minimum_power_set_cubes(games)
@@ -86,9 +87,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 2162, f"Part1 = {res[0]}"
     assert res[1] == 72513, f"Part2 = {res[1]}"

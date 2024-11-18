@@ -2,6 +2,7 @@
 # https://adventofcode.com/2023/day/6
 
 import math
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -35,7 +36,7 @@ def calculate_margin_of_error(times: List[int], records: List[int]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> Tuple[List[int], List[int]]:
+def parse(filename: os.PathLike) -> Tuple[List[int], List[int]]:
     with open(filename, "r") as file:
         times, record_distances = map(
             lambda ss: list(map(int, ss.split()[1:])), file.read().split("\n")
@@ -44,7 +45,7 @@ def parse(filename: str) -> Tuple[List[int], List[int]]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     times, record_distances = parse(filename)
 
     part1 = calculate_margin_of_error(times, record_distances)
@@ -58,9 +59,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 316800, f"Part1 = {res[0]}"
     assert res[1] == 45647654, f"Part2 = {res[1]}"

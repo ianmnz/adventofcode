@@ -1,6 +1,7 @@
 # Advent of Code : Day 10 - Cathode-Ray Tube
 # https://adventofcode.com/2022/day/10
 
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -15,7 +16,9 @@ SPRITE_WIDTH = 3
 
 
 @Timer.timeit
-def get_CRT_signals_and_display(program: List[str]) -> Tuple[int, List[List[str]]]:
+def get_CRT_signals_and_display(
+    program: List[List[str]],
+) -> Tuple[int, List[List[str]]]:
     sum_signal_strength_on_cycles_of_interest = 0
     crt = [["." for _ in range(CRT_WIDTH)] for _ in range(CRT_HEIGHT)]
 
@@ -40,22 +43,22 @@ def get_CRT_signals_and_display(program: List[str]) -> Tuple[int, List[List[str]
 
 
 def display_crt(crt: List[List[str]]) -> str:
-    for i in range(CRT_HEIGHT):
-        for j in range(CRT_WIDTH):
-            print(crt[i][j], end="")
-        print()
+    # for i in range(CRT_HEIGHT):
+    #     for j in range(CRT_WIDTH):
+    #         print(crt[i][j], end="")
+    #     print()
     return "EFUGLPAP"  # It should print this
 
 
 @Timer.timeit
-def parse(filename: str) -> List[List[str]]:
+def parse(filename: os.PathLike) -> List[List[str]]:
     with open(filename, "r") as file:
         program = file.read().strip().split("\n")
     return [instruction.strip().split() for instruction in program]
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, str]:
+def solve(filename: os.PathLike) -> Tuple[int, str]:
     program = parse(filename)
     part1, crt = get_CRT_signals_and_display(program)
     part2 = display_crt(crt)
@@ -64,9 +67,9 @@ def solve(filename: str) -> Tuple[int, str]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 15020, f"Part1 = {res[0]}"
     assert res[1] == "EFUGLPAP", f"Part2 = {res[1]}"

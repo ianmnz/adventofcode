@@ -1,7 +1,7 @@
 # Advent of Code : Day 10 - Pipe Maze
 # https://adventofcode.com/2023/day/10
 
-
+import os
 from typing import Dict, List, Set, Tuple
 
 from helpers import Timer
@@ -100,14 +100,14 @@ def find_enclosed_area(maze: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         maze = file.read().splitlines()
     return maze
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     maze = parse(filename)
     maze_cp = maze.copy()
 
@@ -118,9 +118,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 6725, f"Part1 = {res[0]}"
     assert res[1] == 383, f"Part2 = {res[1]}"

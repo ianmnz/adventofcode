@@ -1,6 +1,7 @@
 # Advent of Code : Day 15 - Lens Library
 # https://adventofcode.com/2023/day/15
 
+import os
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 
@@ -104,14 +105,14 @@ def verify_HASHMAP(sequence: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         sequence = file.read().strip().split(",")
     return sequence
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     sequence = parse(filename)
     part1 = verify_HASH(sequence)
     part2 = verify_HASHMAP(sequence)
@@ -120,9 +121,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 510792, f"Part1 = {res[0]}"
     assert res[1] == 269410, f"Part2 = {res[1]}"

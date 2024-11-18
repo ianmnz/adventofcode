@@ -1,8 +1,8 @@
 # Advent of Code : Day 12 - Hill Climbing Algorithm
 # https://adventofcode.com/2022/day/12
 
-
 import heapq
+import os
 from collections import deque, namedtuple
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple
@@ -220,14 +220,14 @@ def find_best_start(
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         heightmap = file.read().strip().split("\n")
     return heightmap
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     heightmap = parse(filename)
     graph, target, candidates = build_graph(heightmap)
     part1 = find_best_path_from_start(graph, target, candidates[0])
@@ -237,9 +237,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 517, f"Part1 = {res[0]}"
     assert res[1] == 512, f"Part2 = {res[1]}"

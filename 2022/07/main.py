@@ -1,7 +1,7 @@
 # Advent of Code : Day 07 - No Space Left On Device
 # https://adventofcode.com/2022/day/7
 
-
+import os
 from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Dict, List, Optional, Tuple
@@ -50,6 +50,9 @@ def build_filesystem(terminal_output: List[str]) -> Dir:
 
     for line in terminal_output:
         parsed_line = line.split()
+
+        if current_dir is None:
+            break
 
         if parsed_line[0] == "$":  # Command
             if parsed_line[1] == "cd":  # Cd
@@ -119,14 +122,14 @@ def find_size_smallest_dir_to_be_deleted(
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         terminal_output = file.read().strip().split("\n")
     return terminal_output
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     terminal_output = parse(filename)
     root = build_filesystem(terminal_output)
     part1 = sum_dir_sizes_leq_threshold(root)
@@ -136,9 +139,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 1454188, f"Part1 = {res[0]}"
     assert res[1] == 4183246, f"Part2 = {res[1]}"

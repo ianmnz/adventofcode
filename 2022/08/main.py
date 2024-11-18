@@ -1,6 +1,7 @@
 # Advent of Code : Day 08 - Treetop Tree House
 # https://adventofcode.com/2022/day/8
 
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -95,7 +96,7 @@ def get_highest_scenic_score(score: Grid) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> Grid:
+def parse(filename: os.PathLike) -> Grid:
     with open(filename, "r") as file:
         grid = [
             [int(char) for char in line] for line in file.read().strip().split("\n")
@@ -104,7 +105,7 @@ def parse(filename: str) -> Grid:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     grid = parse(filename)
     exposure, score = compute_exposure_and_score(grid)
     part1 = count_nb_visible_trees(exposure)
@@ -114,9 +115,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 1805, f"Part1 = {res[0]}"
     assert res[1] == 444528, f"Part2 = {res[1]}"

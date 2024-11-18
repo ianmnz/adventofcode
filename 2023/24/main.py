@@ -3,6 +3,7 @@
 
 import collections
 import itertools
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -100,14 +101,14 @@ def find_rock_launch_vector(vectors: List[Tuple[Vector3d]]) -> Tuple[Vector3d]:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[List[str]]:
+def parse(filename: os.PathLike) -> List[List[str]]:
     with open(filename, "r") as file:
         hailstorm = [line.split("@") for line in file.read().split("\n")]
     return hailstorm
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     hailstorm = parse(filename)
     vectors = get_vectors(hailstorm)
     part1 = count_intersections(vectors, 200_000_000_000_000, 400_000_000_000_000)
@@ -118,9 +119,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 31921, f"Part1 = {res[0]}"
     assert res[1] == 761691907059631, f"Part2 = {res[1]}"

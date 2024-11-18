@@ -1,7 +1,8 @@
 # Advent of Code : Day 02 - Rock Paper Scissors
 # https://adventofcode.com/2022/day/2
 
-from typing import Dict, List, Tuple
+import os
+from typing import Dict, List, Tuple, cast
 
 from helpers import Timer
 
@@ -27,14 +28,14 @@ def compute_score(
 
 
 @Timer.timeit
-def parse(filename: str) -> List[Tuple[str, str]]:
+def parse(filename: os.PathLike) -> List[Tuple[str, str]]:
     with open(filename, "r") as file:
-        guide = [line.split() for line in file.read().strip().split("\n")]
-    return guide
+        guide = [tuple(line.split()) for line in file.read().strip().split("\n")]
+    return cast(List[Tuple[str, str]], guide)
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     guide = parse(filename)
 
     part1 = compute_score(guide, score_part1)
@@ -44,9 +45,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 11873, f"Part1 = {res[0]}"
     assert res[1] == 12014, f"Part2 = {res[1]}"

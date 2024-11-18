@@ -2,7 +2,8 @@
 # https://adventofcode.com/2023/day/23
 
 import collections
-from typing import Callable, Dict, List, Tuple
+import os
+from typing import Callable, Dict, List, Set, Tuple
 
 from helpers import Timer
 
@@ -10,7 +11,7 @@ from helpers import Timer
 @Timer.timeit
 def build_graph(
     carte: List[List[str]], with_slippery_slope=True
-) -> Tuple[complex, complex, Dict[complex, List[complex]]]:
+) -> Tuple[complex, complex, Dict[complex, Set[Tuple[complex, int]]]]:
     n = len(carte)
     m = len(carte[0])
 
@@ -95,7 +96,7 @@ def build_graph(
 def get_longest_path_length(carte: List[List[str]], with_slippery_slope=True) -> int:
     source, target, graph = build_graph(carte, with_slippery_slope)
 
-    stack = [(source, 0)]
+    stack: List[Tuple[complex, int]] = [(source, 0)]
     visited = set()
     longest = 0
 
@@ -124,14 +125,14 @@ def get_longest_path_length(carte: List[List[str]], with_slippery_slope=True) ->
 
 
 @Timer.timeit
-def parse(filename: str) -> List[List[str]]:
+def parse(filename: os.PathLike) -> List[List[str]]:
     with open(filename, "r") as file:
         carte = [[char for char in line] for line in file.read().split("\n")]
     return carte
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     carte = parse(filename)
     part1 = get_longest_path_length(carte)
     part2 = get_longest_path_length(carte, False)
@@ -140,9 +141,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 2246, f"Part1 = {res[0]}"
     assert res[1] == 6622, f"Part2 = {res[1]}"

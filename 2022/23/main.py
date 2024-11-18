@@ -1,6 +1,7 @@
 # Advent of Code : Day 23 - Unstable Diffusion
 # https://adventofcode.com/2022/day/23
 
+import os
 from collections import defaultdict
 from dataclasses import dataclass
 from itertools import product
@@ -101,7 +102,7 @@ def get_covered_ground(elves: List[Elf]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[Elf]:
+def parse(filename: os.PathLike) -> List[Elf]:
     with open(filename, "r") as file:
         lines = file.read().strip().split("\n")
 
@@ -114,7 +115,7 @@ def parse(filename: str) -> List[Elf]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     elves = parse(filename)
     spread(elves, 10)
     part1 = get_covered_ground(elves)
@@ -124,9 +125,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 4005, f"Part1 = {res[0]}"
     assert res[1] == 1008, f"Part2 = {res[1]}"

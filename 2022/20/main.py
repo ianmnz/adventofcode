@@ -1,6 +1,7 @@
 # Advent of Code : Day 20 - Grove Positioning System
 # https://adventofcode.com/2022/day/20
 
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -26,14 +27,14 @@ def decrypt(
 
 
 @Timer.timeit
-def parse(filename: str) -> List[int]:
+def parse(filename: os.PathLike) -> List[int]:
     with open(filename, "r") as file:
         array = list(map(int, file.read().strip().split("\n")))
     return array
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     array = parse(filename)
     part1 = decrypt(array, 1, 1)
     part2 = decrypt(array, 811589153, 10)
@@ -42,9 +43,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 6712, f"Part1 = {res[0]}"
     assert res[1] == 1595584274798, f"Part2 = {res[1]}"

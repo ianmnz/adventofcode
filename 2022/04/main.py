@@ -1,6 +1,7 @@
 # Advent of Code : Day 04 - Camp Cleanup
 # https://adventofcode.com/2022/day/4
 
+import os
 import re
 from typing import List, NamedTuple, Tuple
 
@@ -13,7 +14,7 @@ class Range(NamedTuple):
 
 
 @Timer.timeit
-def parse(filename: str) -> List[Tuple[Range, Range]]:
+def parse(filename: os.PathLike) -> List[Tuple[Range, Range]]:
     pattern = re.compile(r"(\d+)-(\d+),(\d+)-(\d+)")
 
     with open(filename, "r") as file:
@@ -25,6 +26,7 @@ def parse(filename: str) -> List[Tuple[Range, Range]]:
             Range(int(match.group(3)), int(match.group(4))),
         )
         for match in matches
+        if match is not None
     ]
 
 
@@ -48,7 +50,7 @@ def find_nb_intersections(ranges: List[Tuple[Range, Range]]) -> Tuple[int, int]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     ranges = parse(filename)
     (
         nb_fully_contained,
@@ -62,9 +64,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 528, f"Part1 = {res[0]}"
     assert res[1] == 881, f"Part2 = {res[1]}"

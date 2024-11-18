@@ -1,8 +1,8 @@
 # Advent of Code : Day 03 - Gear Ratios
 # https://adventofcode.com/2023/day/3
 
-
 import math
+import os
 import re
 from typing import List, Tuple
 
@@ -23,7 +23,7 @@ def sum_engine_parts_numbers(schematic: List[str]) -> int:
     engine = dict()
 
     for r, row in enumerate(schematic):
-        for number in re.finditer(f"\d+", row):
+        for number in re.finditer(rf"\d+", row):
             neighborhood = {
                 (i, j)
                 for i in (r - 1, r, r + 1)
@@ -44,7 +44,7 @@ def sum_gear_ratios(schematic: List[str]) -> int:
     gears = {(i, j): [] for i in range(n) for j in range(m) if schematic[i][j] == "*"}
 
     for r, row in enumerate(schematic):
-        for number in re.finditer(f"\d+", row):
+        for number in re.finditer(rf"\d+", row):
             neighborhood = {
                 (i, j)
                 for i in (r - 1, r, r + 1)
@@ -58,14 +58,14 @@ def sum_gear_ratios(schematic: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         schematic = file.read().split("\n")
     return schematic
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     schematic = parse(filename)
     part1 = sum_engine_parts_numbers(schematic)
     part2 = sum_gear_ratios(schematic)
@@ -74,9 +74,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 533775, f"Part1 = {res[0]}"
     assert res[1] == 78236071, f"Part2 = {res[1]}"

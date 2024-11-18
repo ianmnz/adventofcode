@@ -1,6 +1,7 @@
 # Advent of Code : Day 18 - Boiling Boulders
 # https://adventofcode.com/2022/day/18
 
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -88,7 +89,7 @@ def get_external_surface_area(droplets: List[Tuple[int, ...]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[Tuple[int, ...]]:
+def parse(filename: os.PathLike) -> List[Tuple[int, ...]]:
     with open(filename, "r") as file:
         droplets = [
             tuple(map(int, droplet.split(",")))
@@ -98,7 +99,7 @@ def parse(filename: str) -> List[Tuple[int, ...]]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     droplets = parse(filename)
     part1 = get_surface_area(droplets)
     part2 = get_external_surface_area(droplets)
@@ -107,9 +108,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 3448, f"Part1 = {res[0]}"
     assert res[1] == 2052, f"Part2 = {res[1]}"

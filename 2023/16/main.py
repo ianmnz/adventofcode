@@ -1,6 +1,7 @@
 # Advent of Code : Day 16 - The Floor Will Be Lava
 # https://adventofcode.com/2023/day/16
 
+import os
 from dataclasses import dataclass
 from typing import List, Tuple
 
@@ -9,8 +10,8 @@ from helpers import Timer
 
 @dataclass
 class Beam:
-    start: Tuple[int]
-    dir: Tuple[int]
+    start: Tuple[int, int]
+    dir: Tuple[int, int]
 
     def __hash__(self) -> int:
         return hash((*self.start, *self.dir))
@@ -98,14 +99,14 @@ def find_best_starting_beam(layout: List[List[str]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[List[str]]:
+def parse(filename: os.PathLike) -> List[List[str]]:
     with open(filename, "r") as file:
         layout = [[char for char in line] for line in file.read().split("\n")]
     return layout
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     layout = parse(filename)
     part1 = count_energized_tiles(propagate_beams(layout))
     part2 = find_best_starting_beam(layout)
@@ -114,9 +115,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 7543, f"Part1 = {res[0]}"
     assert res[1] == 8231, f"Part2 = {res[1]}"

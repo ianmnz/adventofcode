@@ -2,6 +2,7 @@
 # https://adventofcode.com/2023/day/21
 
 import collections
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -76,14 +77,14 @@ def quadratic_interpolation(grid: List[List[str]], nb_steps: int = 26501365) -> 
 
 
 @Timer.timeit
-def parse(filename: str) -> List[List[str]]:
+def parse(filename: os.PathLike) -> List[List[str]]:
     with open(filename, "r") as file:
         grid = [[char for char in line] for line in file.read().split("\n")]
     return grid
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     grid = parse(filename)
     part1 = nb_reachable_gardens(grid, 64)
     part2 = quadratic_interpolation(grid, 26501365)
@@ -92,9 +93,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 3830, f"Part1 = {res[0]}"
     assert res[1] == 637087163925555, f"Part2 = {res[1]}"

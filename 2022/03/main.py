@@ -1,6 +1,7 @@
 # Advent of Code : Day 03 - Rucksack Reorganization
 # https://adventofcode.com/2022/day/3
 
+import os
 from itertools import islice
 from typing import Generator, Iterable, List, Tuple
 
@@ -71,14 +72,14 @@ def find_priority_of_badges(rucksacks: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         rucksacks = file.read().strip().split()
     return rucksacks
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     rucksacks = parse(filename)
     part1 = find_priority_of_common(rucksacks)
     part2 = find_priority_of_badges(rucksacks)
@@ -87,9 +88,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 8515, f"Part1 = {res[0]}"
     assert res[1] == 2434, f"Part2 = {res[1]}"

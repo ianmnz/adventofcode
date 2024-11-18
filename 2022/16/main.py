@@ -1,6 +1,7 @@
 # Advent of Code : Day 16 - Proboscidea Volcanium
 # https://adventofcode.com/2022/day/16
 
+import os
 import re
 from dataclasses import dataclass
 from functools import lru_cache
@@ -112,14 +113,14 @@ def maximize_released_pressure(
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         report = file.read().strip().split("\n")
     return report
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     report = parse(filename)
     valves = build_graph(report)
     part1 = maximize_released_pressure(valves, 30, False)
@@ -129,9 +130,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 1820, f"Part1 = {res[0]}"
     assert res[1] == 2602, f"Part2 = {res[1]}"

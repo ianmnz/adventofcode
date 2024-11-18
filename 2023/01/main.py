@@ -1,6 +1,7 @@
 # Advent of Code : Day 01 - Trebuchet?!
 # https://adventofcode.com/2023/day/1
 
+import os
 import re
 from typing import List, Tuple
 
@@ -9,7 +10,7 @@ from helpers import Timer
 
 @Timer.timeit
 def calibrate(document: List[str]) -> int:
-    matches = [[digit for digit in re.findall(f"\d", line)] for line in document]
+    matches = [[digit for digit in re.findall(rf"\d", line)] for line in document]
 
     return sum(int(digits[0] + digits[-1]) for digits in matches)
 
@@ -42,14 +43,14 @@ def fix(document: List[str]) -> List[str]:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         document = file.read().strip().split("\n")
     return document
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     document = parse(filename)
     part1 = calibrate(document)
     part2 = calibrate(fix(document))
@@ -58,9 +59,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 55816, f"Part1 = {res[0]}"
     assert res[1] == 54980, f"Part2 = {res[1]}"

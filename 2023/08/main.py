@@ -2,6 +2,7 @@
 # https://adventofcode.com/2023/day/8
 
 import math
+import os
 import re
 from typing import Dict, List, Tuple
 
@@ -15,6 +16,10 @@ def build_graph(nodes: List[str]) -> Dict[str, Dict[str, str]]:
 
     for node in nodes:
         match = pattern.match(node)
+
+        if match is None:
+            continue
+
         graph[match.group(1)] = {"L": match.group(2), "R": match.group(3)}
 
     return graph
@@ -72,14 +77,14 @@ def count_simultaneous_steps_to_exit(sequence: str, nodes: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> Tuple[str, str]:
+def parse(filename: os.PathLike) -> Tuple[str, str]:
     with open(filename, "r") as file:
         sequence, nodes = file.read().strip().split("\n\n")
     return sequence, nodes
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     sequence, nodes = parse(filename)
     part1 = count_steps_to_exit(sequence.strip(), nodes.split("\n"))
     part2 = count_simultaneous_steps_to_exit(sequence.strip(), nodes.split("\n"))
@@ -88,9 +93,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 21797, f"Part1 = {res[0]}"
     assert res[1] == 23977527174353, f"Part2 = {res[1]}"

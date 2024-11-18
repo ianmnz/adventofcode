@@ -1,6 +1,7 @@
 # Advent of Code : Day 07 - Camel Cards
 # https://adventofcode.com/2023/day/7
 
+import os
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import List, Tuple
@@ -48,6 +49,7 @@ class Hand:
                     continue
                 else:
                     return card_strength[self_card] < card_strength[other_card]
+            return False
         else:
             return self.rank < other.rank
 
@@ -61,7 +63,7 @@ class Hand:
         if with_joker and ("J" in counter) and (counter["J"] != 5):
             nb_jokers = counter["J"]
             del counter["J"]
-            counter[max(counter, key=counter.get)] += nb_jokers
+            counter[max(counter, key=counter.get)] += nb_jokers  # type: ignore
 
         nb_unique = len(counter)
 
@@ -102,7 +104,7 @@ def set_ranks(hands: List[Hand], with_joker: bool = False) -> None:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[Hand]:
+def parse(filename: os.PathLike) -> List[Hand]:
     with open(filename, "r") as file:
         hands = [
             Hand(hand[0], int(hand[1]))
@@ -112,7 +114,7 @@ def parse(filename: str) -> List[Hand]:
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     hands = parse(filename)
 
     set_ranks(hands)
@@ -126,9 +128,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 253910319, f"Part1 = {res[0]}"
     assert res[1] == 254083736, f"Part2 = {res[1]}"

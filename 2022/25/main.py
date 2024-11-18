@@ -1,6 +1,7 @@
 # Advent of Code : Day 25 - Full of Hot Air
 # https://adventofcode.com/2022/day/25
 
+import os
 from typing import List
 
 from helpers import Timer
@@ -58,7 +59,7 @@ def get_total_sum(numbers: List[str]) -> str:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[str]:
+def parse(filename: os.PathLike) -> List[str]:
     with open(filename, "r") as file:
         numbers = file.read().strip().split("\n")
 
@@ -70,7 +71,7 @@ def parse(filename: str) -> List[str]:
 
 
 @Timer.timeit
-def solve(filename: str) -> str:
+def solve(filename: os.PathLike) -> str:
     numbers = parse(filename)
     part1 = get_total_sum(numbers)
 
@@ -78,9 +79,9 @@ def solve(filename: str) -> str:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res == "2-0-020-1==1021=--01", f"Part1 = {res[0]}"
 

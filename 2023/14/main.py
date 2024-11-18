@@ -1,6 +1,7 @@
 # Advent of Code : Day 14 - Parabolic Reflector Dish
 # https://adventofcode.com/2023/day/14
 
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -77,14 +78,14 @@ def run_n_cycles(platform: List[List[str]], n: int = 1) -> List[List[str]]:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[List[str]]:
+def parse(filename: os.PathLike) -> List[List[str]]:
     with open(filename, "r") as file:
         platform = [[char for char in line] for line in file.read().split("\n")]
     return platform
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     platform = parse(filename)
     part1 = compute_load_on_north(tilt(platform))
     part2 = compute_load_on_north(run_n_cycles(platform, 1_000_000_000))
@@ -93,9 +94,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main():
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 105208, f"Part1 = {res[0]}"
     assert res[1] == 102943, f"Part2 = {res[1]}"

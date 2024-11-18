@@ -1,6 +1,7 @@
 # Advent of Code : Day 17 - Pyroclastic Flow
 # https://adventofcode.com/2022/day/17
 
+import os
 from typing import List, Tuple
 
 from helpers import Timer
@@ -69,14 +70,14 @@ def simulate_fall(n: int, jets: List[int]) -> int:
 
 
 @Timer.timeit
-def parse(filename: str) -> List[int]:
+def parse(filename: os.PathLike) -> List[int]:
     with open(filename, "r") as file:
         jets = [RIGHT if jet == ">" else LEFT for jet in file.read().strip()]
     return jets
 
 
 @Timer.timeit
-def solve(filename: str) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> Tuple[int, int]:
     jets = parse(filename)
     part1 = simulate_fall(2022, jets)
     part2 = simulate_fall(1_000_000_000_000, jets)
@@ -85,9 +86,9 @@ def solve(filename: str) -> Tuple[int, int]:
 
 
 def main() -> None:
-    import os
+    from pathlib import Path
 
-    res = solve(os.path.dirname(os.path.abspath(__file__)) + "/input.txt")
+    res = solve(Path(__file__).parent / "input.txt")
 
     assert res[0] == 3117, f"Part1 = {res[0]}"
     assert res[1] == 1_553_314_121_019, f"Part2 = {res[1]}"
