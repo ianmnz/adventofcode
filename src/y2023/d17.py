@@ -64,16 +64,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = find_shortest_path(graph, 4, 10)
 
     return part1, part2
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 674, f"Part1 = {res[0]}"
-    assert res[1] == 773, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

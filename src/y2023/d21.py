@@ -90,16 +90,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = quadratic_interpolation(grid, 26501365)
 
     return part1, part2
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 3830, f"Part1 = {res[0]}"
-    assert res[1] == 637087163925555, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

@@ -10,7 +10,7 @@ from helpers import Timer
 
 @Timer.timeit
 def calibrate(document: List[str]) -> int:
-    matches = [[digit for digit in re.findall(rf"\d", line)] for line in document]
+    matches = [[digit for digit in re.findall(r"\d", line)] for line in document]
 
     return sum(int(digits[0] + digits[-1]) for digits in matches)
 
@@ -56,16 +56,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = calibrate(fix(document))
 
     return part1, part2
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 55816, f"Part1 = {res[0]}"
-    assert res[1] == 54980, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

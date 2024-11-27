@@ -90,16 +90,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = count_simultaneous_steps_to_exit(sequence.strip(), nodes.split("\n"))
 
     return part1, part2
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 21797, f"Part1 = {res[0]}"
-    assert res[1] == 23977527174353, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

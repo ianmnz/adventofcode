@@ -91,16 +91,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = compute_load_on_north(run_n_cycles(platform, 1_000_000_000))
 
     return part1, part2
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 105208, f"Part1 = {res[0]}"
-    assert res[1] == 102943, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

@@ -28,8 +28,11 @@ def simulate_fall(n: int, jets: List[int]) -> int:
     tower = set()
     cache = dict()
 
-    is_empty = lambda z: (z.real in range(7)) and (z.imag > 0) and (z not in tower)
-    check_move = lambda z, jet, rock: all(is_empty(z + jet + r) for r in rock)
+    def is_empty(z: complex) -> bool:
+        return z.real in range(7) and z.imag > 0 and z not in tower
+
+    def check_move(z: complex, jet: complex, rock) -> bool:
+        return all(is_empty(z + jet + r) for r in rock)
 
     i, j, top = 0, 0, 0
     nb_jets = len(jets)
@@ -83,16 +86,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = simulate_fall(1_000_000_000_000, jets)
 
     return part1, part2
-
-
-def main() -> None:
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 3117, f"Part1 = {res[0]}"
-    assert res[1] == 1_553_314_121_019, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

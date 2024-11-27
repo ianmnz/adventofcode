@@ -104,16 +104,3 @@ def solve(filename: os.PathLike) -> Coordinate:
     part2 = (part1 + 1) + simulate_up_to_blocking_source(scanner)
 
     return part1, part2
-
-
-def main() -> None:
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 843, f"Part1 = {res[0]}"
-    assert res[1] == 27625, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

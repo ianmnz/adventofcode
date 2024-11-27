@@ -122,16 +122,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = 10 + spread(elves, 2_000)
 
     return part1, part2
-
-
-def main() -> None:
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 4005, f"Part1 = {res[0]}"
-    assert res[1] == 1008, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

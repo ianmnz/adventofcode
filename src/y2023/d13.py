@@ -57,16 +57,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = summarize_patterns(patterns, 1)
 
     return part1, part2
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 34772, f"Part1 = {res[0]}"
-    assert res[1] == 35554, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

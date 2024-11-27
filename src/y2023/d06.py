@@ -56,16 +56,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = calculate_margin_of_error(times, record_distances)
 
     return part1, part2
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 316800, f"Part1 = {res[0]}"
-    assert res[1] == 45647654, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

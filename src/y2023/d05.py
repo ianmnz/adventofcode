@@ -87,7 +87,7 @@ def parse(filename: os.PathLike) -> Tuple[List[int], List[List[str]]]:
     with open(filename, "r") as file:
         seeds, mappings = file.read().split("\n\n", 1)
 
-    seeds = [int(seed) for seed in re.findall(rf"\d+", seeds)]
+    seeds = [int(seed) for seed in re.findall(r"\d+", seeds)]
     mappings = [mapping.split("\n")[1:] for mapping in mappings.split("\n\n")]
 
     return seeds, mappings
@@ -106,16 +106,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = min(seed_to_location(seed_intervals, mappings)).left
 
     return part1, part2
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 650599855, f"Part1 = {res[0]}"
-    assert res[1] == 1240035, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

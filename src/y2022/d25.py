@@ -76,15 +76,3 @@ def solve(filename: os.PathLike) -> str:
     part1 = get_total_sum(numbers)
 
     return part1
-
-
-def main() -> None:
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res == "2-0-020-1==1021=--01", f"Part1 = {res[0]}"
-
-
-if __name__ == "__main__":
-    main()

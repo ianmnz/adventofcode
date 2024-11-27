@@ -133,16 +133,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = compute_monkey_business(10_000, monkeys_cp)
 
     return part1, part2
-
-
-def main() -> None:
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 110_264, f"Part1 = {res[0]}"
-    assert res[1] == 23_612_457_316, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

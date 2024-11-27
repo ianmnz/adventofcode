@@ -63,8 +63,11 @@ def build_graph(
 ) -> Tuple[Dict[complex, Node], complex, List[complex]]:
     m, n = len(heightmap), len(heightmap[0])
 
-    is_valid = lambda x, y: (0 <= x < m) and (0 <= y < n)
-    height = lambda x, y: char_to_int(heightmap[x][y])
+    def is_valid(x: int, y: int) -> bool:
+        return 0 <= x < m and 0 <= y < n
+
+    def height(x: int, y: int) -> int:
+        return char_to_int(heightmap[x][y])
 
     target = 0j
     candidates = []
@@ -127,7 +130,9 @@ def bfs(graph: Dict[complex, Node], start: complex, target: complex) -> int:
 
 
 def A_star_search(graph: Dict[complex, Node], start: complex, target: complex) -> int:
-    manhattan = lambda pos: abs(pos.real - target.real) + abs(pos.imag - target.imag)
+    def manhattan(pos: complex) -> float:
+        return abs(pos.real - target.real) + abs(pos.imag - target.imag)
+
     search_details = {start: ASearch(h := manhattan(start), 0, h)}
 
     open_list: List[Tuple[float, int, Node]] = [(h, 0, graph[start])]  # (f, g, node)
@@ -234,16 +239,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = find_best_start(graph, target, candidates[1:])
 
     return part1, part2
-
-
-def main() -> None:
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 517, f"Part1 = {res[0]}"
-    assert res[1] == 512, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

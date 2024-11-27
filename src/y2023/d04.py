@@ -38,7 +38,7 @@ def compute_total_scratchcards(cards: List[str]) -> int:
         card_id, numbers = card.split(":")
         nb_copies = compute_card_winnings(numbers)
 
-        card_id = int(re.findall(rf"\d+", card_id)[0]) - 1
+        card_id = int(re.findall(r"\d+", card_id)[0]) - 1
         total_scratchcards += scratchcards[card_id]
 
         if nb_copies > 0:
@@ -62,16 +62,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = compute_total_scratchcards(cards)
 
     return part1, part2
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 24733, f"Part1 = {res[0]}"
-    assert res[1] == 5422730, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

@@ -116,16 +116,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = find_rock_launch_vector(vectors)
 
     return part1, part2
-
-
-def main() -> None:
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 31921, f"Part1 = {res[0]}"
-    assert res[1] == 761691907059631, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

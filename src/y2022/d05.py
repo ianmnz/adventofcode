@@ -91,16 +91,3 @@ def solve(filename: os.PathLike) -> Tuple[str, str]:
     part2 = read_top_of_stacks(stacks_cp)
 
     return part1, part2
-
-
-def main() -> None:
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == "QNNTGTPFN", f"Part1 = {res[0]}"
-    assert res[1] == "GGNPJBTTR", f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

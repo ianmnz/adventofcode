@@ -23,7 +23,7 @@ def sum_engine_parts_numbers(schematic: List[str]) -> int:
     engine = dict()
 
     for r, row in enumerate(schematic):
-        for number in re.finditer(rf"\d+", row):
+        for number in re.finditer(r"\d+", row):
             neighborhood = {
                 (i, j)
                 for i in (r - 1, r, r + 1)
@@ -44,7 +44,7 @@ def sum_gear_ratios(schematic: List[str]) -> int:
     gears = {(i, j): [] for i in range(n) for j in range(m) if schematic[i][j] == "*"}
 
     for r, row in enumerate(schematic):
-        for number in re.finditer(rf"\d+", row):
+        for number in re.finditer(r"\d+", row):
             neighborhood = {
                 (i, j)
                 for i in (r - 1, r, r + 1)
@@ -71,16 +71,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = sum_gear_ratios(schematic)
 
     return part1, part2
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 533775, f"Part1 = {res[0]}"
-    assert res[1] == 78236071, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

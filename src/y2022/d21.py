@@ -61,16 +61,3 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     part2 = get_number_to_be_yelled(monkeys["root"], monkeys)
 
     return part1, part2
-
-
-def main() -> None:
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 169_525_884_255_464, f"Part1 = {res[0]}"
-    assert res[1] == 3_247_317_268_284, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()

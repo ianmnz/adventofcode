@@ -144,14 +144,3 @@ def solve(filename: os.PathLike) -> int:
     # return iterative_split(build_graph(network))
     # return karger_min_cut(build_graph(network))
     return minimum_cut(build_graph(network))
-
-
-def main() -> None:
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-    assert res == 552695, f"Res = {res}"
-
-
-if __name__ == "__main__":
-    main()

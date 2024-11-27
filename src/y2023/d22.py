@@ -131,16 +131,3 @@ def parse(filename: os.PathLike) -> List[Brick]:
 def solve(filename: os.PathLike) -> Tuple[int, int]:
     data = parse(filename)
     return bricks_to_disintegrate(data)
-
-
-def main():
-    from pathlib import Path
-
-    res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == 468, f"Part1 = {res[0]}"
-    assert res[1] == 75358, f"Part2 = {res[1]}"
-
-
-if __name__ == "__main__":
-    main()
