@@ -21,6 +21,15 @@ def solve(filename: os.PathLike) -> Tuple[int, int]:
     return part1, part2
 
 
+def test_day_XX(data_dir):
+    # from src.y202X.dXX import solve
+
+    res1, res2 = solve(data_dir / "202XXX.txt")
+
+    assert res1 == -1, f"Part1 = {res1}"
+    assert res2 == -1, f"Part2 = {res2}"
+
+
 def main() -> None:
     from pathlib import Path
 

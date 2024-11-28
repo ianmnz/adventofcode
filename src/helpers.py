@@ -2,11 +2,11 @@
 
 import time
 from functools import wraps
-from typing import List, Callable, TypeVar
-from typing_extensions import ParamSpec     # After 3.10, import directly from typing
+from typing import Callable, List, ParamSpec, TypeVar
 
-R = TypeVar("R")    # Callable return type
+R = TypeVar("R")  # Callable return type
 P = ParamSpec("P")  # Callable parameters type
+
 
 class Timer:
     """
@@ -27,6 +27,7 @@ class Timer:
             end = time.perf_counter_ns()
             Timer._print(f"{func.__name__!r} took", end - start)
             return res
+
         return wrapper
 
     def __init__(self) -> None:
@@ -44,5 +45,5 @@ class Timer:
     def __exit__(self, type, value, traceback) -> None:
         self.checkpoints.append(time.perf_counter_ns())
         if len(self.checkpoints) > 2:
-            self._print('end timer', self.checkpoints[-1] - self.checkpoints[-2])
-        self._print('total elapsed time', self.checkpoints[-1] - self.checkpoints[0])
+            self._print("end timer", self.checkpoints[-1] - self.checkpoints[-2])
+        self._print("total elapsed time", self.checkpoints[-1] - self.checkpoints[0])
