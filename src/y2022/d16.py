@@ -5,7 +5,6 @@ import os
 import re
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Dict, List, Tuple
 
 from helpers import Timer
 
@@ -14,11 +13,11 @@ from helpers import Timer
 class Valve:
     label: str
     flow: int
-    tunnels: Dict[str, int]
+    tunnels: dict[str, int]
 
 
 @Timer.timeit
-def floyd_warshall(valves: Dict[str, Valve]) -> None:
+def floyd_warshall(valves: dict[str, Valve]) -> None:
     INF = 99999
 
     for k, valve_k in valves.items():
@@ -31,7 +30,7 @@ def floyd_warshall(valves: Dict[str, Valve]) -> None:
 
 
 @Timer.timeit
-def filter_functioning_valves(valves: Dict[str, Valve], start: str) -> None:
+def filter_functioning_valves(valves: dict[str, Valve], start: str) -> None:
     valves_to_remove = []
 
     for label, valve in valves.items():
@@ -47,7 +46,7 @@ def filter_functioning_valves(valves: Dict[str, Valve], start: str) -> None:
 
 
 @Timer.timeit
-def build_graph(report: List[str], start: str = "AA") -> Dict[str, Valve]:
+def build_graph(report: list[str], start: str = "AA") -> dict[str, Valve]:
     valves = {}
 
     pattern = re.compile(
@@ -70,7 +69,7 @@ def build_graph(report: List[str], start: str = "AA") -> Dict[str, Valve]:
 
 @Timer.timeit
 def maximize_released_pressure(
-    valves: Dict[str, Valve], total_time: int, with_help: bool, start: str = "AA"
+    valves: dict[str, Valve], total_time: int, with_help: bool, start: str = "AA"
 ) -> int:
     mask = {label: 1 << i for i, label in enumerate(valves)}
 
@@ -113,14 +112,14 @@ def maximize_released_pressure(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         report = file.read().strip().split("\n")
     return report
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     report = parse(filename)
     valves = build_graph(report)
     part1 = maximize_released_pressure(valves, 30, False)

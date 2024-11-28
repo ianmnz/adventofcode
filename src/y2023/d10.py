@@ -2,7 +2,6 @@
 # https://adventofcode.com/2023/day/10
 
 import os
-from typing import Dict, List, Set, Tuple
 
 from helpers import Timer
 
@@ -19,7 +18,7 @@ connections = {
 
 
 @Timer.timeit
-def follow_pipes(maze: List[str]) -> Set[complex]:
+def follow_pipes(maze: list[str]) -> set[complex]:
     n = len(maze)
     m = len(maze[0])
 
@@ -58,7 +57,7 @@ def follow_pipes(maze: List[str]) -> Set[complex]:
 
     start = find_start()
 
-    graph: Dict[complex, List[complex]] = dict()
+    graph: dict[complex, list[complex]] = dict()
     for i in range(n):
         for j in range(m):
             pos = complex(i, j)
@@ -79,12 +78,12 @@ def follow_pipes(maze: List[str]) -> Set[complex]:
 
 
 @Timer.timeit
-def find_farthest_position(maze: List[str]) -> int:
+def find_farthest_position(maze: list[str]) -> int:
     return len(follow_pipes(maze)) // 2
 
 
 @Timer.timeit
-def find_enclosed_area(maze: List[str]) -> int:
+def find_enclosed_area(maze: list[str]) -> int:
     enclosed_area = 0
     visited = follow_pipes(maze)
 
@@ -100,14 +99,14 @@ def find_enclosed_area(maze: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         maze = file.read().splitlines()
     return maze
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     maze = parse(filename)
     maze_cp = maze.copy()
 

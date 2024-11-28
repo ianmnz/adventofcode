@@ -2,7 +2,7 @@
 # https://adventofcode.com/2022/day/2
 
 import os
-from typing import Dict, List, Tuple, cast
+from typing import cast
 
 from helpers import Timer
 
@@ -22,20 +22,20 @@ score_part2 = {
 
 @Timer.timeit
 def compute_score(
-    guide: List[Tuple[str, str]], score_map: Dict[str, Dict[str, int]]
+    guide: list[tuple[str, str]], score_map: dict[str, dict[str, int]]
 ) -> int:
     return sum(score_map[opponent][player] for opponent, player in guide)
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[Tuple[str, str]]:
+def parse(filename: os.PathLike) -> list[tuple[str, str]]:
     with open(filename, "r") as file:
         guide = [tuple(line.split()) for line in file.read().strip().split("\n")]
-    return cast(List[Tuple[str, str]], guide)
+    return cast(list[tuple[str, str]], guide)
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     guide = parse(filename)
 
     part1 = compute_score(guide, score_part1)

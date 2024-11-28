@@ -4,7 +4,7 @@
 import os
 import re
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import Self
 
 from helpers import Timer
 
@@ -14,24 +14,24 @@ class Interval:
     left: int
     right: int
 
-    def __lt__(self, other: "Interval") -> bool:
+    def __lt__(self, other: Self) -> bool:
         return self.left < other.left
 
-    def intersect(self, other: "Interval") -> bool:
+    def intersect(self, other: Self) -> bool:
         return (self.right >= other.left) and (self.left <= other.right)
 
-    def contains(self, other: "Interval") -> bool:
+    def contains(self, other: Self) -> bool:
         return self.left <= other.left <= other.right <= self.right
 
-    def left_intersect(self, other: "Interval") -> bool:
+    def left_intersect(self, other: Self) -> bool:
         return other.left <= self.left <= other.right < self.right
 
-    def right_intersect(self, other: "Interval") -> bool:
+    def right_intersect(self, other: Self) -> bool:
         return self.left < other.left <= self.right <= other.right
 
 
-def apply(mapping: List[str], domain: List[Interval]) -> List[Interval]:
-    images: List[Interval] = list()
+def apply(mapping: list[str], domain: list[Interval]) -> list[Interval]:
+    images: list[Interval] = list()
     while domain:
         domain_interval = domain.pop()
 
@@ -75,15 +75,15 @@ def apply(mapping: List[str], domain: List[Interval]) -> List[Interval]:
 
 @Timer.timeit
 def seed_to_location(
-    seeds: List[Interval], mappings: List[List[str]]
-) -> List[Interval]:
+    seeds: list[Interval], mappings: list[list[str]]
+) -> list[Interval]:
     for mapping in mappings:
         seeds = apply(mapping, seeds)
     return seeds
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Tuple[List[int], List[List[str]]]:
+def parse(filename: os.PathLike) -> tuple[list[int], list[list[str]]]:
     with open(filename, "r") as file:
         seeds, mappings = file.read().split("\n\n", 1)
 
@@ -94,7 +94,7 @@ def parse(filename: os.PathLike) -> Tuple[List[int], List[List[str]]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     seeds, mappings = parse(filename)
 
     seed_intervals = [Interval(seed, seed) for seed in seeds]

@@ -3,14 +3,13 @@
 
 import collections
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
 def nb_reachable_gardens(
-    grid: List[List[str]], nb_steps: int = 64, with_repetition: bool = False
+    grid: list[list[str]], nb_steps: int = 64, with_repetition: bool = False
 ) -> int:
     n = len(grid)
     m = len(grid[0])
@@ -62,7 +61,7 @@ def nb_reachable_gardens(
 
 
 @Timer.timeit
-def quadratic_interpolation(grid: List[List[str]], nb_steps: int = 26501365) -> int:
+def quadratic_interpolation(grid: list[list[str]], nb_steps: int = 26501365) -> int:
     n = len(grid)
 
     y0 = nb_reachable_gardens(grid, n // 2 + 0 * n, True)
@@ -77,14 +76,14 @@ def quadratic_interpolation(grid: List[List[str]], nb_steps: int = 26501365) -> 
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[List[str]]:
+def parse(filename: os.PathLike) -> list[list[str]]:
     with open(filename, "r") as file:
         grid = [[char for char in line] for line in file.read().split("\n")]
     return grid
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     grid = parse(filename)
     part1 = nb_reachable_gardens(grid, 64)
     part2 = quadratic_interpolation(grid, 26501365)

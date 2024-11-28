@@ -2,7 +2,6 @@
 # https://adventofcode.com/2022/day/17
 
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
@@ -24,7 +23,7 @@ DOWN = -1j
 
 
 @Timer.timeit
-def simulate_fall(n: int, jets: List[int]) -> int:
+def simulate_fall(n: int, jets: list[int]) -> int:
     tower = set()
     cache = dict()
 
@@ -73,14 +72,14 @@ def simulate_fall(n: int, jets: List[int]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[int]:
+def parse(filename: os.PathLike) -> list[int]:
     with open(filename, "r") as file:
         jets = [RIGHT if jet == ">" else LEFT for jet in file.read().strip()]
     return jets
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     jets = parse(filename)
     part1 = simulate_fall(2022, jets)
     part2 = simulate_fall(1_000_000_000_000, jets)

@@ -4,7 +4,6 @@
 import collections
 import itertools
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
@@ -12,7 +11,7 @@ Vector3d = collections.namedtuple("Vector3d", ["x", "y", "z"])
 
 
 @Timer.timeit
-def get_vectors(hailstorm: List[List[str]]) -> List[Tuple[Vector3d]]:
+def get_vectors(hailstorm: list[list[str]]) -> list[tuple[Vector3d]]:
     vectors = []
     for hailstone in hailstorm:
         pos = Vector3d(*eval(hailstone[0]))
@@ -24,7 +23,7 @@ def get_vectors(hailstorm: List[List[str]]) -> List[Tuple[Vector3d]]:
 
 @Timer.timeit
 def count_intersections(
-    vectors: List[Tuple[Vector3d]], lower_bound: int, upper_bound: int
+    vectors: list[tuple[Vector3d]], lower_bound: int, upper_bound: int
 ) -> int:
     count = 0
     for (P1, V1), (P2, V2) in itertools.combinations(vectors, 2):
@@ -56,7 +55,7 @@ def count_intersections(
 
 
 @Timer.timeit
-def find_rock_launch_vector(vectors: List[Tuple[Vector3d]]) -> Tuple[Vector3d]:
+def find_rock_launch_vector(vectors: list[tuple[Vector3d]]) -> tuple[Vector3d]:
     import sympy
 
     Px = sympy.Symbol("Px")
@@ -101,14 +100,14 @@ def find_rock_launch_vector(vectors: List[Tuple[Vector3d]]) -> Tuple[Vector3d]:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[List[str]]:
+def parse(filename: os.PathLike) -> list[list[str]]:
     with open(filename, "r") as file:
         hailstorm = [line.split("@") for line in file.read().split("\n")]
     return hailstorm
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     hailstorm = parse(filename)
     vectors = get_vectors(hailstorm)
     part1 = count_intersections(vectors, 200_000_000_000_000, 400_000_000_000_000)

@@ -3,18 +3,17 @@
 
 import os
 from heapq import heappop, heappush
-from typing import Dict, List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def build_graph(heatmap: List[List[int]]) -> Dict[Tuple[int], int]:
+def build_graph(heatmap: list[list[int]]) -> dict[tuple[int], int]:
     return {(i, j): col for i, row in enumerate(heatmap) for j, col in enumerate(row)}
 
 
 @Timer.timeit
-def find_shortest_path(graph: Dict[Tuple[int], int], lower: int, upper: int) -> int:
+def find_shortest_path(graph: dict[tuple[int], int], lower: int, upper: int) -> int:
     source = (0, 0)
     dest = [*graph][-1]
 
@@ -48,7 +47,7 @@ def find_shortest_path(graph: Dict[Tuple[int], int], lower: int, upper: int) -> 
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[List[int]]:
+def parse(filename: os.PathLike) -> list[list[int]]:
     with open(filename, "r") as file:
         heatmap = [
             [int(heatloss) for heatloss in line] for line in file.read().split("\n")
@@ -57,7 +56,7 @@ def parse(filename: os.PathLike) -> List[List[int]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     heatmap = parse(filename)
     graph = build_graph(heatmap)
     part1 = find_shortest_path(graph, 1, 3)

@@ -2,11 +2,10 @@
 # https://adventofcode.com/2022/day/8
 
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
-Grid = List[List[int]]
+Grid = list[list[int]]
 
 
 @Timer.timeit
@@ -14,7 +13,7 @@ def transpose(grid: Grid) -> Grid:
     return [[grid[j][i] for j in range(len(grid))] for i in range(len(grid[0]))]
 
 
-def get_line_of_sight(j: int, row: List[int]) -> Tuple[int, int]:
+def get_line_of_sight(j: int, row: list[int]) -> tuple[int, int]:
     n = len(row)
 
     l_score = j
@@ -69,7 +68,7 @@ def traverse_grid_per_row(grid: Grid, exposure: Grid, score: Grid) -> None:
 
 
 @Timer.timeit
-def compute_exposure_and_score(grid: Grid) -> Tuple[Grid, Grid]:
+def compute_exposure_and_score(grid: Grid) -> tuple[Grid, Grid]:
     m, n = len(grid), len(grid[0])
 
     exposure = [[0 for j in range(n)] for i in range(m)]
@@ -105,7 +104,7 @@ def parse(filename: os.PathLike) -> Grid:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     grid = parse(filename)
     exposure, score = compute_exposure_and_score(grid)
     part1 = count_nb_visible_trees(exposure)

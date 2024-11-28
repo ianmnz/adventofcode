@@ -2,18 +2,17 @@
 # https://adventofcode.com/yyyy/day/dd
 
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     ...
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     _ = parse(filename)
     part1 = -1
     part2 = -1

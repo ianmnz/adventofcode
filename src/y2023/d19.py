@@ -4,12 +4,11 @@
 import os
 import re
 from itertools import islice
-from typing import Dict, List, Tuple
 
 from helpers import Timer
 
 
-def is_accepted(part: List[int], workflows: Dict[str, str], start: str = "in") -> bool:
+def is_accepted(part: list[int], workflows: dict[str, str], start: str = "in") -> bool:
     x, m, a, s = part
     rules = workflows[start]
 
@@ -38,8 +37,8 @@ def is_accepted(part: List[int], workflows: Dict[str, str], start: str = "in") -
 
 
 def get_acceptance_range(
-    parts_range: Dict[str, Tuple[int]], workflows: Dict[str, str], start: str = "in"
-) -> List[Tuple[str, Tuple[int]]]:
+    parts_range: dict[str, tuple[int]], workflows: dict[str, str], start: str = "in"
+) -> list[tuple[str, tuple[int]]]:
     rules = workflows.get(start, start)
     intervals = []
 
@@ -88,13 +87,13 @@ def get_acceptance_range(
 
 
 @Timer.timeit
-def sum_accepted_parts_rating(parts: List[List[int]], workflows: Dict[str, str]) -> int:
+def sum_accepted_parts_rating(parts: list[list[int]], workflows: dict[str, str]) -> int:
     return sum([sum(part) for part in parts if is_accepted(part, workflows)])
 
 
 @Timer.timeit
 def nb_of_combinations_accepted(
-    parts_range: Dict[str, Tuple[int]], workflows: Dict[str, str]
+    parts_range: dict[str, tuple[int]], workflows: dict[str, str]
 ) -> int:
     def batched(iterable, chunk_size):
         iterator = iter(iterable)
@@ -112,7 +111,7 @@ def nb_of_combinations_accepted(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Tuple[str, Dict[str, str]]:
+def parse(filename: os.PathLike) -> tuple[str, dict[str, str]]:
     with open(filename, "r") as file:
         temp, parts = file.read().split("\n\n")
 
@@ -125,7 +124,7 @@ def parse(filename: os.PathLike) -> Tuple[str, Dict[str, str]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     parts, workflows = parse(filename)
 
     parts = [list(map(int, re.findall(r"\d+", part))) for part in parts.split("\n")]

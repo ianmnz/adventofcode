@@ -3,7 +3,7 @@
 
 import os
 from itertools import islice
-from typing import Generator, Iterable, List, Tuple
+from typing import Generator, Iterable
 
 from helpers import Timer
 
@@ -44,7 +44,7 @@ def priority(item: str) -> int:
 
 
 @Timer.timeit
-def find_priority_of_common(rucksacks: List[str]) -> int:
+def find_priority_of_common(rucksacks: list[str]) -> int:
     sum_common_type_prio = 0
 
     for rucksack in rucksacks:
@@ -56,8 +56,8 @@ def find_priority_of_common(rucksacks: List[str]) -> int:
 
 
 @Timer.timeit
-def find_priority_of_badges(rucksacks: List[str]) -> int:
-    def batched(iterable: Iterable, chunk_size: int) -> Generator[Tuple, None, None]:
+def find_priority_of_badges(rucksacks: list[str]) -> int:
+    def batched(iterable: Iterable, chunk_size: int) -> Generator[tuple, None, None]:
         iterator = iter(iterable)
         while chunk := tuple(islice(iterator, chunk_size)):
             yield chunk
@@ -72,14 +72,14 @@ def find_priority_of_badges(rucksacks: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         rucksacks = file.read().strip().split()
     return rucksacks
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     rucksacks = parse(filename)
     part1 = find_priority_of_common(rucksacks)
     part2 = find_priority_of_badges(rucksacks)

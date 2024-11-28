@@ -5,7 +5,6 @@ import os
 from collections import defaultdict
 from dataclasses import dataclass
 from itertools import product
-from typing import Dict, List, Set, Tuple
 
 from helpers import Timer
 
@@ -36,7 +35,7 @@ class Elf:
     # Elf cellular automata
     pos: complex
 
-    def check_surrounding(self, other_pos: Set[complex]) -> int:
+    def check_surrounding(self, other_pos: set[complex]) -> int:
         res = 0
         for dx, dy in product((-1, 0, 1), repeat=2):
             dz = complex(dx, dy)
@@ -45,9 +44,9 @@ class Elf:
         return res
 
 
-def round(elves: List[Elf]) -> bool:
+def round(elves: list[Elf]) -> bool:
     curr_pos = {elf.pos for elf in elves}
-    propositions: Dict[complex, List[Elf]] = defaultdict(list)
+    propositions: dict[complex, list[Elf]] = defaultdict(list)
 
     for elf in elves:
         # First half:
@@ -75,7 +74,7 @@ def round(elves: List[Elf]) -> bool:
 
 
 @Timer.timeit
-def spread(elves: List[Elf], nb_rounds: int) -> int:
+def spread(elves: list[Elf], nb_rounds: int) -> int:
     # A kind of game of life
     global cycle_start
 
@@ -88,7 +87,7 @@ def spread(elves: List[Elf], nb_rounds: int) -> int:
 
 
 @Timer.timeit
-def get_covered_ground(elves: List[Elf]) -> int:
+def get_covered_ground(elves: list[Elf]) -> int:
     x_min = y_min = float("inf")
     x_max = y_max = float("-inf")
 
@@ -102,7 +101,7 @@ def get_covered_ground(elves: List[Elf]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[Elf]:
+def parse(filename: os.PathLike) -> list[Elf]:
     with open(filename, "r") as file:
         lines = file.read().strip().split("\n")
 
@@ -115,7 +114,7 @@ def parse(filename: os.PathLike) -> List[Elf]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     elves = parse(filename)
     spread(elves, 10)
     part1 = get_covered_ground(elves)

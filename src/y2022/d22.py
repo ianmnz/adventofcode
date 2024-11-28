@@ -5,7 +5,6 @@ import math
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Dict, List, Set, Tuple
 
 from helpers import Timer
 
@@ -34,7 +33,7 @@ CLOCKWISE_CUBE_FACES["D"] = list(reversed(CLOCKWISE_CUBE_FACES["T"]))  # Down
 class Face:
     pos: complex
     heading: str = field(init=False, default="")
-    edges: Dict[complex, str] = field(init=False, default_factory=dict)
+    edges: dict[complex, str] = field(init=False, default_factory=dict)
 
     def fold(self, heading: str, _from: complex, edge: str) -> None:
         self.heading = heading
@@ -50,8 +49,8 @@ class Face:
 
 @dataclass
 class Wrapper:
-    walls: Set[complex]
-    wrap: Dict[Tuple[complex, complex], Tuple[complex, complex]]
+    walls: set[complex]
+    wrap: dict[tuple[complex, complex], tuple[complex, complex]]
 
 
 @dataclass
@@ -80,7 +79,7 @@ class Turtle:
             self.dir *= -1j
 
 
-def is_pos_valid(board: List[List[str]], z: complex, dz: complex) -> bool:
+def is_pos_valid(board: list[list[str]], z: complex, dz: complex) -> bool:
     pos = z + dz
     x, y = int(pos.real), int(pos.imag)
     try:
@@ -95,7 +94,7 @@ def is_pos_valid(board: List[List[str]], z: complex, dz: complex) -> bool:
 
 
 @Timer.timeit
-def fold(faces: Dict[complex, Face]) -> Dict[str, Face]:
+def fold(faces: dict[complex, Face]) -> dict[str, Face]:
     # Arbitrarily choose the first as Top
     # and the face right to it as Right
     first = next(iter(faces))
@@ -136,7 +135,7 @@ def fold(faces: Dict[complex, Face]) -> Dict[str, Face]:
     return face_per_headings
 
 
-def find_start(board: List[List[str]]) -> complex:
+def find_start(board: list[list[str]]) -> complex:
     for i, row in enumerate(board):
         for j, col in enumerate(row):
             if col != " ":
@@ -145,7 +144,7 @@ def find_start(board: List[List[str]]) -> complex:
 
 
 @Timer.timeit
-def build_wrappers(board: List[List[str]]) -> Tuple[Wrapper, Wrapper]:
+def build_wrappers(board: list[list[str]]) -> tuple[Wrapper, Wrapper]:
     walls = set()
     torus = {}
     cube = {}
@@ -258,7 +257,7 @@ def build_wrappers(board: List[List[str]]) -> Tuple[Wrapper, Wrapper]:
 
 @Timer.timeit
 def get_final_password(
-    start: complex, wrapper: Wrapper, instructions: List[str]
+    start: complex, wrapper: Wrapper, instructions: list[str]
 ) -> int:
     turtle = Turtle(start)
 
@@ -276,7 +275,7 @@ def get_final_password(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Tuple[List[List[str]], List[str]]:
+def parse(filename: os.PathLike) -> tuple[list[list[str]], list[str]]:
     with open(filename, "r") as file:
         lines, path = file.read().rstrip().split("\n\n")
 
@@ -287,7 +286,7 @@ def parse(filename: os.PathLike) -> Tuple[List[List[str]], List[str]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     board, instructions = parse(filename)
     start = find_start(board)
     torus, cube = build_wrappers(board)

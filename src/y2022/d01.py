@@ -3,18 +3,17 @@
 
 import functools
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def sum_k_first_elements(array: List[int], k: int) -> int:
+def sum_k_first_elements(array: list[int], k: int) -> int:
     return functools.reduce(lambda x, y: x + y, array[:k])
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[int]:
+def parse(filename: os.PathLike) -> list[int]:
     with open(filename, "r") as file:
         inventory = [
             sum(map(int, items.split("\n")))
@@ -24,7 +23,7 @@ def parse(filename: os.PathLike) -> List[int]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     inventory = parse(filename)
     inventory = sorted(inventory, reverse=True)
     part1 = sum_k_first_elements(inventory, 1)

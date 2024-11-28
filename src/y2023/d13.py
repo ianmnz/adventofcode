@@ -2,18 +2,17 @@
 # https://adventofcode.com/2023/day/13
 
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
 
-def transpose(pattern: List[str]) -> List[List[str]]:
+def transpose(pattern: list[str]) -> list[list[str]]:
     return [
         [pattern[j][i] for j in range(len(pattern))] for i in range(len(pattern[0]))
     ]
 
 
-def find_reflection_point(pattern: List[str], expected_smudges: int) -> int:
+def find_reflection_point(pattern: list[str], expected_smudges: int) -> int:
     def check_reflection_point(pattern_l: str, pattern_r: str) -> bool:
         diffs = 0
         for row_l, row_r in zip(pattern_l, pattern_r):
@@ -33,7 +32,7 @@ def find_reflection_point(pattern: List[str], expected_smudges: int) -> int:
 
 
 @Timer.timeit
-def summarize_patterns(patterns: List[List[str]], expected_smudges: int) -> int:
+def summarize_patterns(patterns: list[list[str]], expected_smudges: int) -> int:
     ans = 0
     for pattern in patterns:
         # Horizontal symmetry
@@ -44,14 +43,14 @@ def summarize_patterns(patterns: List[List[str]], expected_smudges: int) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[List[str]]:
+def parse(filename: os.PathLike) -> list[list[str]]:
     with open(filename, "r") as file:
         patterns = [line.split("\n") for line in file.read().split("\n\n")]
     return patterns
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     patterns = parse(filename)
     part1 = summarize_patterns(patterns, 0)
     part2 = summarize_patterns(patterns, 1)

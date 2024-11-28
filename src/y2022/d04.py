@@ -3,7 +3,7 @@
 
 import os
 import re
-from typing import List, NamedTuple, Tuple
+from typing import NamedTuple
 
 from helpers import Timer
 
@@ -14,7 +14,7 @@ class Range(NamedTuple):
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[Tuple[Range, Range]]:
+def parse(filename: os.PathLike) -> list[tuple[Range, Range]]:
     pattern = re.compile(r"(\d+)-(\d+),(\d+)-(\d+)")
 
     with open(filename, "r") as file:
@@ -31,7 +31,7 @@ def parse(filename: os.PathLike) -> List[Tuple[Range, Range]]:
 
 
 @Timer.timeit
-def find_nb_intersections(ranges: List[Tuple[Range, Range]]) -> Tuple[int, int]:
+def find_nb_intersections(ranges: list[tuple[Range, Range]]) -> tuple[int, int]:
     nb_fully_contained = 0
     nb_overlapped_not_fully_contained = 0
 
@@ -50,7 +50,7 @@ def find_nb_intersections(ranges: List[Tuple[Range, Range]]) -> Tuple[int, int]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     ranges = parse(filename)
     (
         nb_fully_contained,

@@ -2,12 +2,11 @@
 # https://adventofcode.com/2023/day/14
 
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
 
-def rotate(platform: List[List[str]]) -> List[List[str]]:
+def rotate(platform: list[list[str]]) -> list[list[str]]:
     # rotate 90° clockwise
     return [
         [platform[j][i] for j in range(len(platform) - 1, -1, -1)]
@@ -15,7 +14,7 @@ def rotate(platform: List[List[str]]) -> List[List[str]]:
     ]
 
 
-def tilt(platform: List[List[str]]) -> List[List[str]]:
+def tilt(platform: list[list[str]]) -> list[list[str]]:
     last_available_row_slot = [0] * len(platform[0])
 
     for i, row in enumerate(platform):
@@ -32,7 +31,7 @@ def tilt(platform: List[List[str]]) -> List[List[str]]:
 
 
 @Timer.timeit
-def compute_load_on_north(platform: List[List[str]]) -> int:
+def compute_load_on_north(platform: list[list[str]]) -> int:
     load = 0
     n = len(platform)
 
@@ -44,11 +43,11 @@ def compute_load_on_north(platform: List[List[str]]) -> int:
 
 
 @Timer.timeit
-def run_n_cycles(platform: List[List[str]], n: int = 1) -> List[List[str]]:
-    def grid2str(grid: List[List[str]]) -> str:
+def run_n_cycles(platform: list[list[str]], n: int = 1) -> list[list[str]]:
+    def grid2str(grid: list[list[str]]) -> str:
         return "_".join("".join(row) for row in grid)
 
-    def str2grid(string: str) -> List[List[str]]:
+    def str2grid(string: str) -> list[list[str]]:
         return [[col for col in row] for row in string.split("_")]
 
     history2order = dict()  # We'll keep a history2order of platforms
@@ -78,14 +77,14 @@ def run_n_cycles(platform: List[List[str]], n: int = 1) -> List[List[str]]:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[List[str]]:
+def parse(filename: os.PathLike) -> list[list[str]]:
     with open(filename, "r") as file:
         platform = [[char for char in line] for line in file.read().split("\n")]
     return platform
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     platform = parse(filename)
     part1 = compute_load_on_north(tilt(platform))
     part2 = compute_load_on_north(run_n_cycles(platform, 1_000_000_000))

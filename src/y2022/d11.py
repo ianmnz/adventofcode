@@ -7,7 +7,7 @@ import operator
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Self
 
 from helpers import Timer
 
@@ -40,16 +40,16 @@ class Decision:
 class Monkey:
     id: int
 
-    worry_eval: Optional[WorryEval] = field(init=False, default=None)
-    decision: Optional[Decision] = field(init=False, default=None)
+    worry_eval: None | WorryEval = field(init=False, default=None)
+    decision: None | Decision = field(init=False, default=None)
 
-    items: List[int] = field(init=False, default_factory=list)
+    items: list[int] = field(init=False, default_factory=list)
     nb_inspected_items: int = field(init=False, default=0)
 
     def receive_item(self, item: int) -> None:
         self.items.append(item)
 
-    def inspect_items(self, monkeys: Dict[int, "Monkey"]) -> None:
+    def inspect_items(self, monkeys: dict[int, Self]) -> None:
         for item in self.items:
             item = self.worry_eval(item)
             send_to = self.decision.send_to(item)
@@ -60,7 +60,7 @@ class Monkey:
 
 
 @Timer.timeit
-def update_worry_evaluation(monkeys: Dict[int, Monkey], relief_factor: int = 1) -> None:
+def update_worry_evaluation(monkeys: dict[int, Monkey], relief_factor: int = 1) -> None:
     mod = functools.reduce(
         operator.mul, (monkey.decision.divisor for monkey in monkeys.values())
     )
@@ -70,7 +70,7 @@ def update_worry_evaluation(monkeys: Dict[int, Monkey], relief_factor: int = 1) 
 
 
 @Timer.timeit
-def compute_monkey_business(nb_rounds: int, monkeys: Dict[int, Monkey]) -> int:
+def compute_monkey_business(nb_rounds: int, monkeys: dict[int, Monkey]) -> int:
     for _ in range(nb_rounds):
         for monkey in monkeys.values():
             monkey.inspect_items(monkeys)
@@ -82,7 +82,7 @@ def compute_monkey_business(nb_rounds: int, monkeys: Dict[int, Monkey]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Dict[int, Monkey]:
+def parse(filename: os.PathLike) -> dict[int, Monkey]:
     with open(filename, "r") as file:
         notes = file.read().strip().split("\n\n")
 
@@ -124,7 +124,7 @@ def parse(filename: os.PathLike) -> Dict[int, Monkey]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     monkeys = parse(filename)
     monkeys_cp = copy.deepcopy(monkeys)
     update_worry_evaluation(monkeys_cp)

@@ -5,7 +5,7 @@ import bisect
 import os
 import re
 from dataclasses import dataclass
-from typing import List, NamedTuple, Set, Tuple
+from typing import NamedTuple, Self
 
 from helpers import Timer
 
@@ -32,12 +32,12 @@ class Interval:
     lb: int
     ub: int
 
-    def __lt__(self, other: "Interval") -> bool:
+    def __lt__(self, other: Self) -> bool:
         if self.lb == other.lb:
             return self.ub < other.ub
         return self.lb < other.lb
 
-    def __and__(self, other: "Interval") -> bool:
+    def __and__(self, other: Self) -> bool:
         return (other.lb <= self.ub <= other.ub) or (self.lb <= other.ub <= self.ub)
 
     def __add__(self, other: "Interval") -> "Interval":
@@ -48,7 +48,7 @@ class Interval:
 
 
 @Timer.timeit
-def build_coverage(coverage: List[str]) -> Tuple[List[Sensor], Set[Beacon]]:
+def build_coverage(coverage: list[str]) -> tuple[list[Sensor], set[Beacon]]:
     sensors = []
     beacons = set()
     pattern = re.compile(
@@ -69,11 +69,11 @@ def build_coverage(coverage: List[str]) -> Tuple[List[Sensor], Set[Beacon]]:
 
 
 def _get_row_coverage(
-    sensors: List[Sensor],
+    sensors: list[Sensor],
     row: int,
     lower: float = float("-inf"),
     upper: float = float("inf"),
-) -> List[Interval]:
+) -> list[Interval]:
     intervals = []
     for sensor in sensors:
         x_margin = sensor.coverage - abs(row - sensor.y)
@@ -102,7 +102,7 @@ def _get_row_coverage(
 
 @Timer.timeit
 def get_nb_covered_positions_on_row(
-    sensors: List[Sensor], beacons: Set[Beacon], row: int = 2_000_000
+    sensors: list[Sensor], beacons: set[Beacon], row: int = 2_000_000
 ) -> int:
     return sum(len(interval) for interval in _get_row_coverage(sensors, row)) - len(
         [beacon for beacon in beacons if beacon.y == row]
@@ -110,7 +110,7 @@ def get_nb_covered_positions_on_row(
 
 
 @Timer.timeit
-def get_uncovered_position(sensors: List[Sensor], boundary: int = 4_000_000) -> int:
+def get_uncovered_position(sensors: list[Sensor], boundary: int = 4_000_000) -> int:
     for y in range(boundary, -1, -1):
         coverage = _get_row_coverage(sensors, y, 0, boundary)
 
@@ -125,7 +125,7 @@ def get_uncovered_position(sensors: List[Sensor], boundary: int = 4_000_000) -> 
 
 @Timer.timeit
 def get_uncovered_position_by_line_intersection(
-    sensors: List[Sensor], boundary: int = 4_000_000
+    sensors: list[Sensor], boundary: int = 4_000_000
 ) -> int:
     # Based on https://www.reddit.com/r/adventofcode/comments/zmcn64/comment/j0b90nr/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
     pos_lines = set()
@@ -156,14 +156,14 @@ def get_uncovered_position_by_line_intersection(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         coverage = file.read().strip().split("\n")
     return coverage
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     coverage = parse(filename)
     sensors, beacons = build_coverage(coverage)
     part1 = get_nb_covered_positions_on_row(sensors, beacons)

@@ -3,7 +3,7 @@
 
 import os
 from dataclasses import dataclass, field
-from typing import List, Optional, Tuple
+from typing import Self
 
 from helpers import Timer
 
@@ -12,7 +12,7 @@ from helpers import Timer
 class LensSlot:
     label: int
     focal: int
-    next: Optional["LensSlot"] = field(default=None, init=False)
+    next: None | Self = field(default=None, init=False)
 
 
 class Box:
@@ -78,7 +78,7 @@ def HASH(string: str) -> int:
     return curr
 
 
-def HASHMAP(string: str, boxes: List[Box]) -> List[Box]:
+def HASHMAP(string: str, boxes: list[Box]) -> list[Box]:
     if "-" in string:
         label, _ = string.split("-")
         boxes[HASH(label)].remove(label)
@@ -91,12 +91,12 @@ def HASHMAP(string: str, boxes: List[Box]) -> List[Box]:
 
 
 @Timer.timeit
-def verify_HASH(sequence: List[str]) -> int:
+def verify_HASH(sequence: list[str]) -> int:
     return sum(HASH(string) for string in sequence)
 
 
 @Timer.timeit
-def verify_HASHMAP(sequence: List[str]) -> int:
+def verify_HASHMAP(sequence: list[str]) -> int:
     boxes = [Box() for _ in range(256)]
     for string in sequence:
         boxes = HASHMAP(string, boxes)
@@ -105,14 +105,14 @@ def verify_HASHMAP(sequence: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         sequence = file.read().strip().split(",")
     return sequence
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     sequence = parse(filename)
     part1 = verify_HASH(sequence)
     part2 = verify_HASHMAP(sequence)

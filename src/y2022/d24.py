@@ -3,12 +3,11 @@
 
 import heapq
 import os
-from typing import List, Set, Tuple
 
 from helpers import Timer
 
-Grid = List[List[int]]
-State = Tuple[int, int, int]
+Grid = list[list[int]]
+State = tuple[int, int, int]
 
 
 bitmask = {
@@ -49,7 +48,7 @@ def generate_next_grid(curr_grid: Grid) -> Grid:
 
 
 def bfs(
-    t0: int, source: Tuple[int, int], target: Tuple[int, int], history: List[Grid]
+    t0: int, source: tuple[int, int], target: tuple[int, int], history: list[Grid]
 ) -> int:
     m, n = len(history[0]), len(history[0][0])
 
@@ -58,8 +57,8 @@ def bfs(
     # Normally, we won't need as much grids
     lcm = (m - 2) * (n - 2)
 
-    queue: List[State] = [(t0, *source)]
-    visited: Set[State] = set()
+    queue: list[State] = [(t0, *source)]
+    visited: set[State] = set()
 
     while queue:
         t, x, y = heapq.heappop(queue)
@@ -115,7 +114,7 @@ def parse(filename: os.PathLike) -> Grid:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     grid = parse(filename)
     part1 = get_time_to_cross_valley(grid)
     part2 = get_time_to_cross_valley(grid, True)

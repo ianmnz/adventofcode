@@ -4,13 +4,12 @@
 import math
 import os
 import re
-from typing import List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def sum_engine_parts_numbers(schematic: List[str]) -> int:
+def sum_engine_parts_numbers(schematic: list[str]) -> int:
     n = len(schematic)
     m = len(schematic[0])
 
@@ -37,7 +36,7 @@ def sum_engine_parts_numbers(schematic: List[str]) -> int:
 
 
 @Timer.timeit
-def sum_gear_ratios(schematic: List[str]) -> int:
+def sum_gear_ratios(schematic: list[str]) -> int:
     n = len(schematic)
     m = len(schematic[0])
 
@@ -58,14 +57,14 @@ def sum_gear_ratios(schematic: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         schematic = file.read().split("\n")
     return schematic
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     schematic = parse(filename)
     part1 = sum_engine_parts_numbers(schematic)
     part2 = sum_gear_ratios(schematic)

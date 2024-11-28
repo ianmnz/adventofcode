@@ -5,13 +5,12 @@ import collections
 import functools
 import itertools
 import os
-from typing import Dict, List, Set, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def build_graph(network: List[str]) -> Dict[str, Set[str]]:
+def build_graph(network: list[str]) -> dict[str, set[str]]:
     graph = collections.defaultdict(set)
 
     for component in network:
@@ -26,7 +25,7 @@ def build_graph(network: List[str]) -> Dict[str, Set[str]]:
 
 
 @Timer.timeit
-def iterative_split(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
+def iterative_split(graph: dict[str, set[str]], cut_value: int = 3) -> int:
     group = set(graph)
 
     def count_adj_in_group(v):
@@ -47,7 +46,7 @@ def iterative_split(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
 
 
 @Timer.timeit
-def minimum_cut(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
+def minimum_cut(graph: dict[str, set[str]], cut_value: int = 3) -> int:
     import networkx as nx
 
     G = nx.DiGraph()
@@ -67,13 +66,13 @@ def minimum_cut(graph: Dict[str, Set[str]], cut_value: int = 3) -> int:
 
 @Timer.timeit
 def karger_min_cut(
-    graph: Dict[str, Set[str]], monte_carlo_iterations: int = 200, cut_value: int = 3
+    graph: dict[str, set[str]], monte_carlo_iterations: int = 200, cut_value: int = 3
 ) -> int:
     import random
 
-    parent: Dict[str, Tuple[str, int]]
+    parent: dict[str, tuple[str, int]]
 
-    def find(v: str) -> Tuple[str, int]:
+    def find(v: str) -> tuple[str, int]:
         if parent[v][0] != v:
             parent[v] = find(parent[v][0])
         return parent[v]

@@ -4,7 +4,7 @@
 import os
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import List, Tuple
+from typing import Self
 
 from helpers import Timer
 
@@ -42,7 +42,7 @@ class Hand:
     bid: int
     rank: int = field(init=False, repr=False)
 
-    def __lt__(self, other: "Hand") -> bool:
+    def __lt__(self, other: Self) -> bool:
         if self.rank == other.rank:
             for self_card, other_card in zip(self.cards, other.cards):
                 if card_strength[self_card] == card_strength[other_card]:
@@ -90,7 +90,7 @@ class Hand:
 
 
 @Timer.timeit
-def calculate_total_winnings(hands: List[Hand]) -> int:
+def calculate_total_winnings(hands: list[Hand]) -> int:
     total_winnings = 0
     for i, hand in enumerate(hands, 1):
         total_winnings += i * hand.bid
@@ -98,13 +98,13 @@ def calculate_total_winnings(hands: List[Hand]) -> int:
 
 
 @Timer.timeit
-def set_ranks(hands: List[Hand], with_joker: bool = False) -> None:
+def set_ranks(hands: list[Hand], with_joker: bool = False) -> None:
     for hand in hands:
         hand.set_rank(with_joker)
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[Hand]:
+def parse(filename: os.PathLike) -> list[Hand]:
     with open(filename, "r") as file:
         hands = [
             Hand(hand[0], int(hand[1]))
@@ -114,7 +114,7 @@ def parse(filename: os.PathLike) -> List[Hand]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     hands = parse(filename)
 
     set_ranks(hands)

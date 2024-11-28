@@ -2,17 +2,16 @@
 # https://adventofcode.com/2022/day/20
 
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
 def decrypt(
-    array: List[int],
+    array: list[int],
     decryption_key: int,
     nb_rounds: int,
-    indexes: List[int] = [1000, 2000, 3000],
+    indexes: list[int] = [1000, 2000, 3000],
 ) -> int:
     array = [decryption_key * val for val in array]
     n = len(array)
@@ -27,14 +26,14 @@ def decrypt(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[int]:
+def parse(filename: os.PathLike) -> list[int]:
     with open(filename, "r") as file:
         array = list(map(int, file.read().strip().split("\n")))
     return array
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     array = parse(filename)
     part1 = decrypt(array, 1, 1)
     part2 = decrypt(array, 811589153, 10)

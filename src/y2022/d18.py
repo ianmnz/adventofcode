@@ -2,13 +2,12 @@
 # https://adventofcode.com/2022/day/18
 
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def get_surface_area(droplets: List[Tuple[int, ...]]) -> int:
+def get_surface_area(droplets: list[tuple[int, ...]]) -> int:
     nb_faces = 6 * len(droplets)
 
     for x, y, z in (cubes := set(droplets)):
@@ -25,7 +24,7 @@ def get_surface_area(droplets: List[Tuple[int, ...]]) -> int:
 
 
 @Timer.timeit
-def get_external_surface_area(droplets: List[Tuple[int, ...]]) -> int:
+def get_external_surface_area(droplets: list[tuple[int, ...]]) -> int:
     cubes = set(droplets)
 
     x_lower, x_upper = float("inf"), float("-inf")
@@ -89,7 +88,7 @@ def get_external_surface_area(droplets: List[Tuple[int, ...]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[Tuple[int, ...]]:
+def parse(filename: os.PathLike) -> list[tuple[int, ...]]:
     with open(filename, "r") as file:
         droplets = [
             tuple(map(int, droplet.split(",")))
@@ -99,7 +98,7 @@ def parse(filename: os.PathLike) -> List[Tuple[int, ...]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     droplets = parse(filename)
     part1 = get_surface_area(droplets)
     part2 = get_external_surface_area(droplets)

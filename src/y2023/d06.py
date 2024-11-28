@@ -3,13 +3,12 @@
 
 import math
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def calculate_margin_of_error(times: List[int], records: List[int]) -> int:
+def calculate_margin_of_error(times: list[int], records: list[int]) -> int:
     nb_of_ways_to_beat_record = 1
 
     for time, record in zip(times, records):
@@ -36,7 +35,7 @@ def calculate_margin_of_error(times: List[int], records: List[int]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Tuple[List[int], List[int]]:
+def parse(filename: os.PathLike) -> tuple[list[int], list[int]]:
     with open(filename, "r") as file:
         times, record_distances = map(
             lambda ss: list(map(int, ss.split()[1:])), file.read().split("\n")
@@ -45,7 +44,7 @@ def parse(filename: os.PathLike) -> Tuple[List[int], List[int]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     times, record_distances = parse(filename)
 
     part1 = calculate_margin_of_error(times, record_distances)

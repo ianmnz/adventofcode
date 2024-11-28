@@ -5,7 +5,7 @@ import collections
 import copy
 import os
 import re
-from typing import Dict, List, NamedTuple, Tuple
+from typing import NamedTuple
 
 from helpers import Timer
 
@@ -18,7 +18,7 @@ class Move(NamedTuple):
 
 @Timer.timeit
 def move_crates_changing_order(
-    stacks: Dict[int, collections.deque], moves: List[Move]
+    stacks: dict[int, collections.deque], moves: list[Move]
 ) -> None:
     for move in moves:
         for _ in range(move.nb):
@@ -28,7 +28,7 @@ def move_crates_changing_order(
 
 @Timer.timeit
 def move_crates_preserving_order(
-    stacks: Dict[int, collections.deque], moves: List[Move]
+    stacks: dict[int, collections.deque], moves: list[Move]
 ) -> None:
     for move in moves:
         moved_crates = []
@@ -42,12 +42,12 @@ def move_crates_preserving_order(
 
 
 @Timer.timeit
-def read_top_of_stacks(stacks: Dict[int, collections.deque]) -> str:
+def read_top_of_stacks(stacks: dict[int, collections.deque]) -> str:
     return "".join(stacks[key][-1] for key in sorted(stacks.keys()))
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Tuple[Dict[int, collections.deque], List[Move]]:
+def parse(filename: os.PathLike) -> tuple[dict[int, collections.deque], list[Move]]:
     with open(filename, "r") as file:
         initial_arrangement, rearrangements = file.read().strip().split("\n\n")
 
@@ -80,7 +80,7 @@ def parse(filename: os.PathLike) -> Tuple[Dict[int, collections.deque], List[Mov
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[str, str]:
+def solve(filename: os.PathLike) -> tuple[str, str]:
     stacks, moves = parse(filename)
     stacks_cp = copy.deepcopy(stacks)
 

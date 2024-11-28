@@ -3,23 +3,22 @@
 
 import os
 from dataclasses import dataclass
-from typing import List, Tuple
 
 from helpers import Timer
 
 
 @dataclass
 class Beam:
-    start: Tuple[int, int]
-    dir: Tuple[int, int]
+    start: tuple[int, int]
+    dir: tuple[int, int]
 
     def __hash__(self) -> int:
         return hash((*self.start, *self.dir))
 
 
 def propagate_beams(
-    layout: List[List[str]], starting_beam: Beam = Beam((0, -1), (0, 1))
-) -> List[List[int]]:
+    layout: list[list[str]], starting_beam: Beam = Beam((0, -1), (0, 1))
+) -> list[list[int]]:
     n = len(layout)
     m = len(layout[0])
 
@@ -66,12 +65,12 @@ def propagate_beams(
     return energized
 
 
-def count_energized_tiles(energized: List[List[int]]) -> int:
+def count_energized_tiles(energized: list[list[int]]) -> int:
     return sum(mask for row in energized for mask in row)
 
 
 @Timer.timeit
-def find_best_starting_beam(layout: List[List[str]]) -> int:
+def find_best_starting_beam(layout: list[list[str]]) -> int:
     n = len(layout)
     m = len(layout[0])
 
@@ -99,14 +98,14 @@ def find_best_starting_beam(layout: List[List[str]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[List[str]]:
+def parse(filename: os.PathLike) -> list[list[str]]:
     with open(filename, "r") as file:
         layout = [[char for char in line] for line in file.read().split("\n")]
     return layout
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     layout = parse(filename)
     part1 = count_energized_tiles(propagate_beams(layout))
     part2 = find_best_starting_beam(layout)

@@ -2,13 +2,12 @@
 # https://adventofcode.com/2023/day/11
 
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def compute_distances_matrix(image: List[str], expansion: int) -> List[List[int]]:
+def compute_distances_matrix(image: list[str], expansion: int) -> list[list[int]]:
     empty_rows = set(range(len(image)))
     empty_cols = set(range(len(image[0])))
 
@@ -47,20 +46,20 @@ def compute_distances_matrix(image: List[str], expansion: int) -> List[List[int]
 
 
 @Timer.timeit
-def calculate_sum_of_distances(image: List[str], expansion: int) -> int:
+def calculate_sum_of_distances(image: list[str], expansion: int) -> int:
     distances = compute_distances_matrix(image, expansion)
     return sum(map(sum, distances)) // 2
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         image = file.read().split("\n")
     return image
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     image = parse(filename)
     part1 = calculate_sum_of_distances(image, 2)
     part2 = calculate_sum_of_distances(image, 1_000_000)

@@ -3,12 +3,11 @@
 
 import os
 import re
-from typing import Dict, Tuple
 
 from helpers import Timer
 
 
-def expand_ast(root: str, monkeys: Dict[str, str]) -> str:
+def expand_ast(root: str, monkeys: dict[str, str]) -> str:
     pattern = re.compile(r"\w{4}")
 
     def expand(expr: str) -> str:
@@ -23,13 +22,13 @@ def expand_ast(root: str, monkeys: Dict[str, str]) -> str:
 
 
 @Timer.timeit
-def get_number_yelled_by_root(root: str, monkeys: Dict[str, str]) -> int:
+def get_number_yelled_by_root(root: str, monkeys: dict[str, str]) -> int:
     return int(eval(expand_ast(root, monkeys)))
 
 
 @Timer.timeit
 def get_number_to_be_yelled(
-    root: str, monkeys: Dict[str, str], you: str = "humn"
+    root: str, monkeys: dict[str, str], you: str = "humn"
 ) -> int:
     # Based on the idea from https://www.reddit.com/r/adventofcode/comments/zrav4h/comment/j133ko6/
     # Using complex numbers instead of "humn", solving for x becomes:
@@ -43,7 +42,7 @@ def get_number_to_be_yelled(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Dict[str, str]:
+def parse(filename: os.PathLike) -> dict[str, str]:
     with open(filename, "r") as file:
         lines = file.read().strip().split("\n")
 
@@ -55,7 +54,7 @@ def parse(filename: os.PathLike) -> Dict[str, str]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     monkeys = parse(filename)
     part1 = get_number_yelled_by_root(monkeys["root"], monkeys)
     part2 = get_number_to_be_yelled(monkeys["root"], monkeys)

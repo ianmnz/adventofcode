@@ -3,20 +3,19 @@
 
 import os
 import re
-from typing import List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def calibrate(document: List[str]) -> int:
+def calibrate(document: list[str]) -> int:
     matches = [[digit for digit in re.findall(r"\d", line)] for line in document]
 
     return sum(int(digits[0] + digits[-1]) for digits in matches)
 
 
 @Timer.timeit
-def fix(document: List[str]) -> List[str]:
+def fix(document: list[str]) -> list[str]:
     """
     The idea here is to replace the spelled digits
     by their numerical counterparts but keeping the
@@ -43,14 +42,14 @@ def fix(document: List[str]) -> List[str]:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         document = file.read().strip().split("\n")
     return document
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     document = parse(filename)
     part1 = calibrate(document)
     part2 = calibrate(fix(document))

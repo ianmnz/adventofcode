@@ -9,7 +9,7 @@ from typing import List, Tuple, Union
 
 from helpers import Timer
 
-Value = List[Union[int, "Value"]]
+type Value = list[int | Value]
 
 
 @dataclass(frozen=True)
@@ -50,7 +50,7 @@ def compare(l_packet: Value, r_packet: Value) -> bool:
 
 
 @Timer.timeit
-def get_sum_of_indices(packets: List[Tuple[Value, Value]]) -> int:
+def get_sum_of_indices(packets: list[tuple[Value, Value]]) -> int:
     return sum(
         idx for idx, (lhs, rhs) in enumerate(packets, start=1) if compare(lhs, rhs)
     )
@@ -58,7 +58,7 @@ def get_sum_of_indices(packets: List[Tuple[Value, Value]]) -> int:
 
 @Timer.timeit
 def get_distress_signal_decoder_key(
-    packets: List[Tuple[Value, Value]], dividers: List[Value] = [[[2]], [[6]]]
+    packets: list[tuple[Value, Value]], dividers: list[Value] = [[[2]], [[6]]]
 ) -> int:
     wrappers = []
     for lhs, rhs in packets:
@@ -73,7 +73,7 @@ def get_distress_signal_decoder_key(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[Tuple[Value, Value]]:
+def parse(filename: os.PathLike) -> list[tuple[Value, Value]]:
     with open(filename, "r") as file:
         packets = [
             tuple(map(eval, pair.split("\n")))
@@ -83,7 +83,7 @@ def parse(filename: os.PathLike) -> List[Tuple[Value, Value]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     packets = parse(filename)
     part1 = get_sum_of_indices(packets)
     part2 = get_distress_signal_decoder_key(packets)

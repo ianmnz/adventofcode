@@ -4,7 +4,7 @@
 import os
 import re
 from dataclasses import dataclass
-from typing import Dict, List, Tuple, TypedDict
+from typing import TypedDict
 
 from ortools.linear_solver import pywraplp
 
@@ -21,10 +21,10 @@ class Resource(TypedDict):
 @dataclass
 class Blueprint:
     id: int
-    cost: Dict[str, Resource]
+    cost: dict[str, Resource]
 
 
-def mip_solve(costs: Dict[str, Resource], T: int) -> int:
+def mip_solve(costs: dict[str, Resource], T: int) -> int:
     solver = pywraplp.Solver.CreateSolver("SAT")
 
     # Variables
@@ -127,7 +127,7 @@ def mip_solve(costs: Dict[str, Resource], T: int) -> int:
 
 
 @Timer.timeit
-def get_sum_of_quality_level(blueprints: List[Blueprint], T: int) -> int:
+def get_sum_of_quality_level(blueprints: list[Blueprint], T: int) -> int:
     quality_level = 0
     for blueprint in blueprints:
         nb_open_geodes = mip_solve(blueprint.cost, T)
@@ -137,7 +137,7 @@ def get_sum_of_quality_level(blueprints: List[Blueprint], T: int) -> int:
 
 
 @Timer.timeit
-def get_product_of_nb_opened(blueprints: List[Blueprint], T: int, n: int) -> int:
+def get_product_of_nb_opened(blueprints: list[Blueprint], T: int, n: int) -> int:
     prod = 1
     for blueprint in blueprints[:n]:
         nb_open_geodes = mip_solve(blueprint.cost, T)
@@ -147,7 +147,7 @@ def get_product_of_nb_opened(blueprints: List[Blueprint], T: int, n: int) -> int
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[Blueprint]:
+def parse(filename: os.PathLike) -> list[Blueprint]:
     with open(filename, "r") as file:
         lines = file.read().strip().split("\n")
 
@@ -176,7 +176,7 @@ def parse(filename: os.PathLike) -> List[Blueprint]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     blueprints = parse(filename)
     part1 = get_sum_of_quality_level(blueprints, 24)
     part2 = get_product_of_nb_opened(blueprints, 32, 3)

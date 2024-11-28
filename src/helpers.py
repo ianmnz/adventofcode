@@ -2,7 +2,7 @@
 
 import time
 from functools import wraps
-from typing import Callable, List, ParamSpec, TypeVar
+from typing import Callable, ParamSpec, TypeVar
 
 R = TypeVar("R")  # Callable return type
 P = ParamSpec("P")  # Callable parameters type
@@ -31,7 +31,7 @@ class Timer:
         return wrapper
 
     def __init__(self) -> None:
-        self.checkpoints: List[int] = []
+        self.checkpoints: list[int] = []
 
     def __enter__(self):
         self._print("start timer")

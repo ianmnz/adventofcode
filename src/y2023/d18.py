@@ -2,7 +2,6 @@
 # https://adventofcode.com/2023/day/18
 
 import os
-from typing import List, Tuple
 
 from helpers import Timer
 
@@ -19,8 +18,8 @@ direction = {
 
 
 @Timer.timeit
-def dig(plan: List[List[str]], is_color_code: bool = False) -> int:
-    def parse(command: List[str]) -> Tuple[int]:
+def dig(plan: list[list[str]], is_color_code: bool = False) -> int:
+    def parse(command: list[str]) -> tuple[int]:
         dir, length, color = command
 
         if not is_color_code:
@@ -42,14 +41,14 @@ def dig(plan: List[List[str]], is_color_code: bool = False) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[List[str]]:
+def parse(filename: os.PathLike) -> list[list[str]]:
     with open(filename, "r") as file:
         plan = [line.split() for line in file.read().split("\n")]
     return plan
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     plan = parse(filename)
     part1 = dig(plan)
     part2 = dig(plan, True)

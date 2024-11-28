@@ -4,7 +4,7 @@
 import collections
 import os
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, List, Set, Tuple
+from typing import Iterable, Self
 
 from helpers import Timer
 
@@ -16,12 +16,8 @@ class Brick:
     left: Position
     right: Position
 
-    stack_up: Set["Brick"] = field(
-        init=False, default_factory=lambda: set(), repr=False
-    )
-    stack_on: Set["Brick"] = field(
-        init=False, default_factory=lambda: set(), repr=False
-    )
+    stack_up: set[Self] = field(init=False, default_factory=lambda: set(), repr=False)
+    stack_on: set[Self] = field(init=False, default_factory=lambda: set(), repr=False)
 
     def base(self) -> int:
         return min(self.left.z, self.right.z)
@@ -40,22 +36,22 @@ class Brick:
             Position(self.right.x, self.right.y, self.right.z - height),
         )
 
-    def stackpush(self, above: "Brick") -> None:
+    def stackpush(self, above: Self) -> None:
         self.stack_up.add(above)
         above.stack_on.add(self)
 
-    def __lt__(self, other: "Brick") -> bool:
+    def __lt__(self, other: Self) -> bool:
         return self.base() < other.base()
 
     def __hash__(self) -> int:
         return hash((*self.left, *self.right))
 
-    def __eq__(self, other: "Brick") -> bool:
+    def __eq__(self, other: Self) -> bool:
         return self.left == other.left and self.right == other.right
 
 
 @Timer.timeit
-def simulate(bricks: List[Brick]) -> List[Brick]:
+def simulate(bricks: list[Brick]) -> list[Brick]:
     top_down_view = dict()
     settled = []
 
@@ -81,7 +77,7 @@ def simulate(bricks: List[Brick]) -> List[Brick]:
     return settled
 
 
-def count_falls_if_removed(brick: Brick, support: Dict[Brick, int]) -> int:
+def count_falls_if_removed(brick: Brick, support: dict[Brick, int]) -> int:
     fallen = [brick]
     nb_falls = 0
     while fallen:
@@ -98,7 +94,7 @@ def count_falls_if_removed(brick: Brick, support: Dict[Brick, int]) -> int:
 
 
 @Timer.timeit
-def bricks_to_disintegrate(data: List[Brick]) -> Tuple[int]:
+def bricks_to_disintegrate(data: list[Brick]) -> tuple[int, int]:
     settled = simulate(sorted(data))
 
     safe = 0
@@ -114,7 +110,7 @@ def bricks_to_disintegrate(data: List[Brick]) -> Tuple[int]:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[Brick]:
+def parse(filename: os.PathLike) -> list[Brick]:
     with open(filename, "r") as file:
         snapshot = [line.split("~") for line in file.read().split("\n")]
 
@@ -128,6 +124,6 @@ def parse(filename: os.PathLike) -> List[Brick]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     data = parse(filename)
     return bricks_to_disintegrate(data)

@@ -2,7 +2,6 @@
 # https://adventofcode.com/2022/day/6
 
 import os
-from typing import Tuple
 
 from helpers import Timer
 
@@ -29,7 +28,7 @@ def parse(filename: os.PathLike) -> str:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     buffer = parse(filename)
     part1 = find_marker_index(buffer, SoP_marker_length, SoP_marker_length - 1)
     # We assume here that the start-of-message comes after the start-of-packet

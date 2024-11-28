@@ -4,7 +4,7 @@
 import os
 from dataclasses import dataclass, field
 from functools import cached_property
-from typing import Dict, List, Optional, Tuple
+from typing import Self
 
 from helpers import Timer
 
@@ -18,11 +18,11 @@ class File:
 @dataclass
 class Dir:
     name: str
-    parent: Optional["Dir"] = field(default=None)
-    children: Dict[str, "Dir"] = field(init=False, default_factory=dict)
-    files: List[File] = field(init=False, default_factory=list)
+    parent: None | Self = field(default=None)
+    children: dict[str, Self] = field(init=False, default_factory=dict)
+    files: list[File] = field(init=False, default_factory=list)
 
-    def cd(self, child_name: str) -> "Dir":
+    def cd(self, child_name: str) -> Self:
         return self.children[child_name]
 
     def mkdir(self, child_name: str) -> "Dir":
@@ -44,7 +44,7 @@ class Dir:
 
 
 @Timer.timeit
-def build_filesystem(terminal_output: List[str]) -> Dir:
+def build_filesystem(terminal_output: list[str]) -> Dir:
     outermost_dir = Dir("/")
     current_dir = outermost_dir
 
@@ -122,14 +122,14 @@ def find_size_smallest_dir_to_be_deleted(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         terminal_output = file.read().strip().split("\n")
     return terminal_output
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     terminal_output = parse(filename)
     root = build_filesystem(terminal_output)
     part1 = sum_dir_sizes_leq_threshold(root)

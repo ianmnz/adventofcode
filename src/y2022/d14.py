@@ -2,18 +2,17 @@
 # https://adventofcode.com/2022/day/14
 
 import os
-from typing import List, Set, Tuple
 
 from helpers import Timer
 
-Coordinate = Tuple[int, int]
-Scanner = Set[Coordinate]
+Coordinate = tuple[int, int]
+Scanner = set[Coordinate]
 
 BOTTOM = 0
 
 
 @Timer.timeit
-def scan(cave: List[List[str]]) -> Scanner:
+def scan(cave: list[list[str]]) -> Scanner:
     scanner: Scanner = set()
 
     global BOTTOM
@@ -88,7 +87,7 @@ def simulate_up_to_blocking_source(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[List[str]]:
+def parse(filename: os.PathLike) -> list[list[str]]:
     with open(filename, "r") as file:
         cave = [line.strip().split(" -> ") for line in file.read().strip().split("\n")]
     return cave

@@ -5,7 +5,7 @@ import heapq
 import os
 from collections import deque, namedtuple
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple
+from typing import Self
 
 from helpers import Timer
 
@@ -48,9 +48,9 @@ def char_to_int(item: str) -> int:
 class Node:
     pos: complex
     val: int
-    adj: List[complex] = field(init=False, default_factory=list)
+    adj: list[complex] = field(init=False, default_factory=list)
 
-    def __lt__(self, other: "Node") -> bool:
+    def __lt__(self, other: Self) -> bool:
         return (self.pos.real, self.pos.imag) < (other.pos.real, other.pos.imag)
 
 
@@ -59,8 +59,8 @@ ASearch = namedtuple("ASearch", ["f", "g", "h"])
 
 @Timer.timeit
 def build_graph(
-    heightmap: List[str],
-) -> Tuple[Dict[complex, Node], complex, List[complex]]:
+    heightmap: list[str],
+) -> tuple[dict[complex, Node], complex, list[complex]]:
     m, n = len(heightmap), len(heightmap[0])
 
     def is_valid(x: int, y: int) -> bool:
@@ -107,8 +107,8 @@ def build_graph(
     return nodes, target, candidates
 
 
-def bfs(graph: Dict[complex, Node], start: complex, target: complex) -> int:
-    queue: deque[Tuple[int, Node]] = deque([(0, graph[start])])
+def bfs(graph: dict[complex, Node], start: complex, target: complex) -> int:
+    queue: deque[tuple[int, Node]] = deque([(0, graph[start])])
     visited = {start}
 
     while queue:
@@ -129,13 +129,13 @@ def bfs(graph: Dict[complex, Node], start: complex, target: complex) -> int:
     return -1
 
 
-def A_star_search(graph: Dict[complex, Node], start: complex, target: complex) -> int:
+def A_star_search(graph: dict[complex, Node], start: complex, target: complex) -> int:
     def manhattan(pos: complex) -> float:
         return abs(pos.real - target.real) + abs(pos.imag - target.imag)
 
     search_details = {start: ASearch(h := manhattan(start), 0, h)}
 
-    open_list: List[Tuple[float, int, Node]] = [(h, 0, graph[start])]  # (f, g, node)
+    open_list: list[tuple[float, int, Node]] = [(h, 0, graph[start])]  # (f, g, node)
     closed_list = {key: False for key in graph}
 
     while open_list:
@@ -165,13 +165,13 @@ def A_star_search(graph: Dict[complex, Node], start: complex, target: complex) -
     return -1
 
 
-def dijkstra(graph: Dict[complex, Node], start: complex, target: complex) -> int:
+def dijkstra(graph: dict[complex, Node], start: complex, target: complex) -> int:
     distances = {}
     distances[start] = 0
     visited = []
     min_curr_dist = float("inf")
 
-    heap: List[Tuple[int, Node]] = [(0, graph[start])]
+    heap: list[tuple[int, Node]] = [(0, graph[start])]
     while heap:
         nb_steps, curr = heapq.heappop(heap)
 
@@ -202,7 +202,7 @@ def dijkstra(graph: Dict[complex, Node], start: complex, target: complex) -> int
 
 @Timer.timeit
 def find_best_path_from_start(
-    graph: Dict[complex, Node], target: complex, start: complex
+    graph: dict[complex, Node], target: complex, start: complex
 ) -> int:
     return bfs(graph, start, target)
     # return A_star_search(graph, start, target)
@@ -211,7 +211,7 @@ def find_best_path_from_start(
 
 @Timer.timeit
 def find_best_start(
-    graph: Dict[complex, Node], target: complex, candidates: List[complex]
+    graph: dict[complex, Node], target: complex, candidates: list[complex]
 ) -> int:
     return min(
         (
@@ -225,14 +225,14 @@ def find_best_start(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         heightmap = file.read().strip().split("\n")
     return heightmap
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     heightmap = parse(filename)
     graph, target, candidates = build_graph(heightmap)
     part1 = find_best_path_from_start(graph, target, candidates[0])

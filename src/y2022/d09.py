@@ -3,7 +3,7 @@
 
 import os
 from dataclasses import dataclass, field
-from typing import List, Optional, Set, Tuple
+from typing import Self
 
 from helpers import Timer
 
@@ -17,9 +17,9 @@ DOWN = 0 - 1j
 class Knot:
     pos: complex
 
-    prev: Optional["Knot"] = field(default=None)
-    next: Optional["Knot"] = field(init=False, default=None)
-    visited: Set[complex] = field(init=False)
+    prev: None | Self = field(default=None)
+    next: None | Self = field(init=False, default=None)
+    visited: set[complex] = field(init=False)
 
     def __post_init__(self) -> None:
         self.visited = {self.pos}
@@ -88,8 +88,8 @@ def are_adjacent(this: Knot, that: Knot) -> bool:
 
 @dataclass
 class Rope:
-    head: Optional[Knot] = field(default=None)
-    tail: Optional[Knot] = field(default=None)
+    head: None | Knot = field(default=None)
+    tail: None | Knot = field(default=None)
 
     def move(self, to: str, dist: int) -> None:
         if self.head is None:
@@ -119,7 +119,7 @@ def build_rope(nb_knots: int) -> Rope:
 
 
 @Timer.timeit
-def get_nb_visited_positions_by_tail(motions: List[str], nb_knots: int) -> int:
+def get_nb_visited_positions_by_tail(motions: list[str], nb_knots: int) -> int:
     rope = build_rope(nb_knots)
     for motion in motions:
         to, dist = motion.strip().split()
@@ -132,14 +132,14 @@ def get_nb_visited_positions_by_tail(motions: List[str], nb_knots: int) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         motions = file.read().strip().split("\n")
     return motions
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     motions = parse(filename)
     part1 = get_nb_visited_positions_by_tail(motions, 2)
     part2 = get_nb_visited_positions_by_tail(motions, 10)

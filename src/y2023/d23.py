@@ -3,15 +3,15 @@
 
 import collections
 import os
-from typing import Callable, Dict, List, Set, Tuple
+from typing import Callable, Dict
 
 from helpers import Timer
 
 
 @Timer.timeit
 def build_graph(
-    carte: List[List[str]], with_slippery_slope=True
-) -> Tuple[complex, complex, Dict[complex, Set[Tuple[complex, int]]]]:
+    carte: list[list[str]], with_slippery_slope=True
+) -> tuple[complex, complex, dict[complex, set[tuple[complex, int]]]]:
     n = len(carte)
     m = len(carte[0])
 
@@ -93,10 +93,10 @@ def build_graph(
 
 
 @Timer.timeit
-def get_longest_path_length(carte: List[List[str]], with_slippery_slope=True) -> int:
+def get_longest_path_length(carte: list[list[str]], with_slippery_slope=True) -> int:
     source, target, graph = build_graph(carte, with_slippery_slope)
 
-    stack: List[Tuple[complex, int]] = [(source, 0)]
+    stack: list[tuple[complex, int]] = [(source, 0)]
     visited = set()
     longest = 0
 
@@ -125,14 +125,14 @@ def get_longest_path_length(carte: List[List[str]], with_slippery_slope=True) ->
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[List[str]]:
+def parse(filename: os.PathLike) -> list[list[str]]:
     with open(filename, "r") as file:
         carte = [[char for char in line] for line in file.read().split("\n")]
     return carte
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     carte = parse(filename)
     part1 = get_longest_path_length(carte)
     part2 = get_longest_path_length(carte, False)

@@ -2,11 +2,10 @@
 # https://adventofcode.com/2022/day/25
 
 import os
-from typing import List
 
 from helpers import Timer
 
-BASE5: List[int] = []
+BASE5: list[int] = []
 
 
 def snafu2decimal(number_snafu: str) -> int:
@@ -53,13 +52,13 @@ def decimal2snafu(number_10: int) -> str:
 
 
 @Timer.timeit
-def get_total_sum(numbers: List[str]) -> str:
+def get_total_sum(numbers: list[str]) -> str:
     total_10 = sum(snafu2decimal(number) for number in numbers)
     return decimal2snafu(total_10)
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         numbers = file.read().strip().split("\n")
 

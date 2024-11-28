@@ -4,13 +4,12 @@
 import math
 import os
 import re
-from typing import Dict, List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def build_graph(nodes: List[str]) -> Dict[str, Dict[str, str]]:
+def build_graph(nodes: list[str]) -> dict[str, dict[str, str]]:
     graph = dict()
     pattern = re.compile(r"(\w{3}) = \((\w{3}), (\w{3})\)")
 
@@ -25,7 +24,7 @@ def build_graph(nodes: List[str]) -> Dict[str, Dict[str, str]]:
     return graph
 
 
-def follow_sequence(sequence: str, start: str, graph: Dict[str, Dict[str, str]]) -> str:
+def follow_sequence(sequence: str, start: str, graph: dict[str, dict[str, str]]) -> str:
     curr = start
     for instruction in sequence:
         curr = graph[curr][instruction]
@@ -33,7 +32,7 @@ def follow_sequence(sequence: str, start: str, graph: Dict[str, Dict[str, str]])
 
 
 @Timer.timeit
-def count_steps_to_exit(sequence: str, nodes: List[str]) -> int:
+def count_steps_to_exit(sequence: str, nodes: list[str]) -> int:
     graph = build_graph(nodes)
     curr = "AAA"
 
@@ -46,7 +45,7 @@ def count_steps_to_exit(sequence: str, nodes: List[str]) -> int:
 
 
 @Timer.timeit
-def count_simultaneous_steps_to_exit(sequence: str, nodes: List[str]) -> int:
+def count_simultaneous_steps_to_exit(sequence: str, nodes: list[str]) -> int:
     graph = build_graph(nodes)
 
     curs = []
@@ -67,7 +66,7 @@ def count_simultaneous_steps_to_exit(sequence: str, nodes: List[str]) -> int:
 
         nb_cycles_by_start.append(nb_cycles)
 
-    def lcm(numbers: List[int]) -> int:
+    def lcm(numbers: list[int]) -> int:
         prod = numbers[0]
         for number in numbers[1:]:
             prod = (prod * number) // math.gcd(prod, number)
@@ -77,14 +76,14 @@ def count_simultaneous_steps_to_exit(sequence: str, nodes: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Tuple[str, str]:
+def parse(filename: os.PathLike) -> tuple[str, str]:
     with open(filename, "r") as file:
         sequence, nodes = file.read().strip().split("\n\n")
     return sequence, nodes
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     sequence, nodes = parse(filename)
     part1 = count_steps_to_exit(sequence.strip(), nodes.split("\n"))
     part2 = count_simultaneous_steps_to_exit(sequence.strip(), nodes.split("\n"))

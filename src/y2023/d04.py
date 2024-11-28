@@ -3,7 +3,6 @@
 
 import os
 import re
-from typing import List, Tuple
 
 from helpers import Timer
 
@@ -18,7 +17,7 @@ def compute_card_winnings(numbers: str) -> int:
 
 
 @Timer.timeit
-def compute_total_points(cards: List[str]) -> int:
+def compute_total_points(cards: list[str]) -> int:
     total_pts = 0
 
     for card in cards:
@@ -30,7 +29,7 @@ def compute_total_points(cards: List[str]) -> int:
 
 
 @Timer.timeit
-def compute_total_scratchcards(cards: List[str]) -> int:
+def compute_total_scratchcards(cards: list[str]) -> int:
     total_scratchcards = 0
     scratchcards = [1] * len(cards)
 
@@ -49,14 +48,14 @@ def compute_total_scratchcards(cards: List[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[str]:
+def parse(filename: os.PathLike) -> list[str]:
     with open(filename, "r") as file:
         cards = file.read().split("\n")
     return cards
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     cards = parse(filename)
     part1 = compute_total_points(cards)
     part2 = compute_total_scratchcards(cards)

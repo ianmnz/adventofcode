@@ -6,12 +6,11 @@
 
 import os
 from functools import lru_cache
-from typing import List, Tuple
 
 from helpers import Timer
 
 
-def nb_arrangements(record: str, duplicate: Tuple[int]) -> int:
+def nb_arrangements(record: str, duplicate: tuple[int]) -> int:
     @lru_cache(maxsize=None)
     def recursive(idx_r: int, idx_d: int) -> int:
         if len(record) == idx_r:
@@ -44,7 +43,7 @@ def nb_arrangements(record: str, duplicate: Tuple[int]) -> int:
 
 
 @Timer.timeit
-def sum_arrangements(records: List[Tuple[str, ...]]) -> int:
+def sum_arrangements(records: list[tuple[str, ...]]) -> int:
     ans = 0
     for record in records:
         ans += nb_arrangements(record[0] + "?", eval(record[1]))
@@ -52,7 +51,7 @@ def sum_arrangements(records: List[Tuple[str, ...]]) -> int:
 
 
 @Timer.timeit
-def sum_unfolded_arrangements(records: List[Tuple[str, ...]]) -> int:
+def sum_unfolded_arrangements(records: list[tuple[str, ...]]) -> int:
     ans = 0
     unfold = 5
     for record in records:
@@ -61,14 +60,14 @@ def sum_unfolded_arrangements(records: List[Tuple[str, ...]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[Tuple[str, ...]]:
+def parse(filename: os.PathLike) -> list[tuple[str, ...]]:
     with open(filename, "r") as file:
         records = [tuple(line.split()) for line in file.read().split("\n")]
     return records
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     records = parse(filename)
     part1 = sum_arrangements(records)
     part2 = sum_unfolded_arrangements(records)

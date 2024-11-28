@@ -3,20 +3,19 @@
 
 import os
 import re
-from typing import Dict, List, Tuple
 
 from helpers import Timer
 
 
 @Timer.timeit
-def determine_possible_games(games: Dict[int, List[List[str]]]) -> int:
+def determine_possible_games(games: dict[int, list[list[str]]]) -> int:
     sum_possible_games = 0
 
     N_R = 12
     N_G = 13
     N_B = 14
 
-    def is_game_possible(game: List[List[str]]) -> bool:
+    def is_game_possible(game: list[list[str]]) -> bool:
         for subset in game:
             for cubes in subset:
                 n, color = cubes.split()
@@ -39,10 +38,10 @@ def determine_possible_games(games: Dict[int, List[List[str]]]) -> int:
 
 
 @Timer.timeit
-def determine_minimum_power_set_cubes(games: Dict[int, List[List[str]]]) -> int:
+def determine_minimum_power_set_cubes(games: dict[int, list[list[str]]]) -> int:
     sum_power_set_cubes = 0
 
-    def minimum_possible_game_power(game: List[List[str]]) -> int:
+    def minimum_possible_game_power(game: list[list[str]]) -> int:
         R = G = B = 1
 
         for subset in game:
@@ -66,7 +65,7 @@ def determine_minimum_power_set_cubes(games: Dict[int, List[List[str]]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Dict[int, List[List[str]]]:
+def parse(filename: os.PathLike) -> dict[int, list[list[str]]]:
     with open(filename, "r") as file:
         games = dict()
         for game in file.read().strip().split("\n"):
@@ -78,7 +77,7 @@ def parse(filename: os.PathLike) -> Dict[int, List[List[str]]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     games = parse(filename)
     part1 = determine_possible_games(games)
     part2 = determine_minimum_power_set_cubes(games)

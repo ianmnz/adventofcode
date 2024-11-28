@@ -4,7 +4,6 @@
 import math
 import os
 from collections import deque
-from typing import List, Tuple
 
 from helpers import Timer
 
@@ -16,7 +15,7 @@ conj_parent = ""
 
 
 @Timer.timeit
-def build_graph(configuration: List[List[str]], target: str = "rx") -> None:
+def build_graph(configuration: list[list[str]], target: str = "rx") -> None:
     adjacency.clear()
     flipflops.clear()
     conjunctions.clear()
@@ -42,7 +41,7 @@ def build_graph(configuration: List[List[str]], target: str = "rx") -> None:
                 conjunctions[receiver][sender] = False
 
 
-def press(counter: int = 1) -> Tuple[int]:
+def press(counter: int = 1) -> tuple[int]:
     nb_low_pulses, nb_high_pulses = 1, 0
 
     queue = deque()
@@ -110,14 +109,14 @@ def get_fewest_nb_presses() -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> List[List[str]]:
+def parse(filename: os.PathLike) -> list[list[str]]:
     with open(filename, "r") as file:
         configuration = [line.split(" -> ") for line in file.read().split("\n")]
     return configuration
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Tuple[int, int]:
+def solve(filename: os.PathLike) -> tuple[int, int]:
     configuration = parse(filename)
     build_graph(configuration)
 
