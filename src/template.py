@@ -23,7 +23,7 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
 def test_day_XX(data_dir):
     # from src.y202X.dXX import solve
 
-    res1, res2 = solve(data_dir / "202XXX.txt")
+    res1, res2 = solve(data_dir / "XX.txt")
 
     assert res1 == -1, f"Part1 = {res1}"
     assert res2 == -1, f"Part2 = {res2}"
