@@ -17,3 +17,12 @@ def test_day_01(data_dir: Path):
 
     assert res1 == 1_579_939, f"Part1 = {res1}"
     assert res2 == 20_351_745, f"Part2 = {res2}"
+
+
+def test_day_02(data_dir):
+    from src.y2024.d02 import solve
+
+    res1, res2 = solve(data_dir / "02.txt")
+
+    assert res1 == 390, f"Part1 = {res1}"
+    assert res2 == 439, f"Part2 = {res2}"
