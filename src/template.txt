@@ -1,5 +1,5 @@
 # Advent of Code : Day DD - INSERT TITLE HERE
-# https://adventofcode.com/yyyy/day/dd
+# https://adventofcode.com/20YY/day/DD
 
 import os
 
@@ -7,8 +7,9 @@ from helpers import Timer
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    ...
+def parse(filename: os.PathLike) -> list:
+    with open(filename, "r") as file:
+        ...
 
 
 @Timer.timeit
@@ -20,10 +21,10 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
     return part1, part2
 
 
-def test_day_XX(data_dir):
-    # from src.y202X.dXX import solve
+def test_day_DD(data_dir):
+    from src.y20YY.dDD import solve
 
-    res1, res2 = solve(data_dir / "XX.txt")
+    res1, res2 = solve(data_dir / "DD.txt")
 
     assert res1 == -1, f"Part1 = {res1}"
     assert res2 == -1, f"Part2 = {res2}"
@@ -33,9 +34,7 @@ def main() -> None:
     from pathlib import Path
 
     res = solve(Path(__file__).parent / "input.txt")
-
-    assert res[0] == -1, f"Part1 = {res[0]}"
-    assert res[1] == -1, f"Part2 = {res[1]}"
+    print(res)
 
 
 if __name__ == "__main__":
