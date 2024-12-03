@@ -2,6 +2,7 @@
 
 import time
 from functools import wraps
+from pathlib import Path
 from typing import Callable, ParamSpec, TypeVar
 
 R = TypeVar("R")  # Callable return type
@@ -47,3 +48,10 @@ class Timer:
         if len(self.checkpoints) > 2:
             self._print("end timer", self.checkpoints[-1] - self.checkpoints[-2])
         self._print("total elapsed time", self.checkpoints[-1] - self.checkpoints[0])
+
+
+def load_input_data(year: int, day: int) -> str:
+    filepath = Path(__file__).parents[1] / "data" / f"{year}" / f"{day:02d}.txt"
+
+    with open(filepath, "r") as file:
+        return file.read()

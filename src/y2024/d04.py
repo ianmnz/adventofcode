@@ -1,9 +1,7 @@
 # Advent of Code : Day 04 - Ceres Search
 # https://adventofcode.com/2024/day/04
 
-import os
-
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -78,15 +76,13 @@ def searchX_MAS(puzzle: list[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        puzzle = file.read().splitlines()
-    return puzzle
+def parse(data: str) -> list[str]:
+    return data.splitlines()
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    puzzle = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    puzzle = parse(data)
     part1 = searchXMAS(puzzle)
     part2 = searchX_MAS(puzzle)
 
@@ -94,6 +90,4 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
 
 
 if __name__ == "__main__":
-    from pathlib import Path
-
-    print(solve(Path(__file__).parents[2] / "data" / "2024" / "04.txt"))
+    print(solve(load_input_data(2024, 4)))

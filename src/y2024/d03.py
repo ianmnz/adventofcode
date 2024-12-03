@@ -1,10 +1,9 @@
 # Advent of Code : Day 03 - Mull It Over
 # https://adventofcode.com/2024/day/03
 
-import os
 import re
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -15,15 +14,13 @@ def compute_mul(memory: str, with_conditional: bool) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> str:
-    with open(filename, "r") as file:
-        memory = file.read()
-    return memory
+def parse(data: str) -> str:
+    return data
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    memory = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    memory = parse(data)
     part1 = compute_mul(memory, False)
     part2 = compute_mul(memory, True)
 
@@ -31,6 +28,4 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
 
 
 if __name__ == "__main__":
-    from pathlib import Path
-
-    print(solve(Path(__file__).parents[2] / "data" / "2024" / "03.txt"))
+    print(solve(load_input_data(2024, 3)))

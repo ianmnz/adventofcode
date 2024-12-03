@@ -1,9 +1,7 @@
 # Advent of Code : Day 02 - Red-Nosed Reports
 # https://adventofcode.com/2024/day/02
 
-import os
-
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 DELTA_LOWER: int = 1
 DELTA_UPPER: int = 3
@@ -41,17 +39,18 @@ def count_nb_safe_reports(reports: list[list[int]], with_dampener: bool) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[int]]:
-    with open(filename, "r") as file:
-        reports = [list(map(int, x.split())) for x in file.read().splitlines()]
-
-    return reports
+def parse(data: str) -> list[list[int]]:
+    return [list(map(int, x.split())) for x in data.splitlines()]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    reports = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    reports = parse(data)
     part1 = count_nb_safe_reports(reports, False)
     part2 = count_nb_safe_reports(reports, True)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2024, 2)))
