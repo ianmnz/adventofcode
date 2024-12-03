@@ -26,3 +26,12 @@ def test_day_02(data_dir):
 
     assert res1 == 390, f"Part1 = {res1}"
     assert res2 == 439, f"Part2 = {res2}"
+
+
+def test_day_03(data_dir):
+    from src.y2024.d03 import solve
+
+    res1, res2 = solve(data_dir / "03.txt")
+
+    assert res1 == 183_788_984, f"Part1 = {res1}"
+    assert res2 == 62_098_619, f"Part2 = {res2}"
