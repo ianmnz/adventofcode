@@ -25,54 +25,66 @@ def searchXMAS(puzzle: list[str]) -> int:
         dx, dy = dir
         return "".join([padded[x + i * dx][y + i * dy] for i in range(len(pattern))])
 
-    count = 0
-    for i in range(pad, len(puzzle) + pad):
-        for j in range(pad, len(puzzle[0]) + pad):
-            if padded[i][j] != "X":
-                continue
+    def count(pos: tuple[int, int]) -> int:
+        found = 0
+        found += substr(pos, (0, +1)) == pattern  # horizontal right
+        found += substr(pos, (0, -1)) == pattern  # horizontal left
 
-            pos = (i, j)
+        found += substr(pos, (+1, 0)) == pattern  # vertical down
+        found += substr(pos, (-1, 0)) == pattern  # vertical up
 
-            count += substr(pos, (0, +1)) == pattern  # horizontal right
-            count += substr(pos, (0, -1)) == pattern  # horizontal left
+        found += substr(pos, (+1, +1)) == pattern  # main diagonal down
+        found += substr(pos, (-1, -1)) == pattern  # main diagonal up
 
-            count += substr(pos, (+1, 0)) == pattern  # vertical down
-            count += substr(pos, (-1, 0)) == pattern  # vertical up
+        found += substr(pos, (-1, +1)) == pattern  # anti diagonal up
+        found += substr(pos, (+1, -1)) == pattern  # anti diagonal down
+        return found
 
-            count += substr(pos, (+1, +1)) == pattern  # main diagonal down
-            count += substr(pos, (-1, -1)) == pattern  # main diagonal up
-
-            count += substr(pos, (-1, +1)) == pattern  # anti diagonal up
-            count += substr(pos, (+1, -1)) == pattern  # anti diagonal down
-
-    return count
+    return sum(
+        map(
+            count,
+            filter(
+                lambda pos: padded[pos[0]][pos[1]] == "X",
+                (
+                    (i, j)
+                    for i in range(pad, len(puzzle) + pad)
+                    for j in range(pad, len(puzzle[0]) + pad)
+                ),
+            ),
+        )
+    )
 
 
 @Timer.timeit
 def searchX_MAS(puzzle: list[str]) -> int:
     # Rotate patterns for the corners
     patterns = ["MSSM", "SSMM", "SMMS", "MMSS"]
-    pad = 1
-    padded = add_padding(puzzle, pad)
 
-    count = 0
-    for i in range(pad, len(puzzle) + pad):
-        for j in range(pad, len(puzzle[0]) + pad):
-            if padded[i][j] != "A":
-                continue
+    def count(pos: tuple[int, int]) -> int:
+        i, j = pos
+        corners = "".join(
+            [
+                puzzle[i - 1][j - 1],  # top-left
+                puzzle[i - 1][j + 1],  # top-right
+                puzzle[i + 1][j + 1],  # bottom-right
+                puzzle[i + 1][j - 1],  # bottom-left
+            ]
+        )
+        return int(corners in patterns)
 
-            corners = "".join(
-                [
-                    padded[i - 1][j - 1],  # top-left
-                    padded[i - 1][j + 1],  # top-right
-                    padded[i + 1][j + 1],  # bottom-right
-                    padded[i + 1][j - 1],  # bottom-left
-                ]
-            )
-
-            count += corners in patterns
-
-    return count
+    return sum(
+        map(
+            count,
+            filter(
+                lambda pos: puzzle[pos[0]][pos[1]] == "A",
+                (
+                    (i, j)
+                    for i in range(1, len(puzzle) - 1)
+                    for j in range(1, len(puzzle[0]) - 1)
+                ),
+            ),
+        )
+    )
 
 
 @Timer.timeit
