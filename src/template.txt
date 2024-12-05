@@ -28,4 +28,10 @@ def test_day_DD():
 
 
 if __name__ == "__main__":
-    print(solve(load_input_data(20YY, DD)))
+    if True:
+        print(solve(load_input_data(20YY, DD)))
+    else:
+        from pathlib import Path
+
+        with open(Path(__file__).parent / "test.txt") as file:
+            print(solve(file.read()))
