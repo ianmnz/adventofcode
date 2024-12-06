@@ -3,6 +3,13 @@
 
 from helpers import Timer, load_input_data
 
+type Pos = tuple[complex, complex]
+type Path = dict[Pos, int]
+
+
+def is_valid(z: complex, m: int, n: int) -> bool:
+    return (0 <= z.real < m) and (0 <= z.imag < n)
+
 
 @Timer.timeit
 def get_starting_point(grid: list[list[str]]) -> complex:
@@ -14,50 +21,66 @@ def get_starting_point(grid: list[list[str]]) -> complex:
 
 
 def simulate_guard_path(
-    grid: list[list[str]], start: complex
-) -> tuple[set[tuple[complex, complex]], bool]:
+    grid: list[list[str]], pos0: complex, dir0: complex = -1 + 0j
+) -> tuple[Path, bool]:
     m = len(grid)
     n = len(grid[0])
 
-    def is_valid(z: complex) -> bool:
-        return (0 <= z.real < m) and (0 <= z.imag < n)
+    curr = pos0
+    dir = dir0  # -1, 1j, 1, -1j
+    path: Path = {}
+    step = 0
 
-    curr = start
-    dir = -1  # -1, 1j, 1, -1j
-    visited: set[tuple[complex, complex]] = set()
-
-    while is_valid(curr) and (curr, dir) not in visited:
-        visited.add((curr, dir))
+    while is_valid(curr, m, n) and not (cycled := (curr, dir) in path):
+        step += 1
+        path[(curr, dir)] = step
 
         next = curr + dir
 
-        if is_valid(next) and grid[int(next.real)][int(next.imag)] in "#O":
+        if is_valid(next, m, n) and grid[int(next.real)][int(next.imag)] in "#O":
             dir *= -1j  # Rotate -90o
 
         else:
             curr = next
 
-    return visited, (curr, dir) in visited
+    return path, cycled
 
 
 @Timer.timeit
-def get_guard_path(grid: list[list[str]], start: complex) -> set[complex]:
-    visited = simulate_guard_path(grid, start)[0]
-    return {pos for pos, _ in visited}
+def get_guard_path(grid: list[list[str]], start: complex) -> tuple[set[complex], Path]:
+    path = simulate_guard_path(grid, start)[0]
+    return {pos for pos, _ in path}, path
 
 
 @Timer.timeit
-def count_nb_possible_obstructions(
-    grid: list[list[str]], start: complex, path: set[complex]
-) -> int:
+def count_idx_possible_obstructions(grid: list[list[str]], path: Path) -> int:
+    m = len(grid)
+    n = len(grid[0])
+
+    # The goal here is to check if putting an obstacle
+    # in the next position creates a cycle.
     count = 0
-    for pos in path:
-        i, j = map(int, (pos.real, pos.imag))
-        cached, grid[i][j] = grid[i][j], "O"
+    for (pos, dir), step in path.items():
+        next = pos + dir
 
-        count += simulate_guard_path(grid, start)[1]
+        # We can only put an obstacle in a place where we did haven't
+        # passed yet, i.e., our current step must be smaller than
+        # any step where we passed through this point
+        if any(
+            (visited := path.get((next, d))) and visited < step
+            for d in (-1 + 0j, 1j, 1 + 0j, -1j)
+        ):
+            continue
 
-        grid[i][j] = cached
+        i, j = map(int, (next.real, next.imag))
+
+        if is_valid(next, m, n) and grid[i][j] != "#":
+            cached, grid[i][j] = grid[i][j], "O"
+
+            count += simulate_guard_path(grid, pos, dir)[1]
+
+            grid[i][j] = cached
+
     return count
 
 
@@ -70,9 +93,9 @@ def parse(data: str) -> list[list[str]]:
 def solve(data: str) -> tuple[int, int]:
     grid = parse(data)
     start = get_starting_point(grid)
-    path = get_guard_path(grid, start)
-    part1 = len(path)
-    part2 = count_nb_possible_obstructions(grid, start, path)
+    visited, path = get_guard_path(grid, start)
+    part1 = len(visited)
+    part2 = count_idx_possible_obstructions(grid, path)
 
     return part1, part2
 
