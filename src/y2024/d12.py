@@ -5,10 +5,7 @@ from collections import deque
 
 from helpers import Timer, load_input_data
 
-N = -1 + 0j
-E = 0 + 1j
-S = 1 + 0j
-W = 0 - 1j
+DIRS = [-1 + 0j, 1j, 1 + 0j, -1j]  # N, E, S, W
 
 
 def flood_fill(
@@ -19,16 +16,16 @@ def flood_fill(
     perimeter = 0
     corners = 0
 
-    def is_adj(z: complex) -> bool:
+    def is_adjacent(z: complex) -> bool:
         return (z in garden) and garden[z] in (plot, index)
 
-    def count_corners(z: complex) -> int:
+    def count_corners(z: complex, adjacency: list[bool]) -> int:
         corners = 0
 
-        is_top_adj = is_adj(z + N)
-        is_right_adj = is_adj(z + E)
-        is_down_adj = is_adj(z + S)
-        is_left_adj = is_adj(z + W)
+        is_top_adj = adjacency[0]
+        is_right_adj = adjacency[1]
+        is_down_adj = adjacency[2]
+        is_left_adj = adjacency[3]
 
         # Outer
         corners += not is_top_adj and not is_left_adj
@@ -37,10 +34,16 @@ def flood_fill(
         corners += not is_down_adj and not is_right_adj
 
         # Inner
-        corners += is_top_adj and is_left_adj and not is_adj(z + N + W)
-        corners += is_down_adj and is_left_adj and not is_adj(z + S + W)
-        corners += is_top_adj and is_right_adj and not is_adj(z + N + E)
-        corners += is_down_adj and is_right_adj and not is_adj(z + S + E)
+        corners += is_top_adj and is_left_adj and not is_adjacent(z + DIRS[0] + DIRS[3])
+        corners += (
+            is_down_adj and is_left_adj and not is_adjacent(z + DIRS[2] + DIRS[3])
+        )
+        corners += (
+            is_top_adj and is_right_adj and not is_adjacent(z + DIRS[0] + DIRS[1])
+        )
+        corners += (
+            is_down_adj and is_right_adj and not is_adjacent(z + DIRS[2] + DIRS[1])
+        )
 
         return corners
 
@@ -54,24 +57,15 @@ def flood_fill(
         garden[curr] = index
         area += 1
         perimeter += 4
+        adjacency = [False for _ in range(len(DIRS))]
 
-        if is_adj(top := curr + N):
-            queue.append(top)
-            perimeter -= 1
+        for i, dir in enumerate(DIRS):
+            if is_adjacent(adj := curr + dir):
+                queue.append(adj)
+                perimeter -= 1
+                adjacency[i] = True
 
-        if is_adj(right := curr + E):
-            queue.append(right)
-            perimeter -= 1
-
-        if is_adj(down := curr + S):
-            queue.append(down)
-            perimeter -= 1
-
-        if is_adj(left := curr + W):
-            queue.append(left)
-            perimeter -= 1
-
-        corners += count_corners(curr)
+        corners += count_corners(curr, adjacency)
 
     return area, perimeter, corners
 
