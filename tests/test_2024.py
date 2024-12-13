@@ -109,3 +109,12 @@ def test_day_12():
 
     assert res1 == 1_359_028, f"Part1 = {res1}"
     assert res2 == 839_780, f"Part2 = {res2}"
+
+
+def test_day_13():
+    from y2024.d13 import solve
+
+    res1, res2 = solve(load_input_data(2024, 13))
+
+    assert res1 == 35_082, f"Part1 = {res1}"
+    assert res2 == 82_570_698_600_470, f"Part2 = {res2}"
