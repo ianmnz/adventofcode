@@ -19,7 +19,7 @@ def solve(data: str) -> tuple[int, int]:
 
 
 def test_day_DD():
-    from src.y20YY.dDD import solve
+    from y20YY.dDD import solve
 
     res1, res2 = solve(load_input_data(20YY, DD))
 

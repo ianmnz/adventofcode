@@ -4,7 +4,7 @@ from helpers import load_input_data
 
 
 def test_day_01():
-    from src.y2024.d01 import solve
+    from y2024.d01 import solve
 
     res1, res2 = solve(load_input_data(2024, 1))
 
@@ -13,7 +13,7 @@ def test_day_01():
 
 
 def test_day_02():
-    from src.y2024.d02 import solve
+    from y2024.d02 import solve
 
     res1, res2 = solve(load_input_data(2024, 2))
 
@@ -22,7 +22,7 @@ def test_day_02():
 
 
 def test_day_03():
-    from src.y2024.d03 import solve
+    from y2024.d03 import solve
 
     res1, res2 = solve(load_input_data(2024, 3))
 
@@ -31,7 +31,7 @@ def test_day_03():
 
 
 def test_day_04():
-    from src.y2024.d04 import solve
+    from y2024.d04 import solve
 
     res1, res2 = solve(load_input_data(2024, 4))
 
@@ -40,7 +40,7 @@ def test_day_04():
 
 
 def test_day_05():
-    from src.y2024.d05 import solve
+    from y2024.d05 import solve
 
     res1, res2 = solve(load_input_data(2024, 5))
 
@@ -49,7 +49,7 @@ def test_day_05():
 
 
 def test_day_06():
-    from src.y2024.d06 import solve
+    from y2024.d06 import solve
 
     res1, res2 = solve(load_input_data(2024, 6))
 
@@ -58,7 +58,7 @@ def test_day_06():
 
 
 def test_day_07():
-    from src.y2024.d07 import solve
+    from y2024.d07 import solve
 
     res1, res2 = solve(load_input_data(2024, 7))
 
@@ -67,7 +67,7 @@ def test_day_07():
 
 
 def test_day_08():
-    from src.y2024.d08 import solve
+    from y2024.d08 import solve
 
     res1, res2 = solve(load_input_data(2024, 8))
 
@@ -76,7 +76,7 @@ def test_day_08():
 
 
 def test_day_09():
-    from src.y2024.d09 import solve
+    from y2024.d09 import solve
 
     res1, res2 = solve(load_input_data(2024, 9))
 
@@ -85,7 +85,7 @@ def test_day_09():
 
 
 def test_day_10():
-    from src.y2024.d10 import solve
+    from y2024.d10 import solve
 
     res1, res2 = solve(load_input_data(2024, 10))
 
@@ -94,7 +94,7 @@ def test_day_10():
 
 
 def test_day_11():
-    from src.y2024.d11 import solve
+    from y2024.d11 import solve
 
     res1, res2 = solve(load_input_data(2024, 11))
 
