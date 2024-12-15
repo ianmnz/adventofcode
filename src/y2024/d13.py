@@ -7,50 +7,51 @@ from typing import NamedTuple
 
 from helpers import Timer, load_input_data
 
-COST_A = 3
-COST_B = 1
 
-
-class Point(NamedTuple):
+class Vec2D(NamedTuple):
     x: int
     y: int
 
 
-def solve_eq_system(machine: tuple[Point, Point, Point], factor) -> int:
-    # Ax * alpha + Bx * beta = Px
-    # Ay * alpha + By * beta = Py
+def solve_eq_system(
+    machine: tuple[Vec2D, Vec2D, Vec2D], factor, cost: Vec2D = Vec2D(3, 1)
+) -> int:
+    # Ax * x + Bx * y = Px
+    # Ay * x + By * y = Py
     #
-    # [ Ax  Bx ] * ( alpha ) = ( Px )
-    # [ Ay  By ]   (  beta )   ( Py )
+    # [ Ax  Bx ] * ( x ) = ( Px )
+    # [ Ay  By ]   ( y )   ( Py )
     #
-    # ( alpha ) =  1  [  By  -Bx ] * ( Px )
-    # (  beta )   det [ -Ay   Ax ]   ( Py )
+    # ( x ) =  1  [  By  -Bx ] * ( Px )
+    # ( y )   det [ -Ay   Ax ]   ( Py )
 
     A, B, P = machine
-    P = Point(P.x + factor, P.y + factor)
+    P = Vec2D(P.x + factor, P.y + factor)
 
     det = A.x * B.y - A.y * B.x
 
     assert det != 0
 
-    alpha = (P.x * B.y - P.y * B.x) / det
-    beta = (P.y * A.x - P.x * A.y) / det
+    x = (P.x * B.y - P.y * B.x) / det
+    y = (P.y * A.x - P.x * A.y) / det
 
-    if floor(alpha) != alpha or floor(beta) != beta:
+    if floor(x) != x or floor(y) != y:
         return 0
 
-    assert alpha >= 0 and beta >= 0
+    assert x >= 0 and y >= 0
 
-    return int(COST_A * alpha + COST_B * beta)
+    return int(cost.x * x + cost.y * y)
 
 
 @Timer.timeit
-def get_total_tokens(machines: list[tuple[Point, Point, Point]], factor=0) -> int:
+def get_total_tokens(
+    machines: list[tuple[Vec2D, Vec2D, Vec2D]], factor: int = 0
+) -> int:
     return sum(solve_eq_system(machine, factor) for machine in machines)
 
 
 @Timer.timeit
-def parse(data: str) -> list[tuple[Point, Point, Point]]:
+def parse(data: str) -> list[tuple[Vec2D, Vec2D, Vec2D]]:
     machines = []
 
     patternA = re.compile(r"Button A: X\+(\d+), Y\+(\d+)")
@@ -65,9 +66,9 @@ def parse(data: str) -> list[tuple[Point, Point, Point]]:
         matchP = patternP.search(block)
 
         if matchA and matchB and matchP:
-            A = Point(int(matchA.group(1)), int(matchA.group(2)))
-            B = Point(int(matchB.group(1)), int(matchB.group(2)))
-            P = Point(int(matchP.group(1)), int(matchP.group(2)))
+            A = Vec2D(int(matchA.group(1)), int(matchA.group(2)))
+            B = Vec2D(int(matchB.group(1)), int(matchB.group(2)))
+            P = Vec2D(int(matchP.group(1)), int(matchP.group(2)))
 
             machines.append((A, B, P))
 
