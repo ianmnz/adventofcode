@@ -136,3 +136,12 @@ def test_day_15():
 
     assert res1 == 1_406_628, f"Part1 = {res1}"
     assert res2 == 1_432_781, f"Part2 = {res2}"
+
+
+def test_day_16():
+    from y2024.d16 import solve
+
+    res1, res2 = solve(load_input_data(2024, 16))
+
+    assert res1 == 98_520, f"Part1 = {res1}"
+    assert res2 == 609, f"Part2 = {res2}"
