@@ -2,6 +2,9 @@
 # https://adventofcode.com/2024/day/18
 
 from collections import deque
+from dataclasses import dataclass
+from itertools import product
+from typing import Self
 
 from helpers import Timer, load_input_data
 
@@ -43,7 +46,7 @@ def find_shortest_path(falling_bytes: list[complex], N: int, T: int) -> int:
 
 
 @Timer.timeit
-def find_last_fallen_byte(falling_bytes: list[complex], N: int, T: int) -> str:
+def find_closing_byte(falling_bytes: list[complex], N: int, T: int) -> str:
     lo, hi = T, len(falling_bytes)
 
     while lo <= hi:
@@ -62,6 +65,54 @@ def find_last_fallen_byte(falling_bytes: list[complex], N: int, T: int) -> str:
 
 
 @Timer.timeit
+def find_closing_byte2(falling_bytes: list[complex], N: int) -> str:
+    @dataclass
+    class UnionFind:
+        color: int
+        prev: Self | None = None
+
+        def find(self) -> Self:
+            if self.prev is None:
+                return self
+            self.prev = self.prev.find()
+            return self.prev
+
+        def merge(self, other: Self) -> None:
+            ps = self.find()
+            po = other.find()
+            if ps is not po:
+                ps.prev = po
+                po.color |= ps.color
+
+    def get_group(z: complex) -> int:
+        x, y = map(int, (z.real, z.imag))
+        if x == N or y == 0:
+            return 0b10  # Belongs to Top-Right group
+        elif x == 0 or y == N:
+            return 0b01  # Belongs to Bottom-Left group
+        else:
+            return 0b00  # Does not belong to any group
+
+    fallen: dict[complex, UnionFind] = {}
+    adjacency = set(complex(x, y) for x, y in product((-1, 0, 1), repeat=2)) - {0j}
+    for b in falling_bytes:
+        b_uf = UnionFind(get_group(b))
+        fallen[b] = b_uf
+
+        for d in adjacency:
+            if (adj := b + d) in fallen:
+                b_uf.merge(fallen[adj])
+
+        # Belongs to both Top-Right and Bottom-Left groups
+        # i.e., there is a connection between both groups and so,
+        # there is no possible path from (0, 0) to (N, N)
+        if b_uf.find().color == 0b11:
+            return f"{int(b.real)},{int(b.imag)}"
+
+    return ""
+
+
+@Timer.timeit
 def parse(data: str) -> list[complex]:
     falling_bytes = []
     for coord in data.splitlines():
@@ -74,7 +125,8 @@ def parse(data: str) -> list[complex]:
 def solve(data: str) -> tuple[int, str]:
     falling_bytes = parse(data)
     part1 = find_shortest_path(falling_bytes, 70, 1024)
-    part2 = find_last_fallen_byte(falling_bytes, 70, 1024)
+    part2 = find_closing_byte(falling_bytes, 70, 1024)
+    # part2 = find_closing_byte2(falling_bytes, 70)
 
     return part1, part2
 
