@@ -217,3 +217,11 @@ def test_day_24():
 
     assert res1 == 55_920_211_035_878, f"Part1 = {res1}"
     assert res2 == "btb,cmv,mwp,rdg,rmj,z17,z23,z30", f"Part2 = {res2}"
+
+
+def test_day_25():
+    from y2024.d25 import solve
+
+    res1 = solve(load_input_data(2024, 25))
+
+    assert res1 == 2_770, f"Part1 = {res1}"
