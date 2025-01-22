@@ -1,9 +1,8 @@
 # Advent of Code : Day 13 - Point of Incidence
 # https://adventofcode.com/2023/day/13
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 def transpose(pattern: list[str]) -> list[list[str]]:
@@ -43,16 +42,18 @@ def summarize_patterns(patterns: list[list[str]], expected_smudges: int) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[str]]:
-    with open(filename, "r") as file:
-        patterns = [line.split("\n") for line in file.read().split("\n\n")]
-    return patterns
+def parse(data: str) -> list[list[str]]:
+    return [line.split("\n") for line in data.split("\n\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    patterns = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    patterns = parse(data)
     part1 = summarize_patterns(patterns, 0)
     part2 = summarize_patterns(patterns, 1)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 13)))

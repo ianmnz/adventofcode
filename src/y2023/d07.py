@@ -1,12 +1,11 @@
 # Advent of Code : Day 07 - Camel Cards
 # https://adventofcode.com/2023/day/7
 
-import os
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Self
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 hand_strength = {
     "high": 1,
@@ -104,18 +103,17 @@ def set_ranks(hands: list[Hand], with_joker: bool = False) -> None:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[Hand]:
-    with open(filename, "r") as file:
-        hands = [
-            Hand(hand[0], int(hand[1]))
-            for hand in map(lambda ss: ss.strip().split(), file.read().split("\n"))
-        ]
+def parse(data: str) -> list[Hand]:
+    hands = [
+        Hand(hand[0], int(hand[1]))
+        for hand in map(lambda ss: ss.strip().split(), data.split("\n"))
+    ]
     return hands
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    hands = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    hands = parse(data)
 
     set_ranks(hands)
     part1 = calculate_total_winnings(sorted(hands))
@@ -125,3 +123,7 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
     part2 = calculate_total_winnings(sorted(hands))
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 7)))

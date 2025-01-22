@@ -4,10 +4,9 @@
 # For some more explanation
 # https://www.reddit.com/r/adventofcode/comments/18ghux0/comment/kd0npmi/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 
-import os
 from functools import lru_cache
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 def nb_arrangements(record: str, duplicate: tuple[int]) -> int:
@@ -60,16 +59,18 @@ def sum_unfolded_arrangements(records: list[tuple[str, ...]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[tuple[str, ...]]:
-    with open(filename, "r") as file:
-        records = [tuple(line.split()) for line in file.read().split("\n")]
-    return records
+def parse(data: str) -> list[tuple[str, ...]]:
+    return [tuple(line.split()) for line in data.split("\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    records = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    records = parse(data)
     part1 = sum_arrangements(records)
     part2 = sum_unfolded_arrangements(records)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 12)))

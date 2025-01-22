@@ -1,9 +1,8 @@
 # Advent of Code : Day 14 - Parabolic Reflector Dish
 # https://adventofcode.com/2023/day/14
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 def rotate(platform: list[list[str]]) -> list[list[str]]:
@@ -77,16 +76,18 @@ def run_n_cycles(platform: list[list[str]], n: int = 1) -> list[list[str]]:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[str]]:
-    with open(filename, "r") as file:
-        platform = [[char for char in line] for line in file.read().split("\n")]
-    return platform
+def parse(data: str) -> list[list[str]]:
+    return [[char for char in line] for line in data.split("\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    platform = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    platform = parse(data)
     part1 = compute_load_on_north(tilt(platform))
     part2 = compute_load_on_north(run_n_cycles(platform, 1_000_000_000))
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 14)))

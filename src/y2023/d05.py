@@ -1,12 +1,11 @@
 # Advent of Code : Day 05 - If You Give A Seed A Fertilizer
 # https://adventofcode.com/2023/day/5
 
-import os
 import re
 from dataclasses import dataclass
 from typing import Self
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @dataclass
@@ -83,9 +82,8 @@ def seed_to_location(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> tuple[list[int], list[list[str]]]:
-    with open(filename, "r") as file:
-        seeds, mappings = file.read().split("\n\n", 1)
+def parse(data: str) -> tuple[list[int], list[list[str]]]:
+    seeds, mappings = data.split("\n\n", 1)
 
     seeds = [int(seed) for seed in re.findall(r"\d+", seeds)]
     mappings = [mapping.split("\n")[1:] for mapping in mappings.split("\n\n")]
@@ -94,8 +92,8 @@ def parse(filename: os.PathLike) -> tuple[list[int], list[list[str]]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    seeds, mappings = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    seeds, mappings = parse(data)
 
     seed_intervals = [Interval(seed, seed) for seed in seeds]
     part1 = min(seed_to_location(seed_intervals, mappings)).left
@@ -106,3 +104,7 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
     part2 = min(seed_to_location(seed_intervals, mappings)).left
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 5)))

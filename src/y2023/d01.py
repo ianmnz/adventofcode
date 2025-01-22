@@ -1,10 +1,9 @@
 # Advent of Code : Day 01 - Trebuchet?!
 # https://adventofcode.com/2023/day/1
 
-import os
 import re
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -42,16 +41,18 @@ def fix(document: list[str]) -> list[str]:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        document = file.read().strip().split("\n")
-    return document
+def parse(data: str) -> list[str]:
+    return data.strip().split("\n")
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    document = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    document = parse(data)
     part1 = calibrate(document)
     part2 = calibrate(fix(document))
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 1)))

@@ -1,10 +1,9 @@
 # Advent of Code : Day 04 - Scratchcards
 # https://adventofcode.com/2023/day/4
 
-import os
 import re
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 def compute_card_winnings(numbers: str) -> int:
@@ -48,16 +47,18 @@ def compute_total_scratchcards(cards: list[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        cards = file.read().split("\n")
-    return cards
+def parse(data: str) -> list[str]:
+    return data.split("\n")
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    cards = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    cards = parse(data)
     part1 = compute_total_points(cards)
     part2 = compute_total_scratchcards(cards)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 4)))

@@ -2,10 +2,9 @@
 # https://adventofcode.com/2023/day/20
 
 import math
-import os
 from collections import deque
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 adjacency = {}
 flipflops = {}
@@ -109,15 +108,14 @@ def get_fewest_nb_presses() -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[str]]:
-    with open(filename, "r") as file:
-        configuration = [line.split(" -> ") for line in file.read().split("\n")]
+def parse(data: str) -> list[list[str]]:
+    configuration = [line.split(" -> ") for line in data.split("\n")]
     return configuration
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    configuration = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    configuration = parse(data)
     build_graph(configuration)
 
     part1 = prod_low_high_pulses()
@@ -126,3 +124,7 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
     part2 = get_fewest_nb_presses()
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 20)))

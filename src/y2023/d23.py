@@ -2,10 +2,9 @@
 # https://adventofcode.com/2023/day/23
 
 import collections
-import os
 from typing import Callable, Dict
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -125,16 +124,18 @@ def get_longest_path_length(carte: list[list[str]], with_slippery_slope=True) ->
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[str]]:
-    with open(filename, "r") as file:
-        carte = [[char for char in line] for line in file.read().split("\n")]
-    return carte
+def parse(data: str) -> list[list[str]]:
+    return [[char for char in line] for line in data.split("\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    carte = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    carte = parse(data)
     part1 = get_longest_path_length(carte)
     part2 = get_longest_path_length(carte, False)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 23)))

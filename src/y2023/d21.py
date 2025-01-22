@@ -2,9 +2,8 @@
 # https://adventofcode.com/2023/day/21
 
 import collections
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -76,16 +75,18 @@ def quadratic_interpolation(grid: list[list[str]], nb_steps: int = 26501365) -> 
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[str]]:
-    with open(filename, "r") as file:
-        grid = [[char for char in line] for line in file.read().split("\n")]
-    return grid
+def parse(data: str) -> list[list[str]]:
+    return [[char for char in line] for line in data.split("\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    grid = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    grid = parse(data)
     part1 = nb_reachable_gardens(grid, 64)
     part2 = quadratic_interpolation(grid, 26501365)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 21)))

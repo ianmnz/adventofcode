@@ -1,10 +1,9 @@
 # Advent of Code : Day 02 - Cube Conundrum
 # https://adventofcode.com/2023/day/2
 
-import os
 import re
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -65,21 +64,24 @@ def determine_minimum_power_set_cubes(games: dict[int, list[list[str]]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> dict[int, list[list[str]]]:
-    with open(filename, "r") as file:
-        games = dict()
-        for game in file.read().strip().split("\n"):
-            game_id, subsets = game.split(":")
-            games[int(re.findall(r"\d+", game_id)[0])] = [
-                subset.split(",") for subset in subsets.split(";")
-            ]
+def parse(data: str) -> dict[int, list[list[str]]]:
+    games = dict()
+    for game in data.strip().split("\n"):
+        game_id, subsets = game.split(":")
+        games[int(re.findall(r"\d+", game_id)[0])] = [
+            subset.split(",") for subset in subsets.split(";")
+        ]
     return games
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    games = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    games = parse(data)
     part1 = determine_possible_games(games)
     part2 = determine_minimum_power_set_cubes(games)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 2)))

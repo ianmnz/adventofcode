@@ -1,9 +1,8 @@
 # Advent of Code : Day 10 - Pipe Maze
 # https://adventofcode.com/2023/day/10
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 N, S, E, W = -1, +1, +1j, -1j
 connections = {
@@ -54,6 +53,7 @@ def follow_pipes(maze: list[str]) -> set[complex]:
                         maze[i] = maze[i].replace("S", "-")  # matches == {E, W}
 
                     return start
+        return 0j
 
     start = find_start()
 
@@ -99,18 +99,20 @@ def find_enclosed_area(maze: list[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        maze = file.read().splitlines()
-    return maze
+def parse(data: str) -> list[str]:
+    return data.splitlines()
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    maze = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    maze = parse(data)
     maze_cp = maze.copy()
 
     part1 = find_farthest_position(maze)
     part2 = find_enclosed_area(maze_cp)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 10)))

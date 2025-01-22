@@ -1,11 +1,10 @@
 # Advent of Code : Day 19 - Aplenty
 # https://adventofcode.com/2023/day/19
 
-import os
 import re
 from itertools import islice
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 def is_accepted(part: list[int], workflows: dict[str, str], start: str = "in") -> bool:
@@ -111,9 +110,8 @@ def nb_of_combinations_accepted(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> tuple[str, dict[str, str]]:
-    with open(filename, "r") as file:
-        temp, parts = file.read().split("\n\n")
+def parse(data: str) -> tuple[str, dict[str, str]]:
+    temp, parts = data.split("\n\n")
 
     workflows = dict()
     for workflow in temp.split("\n"):
@@ -124,8 +122,8 @@ def parse(filename: os.PathLike) -> tuple[str, dict[str, str]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    parts, workflows = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    parts, workflows = parse(data)
 
     parts = [list(map(int, re.findall(r"\d+", part))) for part in parts.split("\n")]
     part1 = sum_accepted_parts_rating(parts, workflows)
@@ -134,3 +132,7 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
     part2 = nb_of_combinations_accepted(parts_range, workflows)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 19)))

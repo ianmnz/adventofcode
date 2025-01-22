@@ -2,10 +2,9 @@
 # https://adventofcode.com/2023/day/3
 
 import math
-import os
 import re
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -57,16 +56,18 @@ def sum_gear_ratios(schematic: list[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        schematic = file.read().split("\n")
-    return schematic
+def parse(data: str) -> list[str]:
+    return data.split("\n")
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    schematic = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    schematic = parse(data)
     part1 = sum_engine_parts_numbers(schematic)
     part2 = sum_gear_ratios(schematic)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 3)))

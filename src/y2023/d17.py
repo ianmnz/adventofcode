@@ -1,10 +1,9 @@
 # Advent of Code : Day 17 - Clumsy Crucible
 # https://adventofcode.com/2023/day/17
 
-import os
 from heapq import heappop, heappush
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -47,19 +46,20 @@ def find_shortest_path(graph: dict[tuple[int], int], lower: int, upper: int) -> 
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[int]]:
-    with open(filename, "r") as file:
-        heatmap = [
-            [int(heatloss) for heatloss in line] for line in file.read().split("\n")
-        ]
+def parse(data: str) -> list[list[int]]:
+    heatmap = [[int(heatloss) for heatloss in line] for line in data.split("\n")]
     return heatmap
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    heatmap = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    heatmap = parse(data)
     graph = build_graph(heatmap)
     part1 = find_shortest_path(graph, 1, 3)
     part2 = find_shortest_path(graph, 4, 10)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 17)))

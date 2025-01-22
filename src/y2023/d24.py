@@ -3,9 +3,8 @@
 
 import collections
 import itertools
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 Vector3d = collections.namedtuple("Vector3d", ["x", "y", "z"])
 
@@ -55,7 +54,7 @@ def count_intersections(
 
 
 @Timer.timeit
-def find_rock_launch_vector(vectors: list[tuple[Vector3d]]) -> tuple[Vector3d]:
+def find_rock_launch_vector(vectors: list[tuple[Vector3d]]) -> int:
     import sympy
 
     Px = sympy.Symbol("Px")
@@ -100,18 +99,20 @@ def find_rock_launch_vector(vectors: list[tuple[Vector3d]]) -> tuple[Vector3d]:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[str]]:
-    with open(filename, "r") as file:
-        hailstorm = [line.split("@") for line in file.read().split("\n")]
-    return hailstorm
+def parse(data: str) -> list[list[str]]:
+    return [line.split("@") for line in data.split("\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    hailstorm = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    hailstorm = parse(data)
     vectors = get_vectors(hailstorm)
     part1 = count_intersections(vectors, 200_000_000_000_000, 400_000_000_000_000)
     # Try with numpy and Newtons-Raphson algo
     part2 = find_rock_launch_vector(vectors)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 24)))

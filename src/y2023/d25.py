@@ -4,9 +4,8 @@
 import collections
 import functools
 import itertools
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -136,10 +135,18 @@ def karger_min_cut(
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> int:
-    with open(filename, "r") as file:
-        network = [line for line in file.read().split("\n")]
+def parse(data: str) -> list[str]:
+    return [line for line in data.split("\n")]
+
+
+@Timer.timeit
+def solve(data: str) -> int:
+    network = parse(data)
 
     # return iterative_split(build_graph(network))
     # return karger_min_cut(build_graph(network))
     return minimum_cut(build_graph(network))
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 25)))

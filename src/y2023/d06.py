@@ -2,9 +2,8 @@
 # https://adventofcode.com/2023/day/6
 
 import math
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -35,17 +34,16 @@ def calculate_margin_of_error(times: list[int], records: list[int]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> tuple[list[int], list[int]]:
-    with open(filename, "r") as file:
-        times, record_distances = map(
-            lambda ss: list(map(int, ss.split()[1:])), file.read().split("\n")
-        )
+def parse(data: str) -> tuple[list[int], list[int]]:
+    times, record_distances = map(
+        lambda ss: list(map(int, ss.split()[1:])), data.split("\n")
+    )
     return times, record_distances
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    times, record_distances = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    times, record_distances = parse(data)
 
     part1 = calculate_margin_of_error(times, record_distances)
 
@@ -55,3 +53,7 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
     part2 = calculate_margin_of_error(times, record_distances)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 6)))

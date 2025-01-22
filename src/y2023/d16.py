@@ -1,10 +1,9 @@
 # Advent of Code : Day 16 - The Floor Will Be Lava
 # https://adventofcode.com/2023/day/16
 
-import os
 from dataclasses import dataclass
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @dataclass
@@ -98,16 +97,18 @@ def find_best_starting_beam(layout: list[list[str]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[str]]:
-    with open(filename, "r") as file:
-        layout = [[char for char in line] for line in file.read().split("\n")]
-    return layout
+def parse(data: str) -> list[list[str]]:
+    return [[char for char in line] for line in data.split("\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    layout = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    layout = parse(data)
     part1 = count_energized_tiles(propagate_beams(layout))
     part2 = find_best_starting_beam(layout)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 16)))

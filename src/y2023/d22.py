@@ -2,11 +2,10 @@
 # https://adventofcode.com/2023/day/22
 
 import collections
-import os
 from dataclasses import dataclass, field
 from typing import Iterable, Self
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 Position = collections.namedtuple("Position", ["x", "y", "z"])
 
@@ -94,8 +93,8 @@ def count_falls_if_removed(brick: Brick, support: dict[Brick, int]) -> int:
 
 
 @Timer.timeit
-def bricks_to_disintegrate(data: list[Brick]) -> tuple[int, int]:
-    settled = simulate(sorted(data))
+def bricks_to_disintegrate(bricks: list[Brick]) -> tuple[int, int]:
+    settled = simulate(sorted(bricks))
 
     safe = 0
     count = 0
@@ -110,20 +109,23 @@ def bricks_to_disintegrate(data: list[Brick]) -> tuple[int, int]:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[Brick]:
-    with open(filename, "r") as file:
-        snapshot = [line.split("~") for line in file.read().split("\n")]
+def parse(data: str) -> list[Brick]:
+    snapshot = [line.split("~") for line in data.split("\n")]
 
-    data = []
+    bricks = []
     for left, right in snapshot:
         left = Position(*eval(left))
         right = Position(*eval(right))
-        data.append(Brick(left, right))
+        bricks.append(Brick(left, right))
 
-    return data
+    return bricks
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    data = parse(filename)
-    return bricks_to_disintegrate(data)
+def solve(data: str) -> tuple[int, int]:
+    bricks = parse(data)
+    return bricks_to_disintegrate(bricks)
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 22)))

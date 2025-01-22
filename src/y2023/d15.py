@@ -1,11 +1,10 @@
 # Advent of Code : Day 15 - Lens Library
 # https://adventofcode.com/2023/day/15
 
-import os
 from dataclasses import dataclass, field
 from typing import Self
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @dataclass
@@ -105,16 +104,18 @@ def verify_HASHMAP(sequence: list[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        sequence = file.read().strip().split(",")
-    return sequence
+def parse(data: str) -> list[str]:
+    return data.strip().split(",")
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    sequence = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    sequence = parse(data)
     part1 = verify_HASH(sequence)
     part2 = verify_HASHMAP(sequence)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 15)))

@@ -1,9 +1,8 @@
 # Advent of Code : Day 09 - Mirage Maintenance
 # https://adventofcode.com/2023/day/9
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 def extrapolate(history: list[int]) -> int:
@@ -12,16 +11,18 @@ def extrapolate(history: list[int]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[int]]:
-    with open(filename, "r") as file:
-        histories = [[*map(int, line.split())] for line in file]
-    return histories
+def parse(data: str) -> list[list[int]]:
+    return [[*map(int, line.split())] for line in data.splitlines()]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    histories = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    histories = parse(data)
     part1 = sum([extrapolate(history) for history in histories])
     part2 = sum([extrapolate(history[::-1]) for history in histories])
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2023, 9)))
