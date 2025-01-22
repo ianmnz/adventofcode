@@ -3,11 +3,10 @@
 
 import collections
 import copy
-import os
 import re
 from typing import NamedTuple
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 class Move(NamedTuple):
@@ -47,10 +46,8 @@ def read_top_of_stacks(stacks: dict[int, collections.deque]) -> str:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> tuple[dict[int, collections.deque], list[Move]]:
-    with open(filename, "r") as file:
-        initial_arrangement, rearrangements = file.read().strip().split("\n\n")
-
+def parse(data: str) -> tuple[dict[int, collections.deque], list[Move]]:
+    initial_arrangement, rearrangements = data.strip().split("\n\n")
     spacing = 4
     stacks = collections.defaultdict(collections.deque)
     for line in initial_arrangement.split("\n")[:-1]:
@@ -80,8 +77,8 @@ def parse(filename: os.PathLike) -> tuple[dict[int, collections.deque], list[Mov
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[str, str]:
-    stacks, moves = parse(filename)
+def solve(data: str) -> tuple[str, str]:
+    stacks, moves = parse(data)
     stacks_cp = copy.deepcopy(stacks)
 
     move_crates_changing_order(stacks, moves)
@@ -91,3 +88,7 @@ def solve(filename: os.PathLike) -> tuple[str, str]:
     part2 = read_top_of_stacks(stacks_cp)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 5)))

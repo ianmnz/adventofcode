@@ -1,10 +1,9 @@
 # Advent of Code : Day 21 - Monkey Math
 # https://adventofcode.com/2022/day/21
 
-import os
 import re
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 def expand_ast(root: str, monkeys: dict[str, str]) -> str:
@@ -42,10 +41,8 @@ def get_number_to_be_yelled(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> dict[str, str]:
-    with open(filename, "r") as file:
-        lines = file.read().strip().split("\n")
-
+def parse(data: str) -> dict[str, str]:
+    lines = data.strip().split("\n")
     monkeys = {}
     for line in lines:
         key, value = line.split(": ")
@@ -54,9 +51,13 @@ def parse(filename: os.PathLike) -> dict[str, str]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    monkeys = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    monkeys = parse(data)
     part1 = get_number_yelled_by_root(monkeys["root"], monkeys)
     part2 = get_number_to_be_yelled(monkeys["root"], monkeys)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 21)))

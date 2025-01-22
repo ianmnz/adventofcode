@@ -1,14 +1,13 @@
 # Advent of Code : Day 19 - Not Enough Minerals
 # https://adventofcode.com/2022/day/19
 
-import os
 import re
 from dataclasses import dataclass
 from typing import TypedDict
 
 from ortools.linear_solver import pywraplp
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 class Resource(TypedDict):
@@ -147,10 +146,8 @@ def get_product_of_nb_opened(blueprints: list[Blueprint], T: int, n: int) -> int
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[Blueprint]:
-    with open(filename, "r") as file:
-        lines = file.read().strip().split("\n")
-
+def parse(data: str) -> list[Blueprint]:
+    lines = data.strip().split("\n")
     blueprints = []
     pattern = re.compile(
         r"Blueprint (\d+): Each ore robot costs (\d+) ore. Each clay robot costs (\d+) ore. Each obsidian robot costs (\d+) ore and (\d+) clay. Each geode robot costs (\d+) ore and (\d+) obsidian."
@@ -176,9 +173,13 @@ def parse(filename: os.PathLike) -> list[Blueprint]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    blueprints = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    blueprints = parse(data)
     part1 = get_sum_of_quality_level(blueprints, 24)
     part2 = get_product_of_nb_opened(blueprints, 32, 3)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 19)))

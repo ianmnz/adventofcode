@@ -1,9 +1,8 @@
 # Advent of Code : Day 20 - Grove Positioning System
 # https://adventofcode.com/2022/day/20
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -26,16 +25,18 @@ def decrypt(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[int]:
-    with open(filename, "r") as file:
-        array = list(map(int, file.read().strip().split("\n")))
-    return array
+def parse(data: str) -> list[int]:
+    return list(map(int, data.strip().split("\n")))
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    array = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    array = parse(data)
     part1 = decrypt(array, 1, 1)
     part2 = decrypt(array, 811589153, 10)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 20)))

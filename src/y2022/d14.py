@@ -1,9 +1,8 @@
 # Advent of Code : Day 14 - Regolith Reservoir
 # https://adventofcode.com/2022/day/14
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 Coordinate = tuple[int, int]
 Scanner = set[Coordinate]
@@ -87,15 +86,13 @@ def simulate_up_to_blocking_source(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[str]]:
-    with open(filename, "r") as file:
-        cave = [line.strip().split(" -> ") for line in file.read().strip().split("\n")]
-    return cave
+def parse(data: str) -> list[list[str]]:
+    return [line.strip().split(" -> ") for line in data.strip().split("\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> Coordinate:
-    cave = parse(filename)
+def solve(data: str) -> Coordinate:
+    cave = parse(data)
     scanner = scan(cave)
     part1 = simulate_up_to_reaching_bottom(scanner)
     # For performance purposes, i.e., avoid redoing the first part
@@ -103,3 +100,7 @@ def solve(filename: os.PathLike) -> Coordinate:
     part2 = (part1 + 1) + simulate_up_to_blocking_source(scanner)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 14)))

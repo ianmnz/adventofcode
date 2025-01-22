@@ -1,9 +1,8 @@
 # Advent of Code : Day 17 - Pyroclastic Flow
 # https://adventofcode.com/2022/day/17
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 rocks = (
     (0, 1, 2, 3),  # - shape
@@ -72,16 +71,18 @@ def simulate_fall(n: int, jets: list[int]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[int]:
-    with open(filename, "r") as file:
-        jets = [RIGHT if jet == ">" else LEFT for jet in file.read().strip()]
-    return jets
+def parse(data: str) -> list[int]:
+    return [RIGHT if jet == ">" else LEFT for jet in data.strip()]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    jets = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    jets = parse(data)
     part1 = simulate_fall(2022, jets)
     part2 = simulate_fall(1_000_000_000_000, jets)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 17)))

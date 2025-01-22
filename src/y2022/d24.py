@@ -2,9 +2,8 @@
 # https://adventofcode.com/2022/day/24
 
 import heapq
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 Grid = list[list[int]]
 State = tuple[int, int, int]
@@ -105,18 +104,19 @@ def get_time_to_cross_valley(grid: Grid, with_return: bool = False) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Grid:
-    with open(filename, "r") as file:
-        grid = [
-            [bitmask[char] for char in line] for line in file.read().strip().split("\n")
-        ]
+def parse(data: str) -> Grid:
+    grid = [[bitmask[char] for char in line] for line in data.strip().split("\n")]
     return grid
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    grid = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    grid = parse(data)
     part1 = get_time_to_cross_valley(grid)
     part2 = get_time_to_cross_valley(grid, True)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 24)))

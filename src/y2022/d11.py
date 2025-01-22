@@ -4,12 +4,11 @@
 import copy
 import functools
 import operator
-import os
 import re
 from dataclasses import dataclass, field
 from typing import Callable, Self
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @dataclass
@@ -82,9 +81,8 @@ def compute_monkey_business(nb_rounds: int, monkeys: dict[int, Monkey]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> dict[int, Monkey]:
-    with open(filename, "r") as file:
-        notes = file.read().strip().split("\n\n")
+def parse(data: str) -> dict[int, Monkey]:
+    notes = data.strip().split("\n\n")
 
     monkey_id = re.compile(r"Monkey (\d+):")
     items = re.compile(r"Starting items: (.*)")
@@ -124,8 +122,8 @@ def parse(filename: os.PathLike) -> dict[int, Monkey]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    monkeys = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    monkeys = parse(data)
     monkeys_cp = copy.deepcopy(monkeys)
     update_worry_evaluation(monkeys_cp)
 
@@ -133,3 +131,7 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
     part2 = compute_monkey_business(10_000, monkeys_cp)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 11)))

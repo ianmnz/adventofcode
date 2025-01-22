@@ -2,11 +2,10 @@
 # https://adventofcode.com/2022/day/22
 
 import math
-import os
 import re
 from dataclasses import dataclass, field
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 UP = -1 + 0j
 DOWN = 1 + 0j
@@ -275,10 +274,8 @@ def get_final_password(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> tuple[list[list[str]], list[str]]:
-    with open(filename, "r") as file:
-        lines, path = file.read().rstrip().split("\n\n")
-
+def parse(data: str) -> tuple[list[list[str]], list[str]]:
+    lines, path = data.rstrip().split("\n\n")
     board = [[col for col in row] for row in lines.split("\n")]
     instructions = [move for move in re.findall(r"\d+|[RL]", path)]
 
@@ -286,11 +283,15 @@ def parse(filename: os.PathLike) -> tuple[list[list[str]], list[str]]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    board, instructions = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    board, instructions = parse(data)
     start = find_start(board)
     torus, cube = build_wrappers(board)
     part1 = get_final_password(start, torus, instructions)
     part2 = get_final_password(start, cube, instructions)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 22)))

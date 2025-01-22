@@ -1,12 +1,11 @@
 # Advent of Code : Day 16 - Proboscidea Volcanium
 # https://adventofcode.com/2022/day/16
 
-import os
 import re
 from dataclasses import dataclass
 from functools import lru_cache
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @dataclass
@@ -112,17 +111,19 @@ def maximize_released_pressure(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        report = file.read().strip().split("\n")
-    return report
+def parse(data: str) -> list[str]:
+    return data.strip().split("\n")
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    report = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    report = parse(data)
     valves = build_graph(report)
     part1 = maximize_released_pressure(valves, 30, False)
     part2 = maximize_released_pressure(valves, 26, True)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 16)))

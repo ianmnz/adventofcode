@@ -1,11 +1,10 @@
 # Advent of Code : Day 04 - Camp Cleanup
 # https://adventofcode.com/2022/day/4
 
-import os
 import re
 from typing import NamedTuple
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 class Range(NamedTuple):
@@ -14,11 +13,9 @@ class Range(NamedTuple):
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[tuple[Range, Range]]:
+def parse(data: str) -> list[tuple[Range, Range]]:
     pattern = re.compile(r"(\d+)-(\d+),(\d+)-(\d+)")
-
-    with open(filename, "r") as file:
-        matches = [pattern.match(line) for line in file.read().strip().split("\n")]
+    matches = [pattern.match(line) for line in data.strip().split("\n")]
 
     return [
         (
@@ -50,8 +47,8 @@ def find_nb_intersections(ranges: list[tuple[Range, Range]]) -> tuple[int, int]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    ranges = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    ranges = parse(data)
     (
         nb_fully_contained,
         nb_overlapped_not_fully_contained,
@@ -61,3 +58,7 @@ def solve(filename: os.PathLike) -> tuple[int, int]:
     part2 = nb_fully_contained + nb_overlapped_not_fully_contained
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 4)))

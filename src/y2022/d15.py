@@ -2,12 +2,11 @@
 # https://adventofcode.com/2022/day/15
 
 import bisect
-import os
 import re
 from dataclasses import dataclass
 from typing import NamedTuple, Self
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 class Beacon(NamedTuple):
@@ -156,18 +155,20 @@ def get_uncovered_position_by_line_intersection(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        coverage = file.read().strip().split("\n")
-    return coverage
+def parse(data: str) -> list[str]:
+    return data.strip().split("\n")
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    coverage = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    coverage = parse(data)
     sensors, beacons = build_coverage(coverage)
     part1 = get_nb_covered_positions_on_row(sensors, beacons)
     # part2 = get_uncovered_position(sensors)
     part2 = get_uncovered_position_by_line_intersection(sensors)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 15)))

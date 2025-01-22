@@ -1,9 +1,8 @@
 # Advent of Code : Day 10 - Cathode-Ray Tube
 # https://adventofcode.com/2022/day/10
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 CYCLES_PER_INSTRUCTION = {"noop": 1, "addx": 2}
 
@@ -50,16 +49,18 @@ def display_crt(crt: list[list[str]]) -> str:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[list[str]]:
-    with open(filename, "r") as file:
-        program = file.read().strip().split("\n")
-    return [instruction.strip().split() for instruction in program]
+def parse(data: str) -> list[list[str]]:
+    return [instruction.strip().split() for instruction in data.strip().split("\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, str]:
-    program = parse(filename)
+def solve(data: str) -> tuple[int, str]:
+    program = parse(data)
     part1, crt = get_CRT_signals_and_display(program)
     part2 = display_crt(crt)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 10)))

@@ -1,9 +1,8 @@
 # Advent of Code : Day 06 - Tuning Trouble
 # https://adventofcode.com/2022/day/6
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 SoP_marker_length = 4  # Start-of-Packet
 SoM_marker_length = 14  # Start-of-Message
@@ -21,17 +20,19 @@ def find_marker_index(buffer: str, marker_length: int, start: int) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> str:
-    with open(filename, "r") as file:
-        buffer = file.read().rstrip("\n")
-    return buffer
+def parse(data: str) -> str:
+    return data.rstrip("\n")
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    buffer = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    buffer = parse(data)
     part1 = find_marker_index(buffer, SoP_marker_length, SoP_marker_length - 1)
     # We assume here that the start-of-message comes after the start-of-packet
     part2 = find_marker_index(buffer, SoM_marker_length, part1)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 6)))

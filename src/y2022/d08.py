@@ -1,9 +1,8 @@
 # Advent of Code : Day 08 - Treetop Tree House
 # https://adventofcode.com/2022/day/8
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 Grid = list[list[int]]
 
@@ -95,19 +94,19 @@ def get_highest_scenic_score(score: Grid) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> Grid:
-    with open(filename, "r") as file:
-        grid = [
-            [int(char) for char in line] for line in file.read().strip().split("\n")
-        ]
-    return grid
+def parse(data: str) -> Grid:
+    return [[int(char) for char in line] for line in data.strip().split("\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    grid = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    grid = parse(data)
     exposure, score = compute_exposure_and_score(grid)
     part1 = count_nb_visible_trees(exposure)
     part2 = get_highest_scenic_score(score)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 8)))

@@ -2,12 +2,10 @@
 # https://adventofcode.com/2022/day/13
 
 import bisect
-import os
 from dataclasses import dataclass
 from functools import reduce
-from typing import List, Tuple, Union
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 type Value = list[int | Value]
 
@@ -73,19 +71,21 @@ def get_distress_signal_decoder_key(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[tuple[Value, Value]]:
-    with open(filename, "r") as file:
-        packets = [
-            tuple(map(eval, pair.split("\n")))
-            for pair in file.read().strip().split("\n\n")
-        ]
+def parse(data: str) -> list[tuple[Value, Value]]:
+    packets = [
+        tuple(map(eval, pair.split("\n"))) for pair in data.strip().split("\n\n")
+    ]
     return packets
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    packets = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    packets = parse(data)
     part1 = get_sum_of_indices(packets)
     part2 = get_distress_signal_decoder_key(packets)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 13)))

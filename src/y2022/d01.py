@@ -2,9 +2,8 @@
 # https://adventofcode.com/2022/day/1
 
 import functools
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -13,20 +12,19 @@ def sum_k_first_elements(array: list[int], k: int) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[int]:
-    with open(filename, "r") as file:
-        inventory = [
-            sum(map(int, items.split("\n")))
-            for items in file.read().strip().split("\n\n")
-        ]
-    return inventory
+def parse(data: str) -> list[int]:
+    return [sum(map(int, items.split("\n"))) for items in data.strip().split("\n\n")]
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    inventory = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    inventory = parse(data)
     inventory = sorted(inventory, reverse=True)
     part1 = sum_k_first_elements(inventory, 1)
     part2 = sum_k_first_elements(inventory, 3)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 1)))

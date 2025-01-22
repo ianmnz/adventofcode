@@ -1,9 +1,8 @@
 # Advent of Code : Day 25 - Full of Hot Air
 # https://adventofcode.com/2022/day/25
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 BASE5: list[int] = []
 
@@ -58,9 +57,8 @@ def get_total_sum(numbers: list[str]) -> str:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        numbers = file.read().strip().split("\n")
+def parse(data: str) -> list[str]:
+    numbers = data.strip().split("\n")
 
     global BASE5
     max_power = max(len(number) for number in numbers)
@@ -70,8 +68,12 @@ def parse(filename: os.PathLike) -> list[str]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> str:
-    numbers = parse(filename)
+def solve(data: str) -> str:
+    numbers = parse(data)
     part1 = get_total_sum(numbers)
 
     return part1
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 25)))

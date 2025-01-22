@@ -2,12 +2,11 @@
 # https://adventofcode.com/2022/day/12
 
 import heapq
-import os
 from collections import deque, namedtuple
 from dataclasses import dataclass, field
 from typing import Self
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 def char_to_int(item: str) -> int:
@@ -225,17 +224,19 @@ def find_best_start(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        heightmap = file.read().strip().split("\n")
-    return heightmap
+def parse(data: str) -> list[str]:
+    return data.strip().split("\n")
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    heightmap = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    heightmap = parse(data)
     graph, target, candidates = build_graph(heightmap)
     part1 = find_best_path_from_start(graph, target, candidates[0])
     part2 = find_best_start(graph, target, candidates[1:])
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 12)))

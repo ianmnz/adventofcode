@@ -1,11 +1,10 @@
 # Advent of Code : Day 09 - Rope Bridge
 # https://adventofcode.com/2022/day/9
 
-import os
 from dataclasses import dataclass, field
 from typing import Self
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 RIGHT = 1 + 0j
 LEFT = -1 + 0j
@@ -132,16 +131,18 @@ def get_nb_visited_positions_by_tail(motions: list[str], nb_knots: int) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        motions = file.read().strip().split("\n")
-    return motions
+def parse(data: str) -> list[str]:
+    return data.strip().split("\n")
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    motions = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    motions = parse(data)
     part1 = get_nb_visited_positions_by_tail(motions, 2)
     part2 = get_nb_visited_positions_by_tail(motions, 10)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 9)))

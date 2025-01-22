@@ -1,12 +1,11 @@
 # Advent of Code : Day 23 - Unstable Diffusion
 # https://adventofcode.com/2022/day/23
 
-import os
 from collections import defaultdict
 from dataclasses import dataclass
 from itertools import product
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 N = 0 - 1j
 S = 0 + 1j
@@ -101,9 +100,8 @@ def get_covered_ground(elves: list[Elf]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[Elf]:
-    with open(filename, "r") as file:
-        lines = file.read().strip().split("\n")
+def parse(data: str) -> list[Elf]:
+    lines = data.strip().split("\n")
 
     return [
         Elf(complex(x, y))
@@ -114,10 +112,14 @@ def parse(filename: os.PathLike) -> list[Elf]:
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    elves = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    elves = parse(data)
     spread(elves, 10)
     part1 = get_covered_ground(elves)
     part2 = 10 + spread(elves, 2_000)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 23)))

@@ -1,10 +1,9 @@
 # Advent of Code : Day 02 - Rock Paper Scissors
 # https://adventofcode.com/2022/day/2
 
-import os
 from typing import cast
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 score_part1 = {
     "A": {"X": 4, "Y": 8, "Z": 3},
@@ -28,17 +27,20 @@ def compute_score(
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[tuple[str, str]]:
-    with open(filename, "r") as file:
-        guide = [tuple(line.split()) for line in file.read().strip().split("\n")]
+def parse(data: str) -> list[tuple[str, str]]:
+    guide = [tuple(line.split()) for line in data.strip().split("\n")]
     return cast(list[tuple[str, str]], guide)
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    guide = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    guide = parse(data)
 
     part1 = compute_score(guide, score_part1)
     part2 = compute_score(guide, score_part2)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 2)))

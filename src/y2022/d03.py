@@ -1,11 +1,10 @@
 # Advent of Code : Day 03 - Rucksack Reorganization
 # https://adventofcode.com/2022/day/3
 
-import os
 from itertools import islice
 from typing import Generator, Iterable
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 def priority(item: str) -> int:
@@ -72,16 +71,18 @@ def find_priority_of_badges(rucksacks: list[str]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[str]:
-    with open(filename, "r") as file:
-        rucksacks = file.read().strip().split()
-    return rucksacks
+def parse(data: str) -> list[str]:
+    return data.strip().split()
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    rucksacks = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    rucksacks = parse(data)
     part1 = find_priority_of_common(rucksacks)
     part2 = find_priority_of_badges(rucksacks)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 3)))

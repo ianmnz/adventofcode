@@ -1,9 +1,8 @@
 # Advent of Code : Day 18 - Boiling Boulders
 # https://adventofcode.com/2022/day/18
 
-import os
 
-from helpers import Timer
+from helpers import Timer, load_input_data
 
 
 @Timer.timeit
@@ -88,19 +87,21 @@ def get_external_surface_area(droplets: list[tuple[int, ...]]) -> int:
 
 
 @Timer.timeit
-def parse(filename: os.PathLike) -> list[tuple[int, ...]]:
-    with open(filename, "r") as file:
-        droplets = [
-            tuple(map(int, droplet.split(",")))
-            for droplet in file.read().strip().split("\n")
-        ]
+def parse(data: str) -> list[tuple[int, ...]]:
+    droplets = [
+        tuple(map(int, droplet.split(","))) for droplet in data.strip().split("\n")
+    ]
     return droplets
 
 
 @Timer.timeit
-def solve(filename: os.PathLike) -> tuple[int, int]:
-    droplets = parse(filename)
+def solve(data: str) -> tuple[int, int]:
+    droplets = parse(data)
     part1 = get_surface_area(droplets)
     part2 = get_external_surface_area(droplets)
 
     return part1, part2
+
+
+if __name__ == "__main__":
+    print(solve(load_input_data(2022, 18)))
