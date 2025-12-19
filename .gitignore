@@ -1,5 +1,6 @@
 # .gitignore
 
+.vscode
 __pycache__
 uv.lock
 .python-version
